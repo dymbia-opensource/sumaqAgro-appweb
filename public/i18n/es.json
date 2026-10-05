@@ -1,0 +1,34 @@
+{
+  "app": {
+    "title": "SumaqAgro"
+  },
+  "option": {
+    "dashboard": "Mi parcela",
+    "plots": "Parcelas",
+    "finances": "Costos de campaña",
+    "crop-health": "Salud del cultivo",
+    "alerts": "Alertas",
+    "harvest": "Acopio y certificados",
+    "cooperative": "Cooperativa",
+    "plans": "Planes",
+    "profile": "Mi perfil"
+  },
+  "language": {
+    "es": "Español",
+    "en": "Inglés"
+  },
+  "common": {
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "back": "Volver",
+    "loading": "Cargando...",
+    "no-data": "No hay datos para mostrar."
+  },
+  "page-not-found": {
+    "title": "Página no encontrada",
+    "message": "La ruta {{ path }} no existe.",
+    "go-home": "Ir al inicio"
+  }
+}
