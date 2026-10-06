@@ -1,0 +1,244 @@
+@if (loading()) {
+  <mat-progress-bar mode="indeterminate" [attr.aria-label]="'common.loading' | translate" />
+}
+
+<header class="dashboard-header">
+  <div>
+    <span class="breadcrumb">{{ 'option.my-plot' | translate }}</span>
+    <h1>{{ greetingKey() | translate: { name: userName } }}</h1>
+    @if (plot(); as plot) {
+      <p class="subtitle">
+        {{ plot.name }}
+        @if (campaign(); as campaign) {
+          – {{ campaign.seedVariety }}
+        }
+        ({{ plot.areaHectares | number: '1.0-2' }} Ha)
+        @if (campaign(); as campaign) {
+          | {{ 'field-management.dashboard.campaign' | translate }} {{ campaign.season }}
+        }
+      </p>
+    }
+  </div>
+  <a mat-flat-button class="view-plots" routerLink="/field-management/plots">
+    <mat-icon>grid_view</mat-icon>
+    {{ 'field-management.dashboard.view-all-plots' | translate }}
+  </a>
+</header>
+
+@if (error(); as error) {
+  <mat-card appearance="outlined" class="message-card" role="alert">
+    <mat-card-content>
+      <mat-icon>cloud_off</mat-icon>
+      <span>{{ 'field-management.dashboard.load-error' | translate }}</span>
+    </mat-card-content>
+    <mat-card-actions align="end">
+      <button mat-button (click)="retry()">
+        <mat-icon>refresh</mat-icon>
+        {{ 'common.retry' | translate }}
+      </button>
+    </mat-card-actions>
+  </mat-card>
+} @else if (!loading() && plots().length === 0) {
+  <mat-card appearance="outlined" class="message-card">
+    <mat-card-content>
+      <mat-icon>agriculture</mat-icon>
+      <span>{{ 'field-management.dashboard.no-plots' | translate }}</span>
+    </mat-card-content>
+    <mat-card-actions align="end">
+      <a mat-flat-button routerLink="/field-management/plots/new">
+        <mat-icon>add</mat-icon>
+        {{ 'field-management.dashboard.register-plot' | translate }}
+      </a>
+    </mat-card-actions>
+  </mat-card>
+} @else {
+  <section class="kpi-grid" [attr.aria-label]="'field-management.dashboard.summary' | translate">
+    <!-- Leaf health: data of Crop Health, added in that phase -->
+    <mat-card class="kpi-card">
+      <mat-card-header>
+        <mat-icon mat-card-avatar>eco</mat-icon>
+        <mat-card-title>{{ 'field-management.dashboard.leaf-health' | translate }}</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <p class="kpi-note">{{ 'field-management.dashboard.leaf-health-pending' | translate }}</p>
+      </mat-card-content>
+      <mat-card-actions>
+        <a mat-flat-button class="kpi-action" routerLink="/crop-health/monitoring">
+          <mat-icon>map</mat-icon>
+          {{ 'field-management.dashboard.view-satellite-map' | translate }}
+          <mat-icon iconPositionEnd>chevron_right</mat-icon>
+        </a>
+      </mat-card-actions>
+    </mat-card>
+
+    <!-- Total spend (US-16, US-17, US-19) -->
+    <mat-card class="kpi-card">
+      <mat-card-header>
+        <mat-icon mat-card-avatar>monetization_on</mat-icon>
+        <mat-card-title>{{ 'field-management.dashboard.total-spend' | translate }}</mat-card-title>
+        @if (campaign(); as campaign) {
+          <mat-chip-set class="kpi-chip">
+            <mat-chip [disableRipple]="true">
+              <mat-icon matChipAvatar>{{ campaign.isActive() ? 'check_circle' : 'lock' }}</mat-icon>
+              {{ 'field-management.campaign-status.' + campaign.status | translate }}
+            </mat-chip>
+          </mat-chip-set>
+        }
+      </mat-card-header>
+      <mat-card-content>
+        @if (finances(); as finances) {
+          <p class="kpi-label">{{ 'field-management.dashboard.total-invested' | translate }}</p>
+          <p class="kpi-value">{{ finances.total.format() }}</p>
+          <p class="kpi-note">
+            @for (item of finances.categories; track item.label; let last = $last) {
+              {{ item.label | translate }}: {{ item.percentage | number: '1.0-0' }}%
+              @if (!last) {
+                |
+              }
+            }
+          </p>
+        } @else {
+          <p class="kpi-note">{{ 'field-management.dashboard.no-expenses' | translate }}</p>
+        }
+      </mat-card-content>
+      <mat-card-actions>
+        <a mat-flat-button class="kpi-action" routerLink="/field-management/finances">
+          <mat-icon>receipt_long</mat-icon>
+          {{ 'field-management.dashboard.view-expenses' | translate }}
+          <mat-icon iconPositionEnd>chevron_right</mat-icon>
+        </a>
+      </mat-card-actions>
+    </mat-card>
+
+    <!-- Breakeven price (US-18) -->
+    <mat-card class="kpi-card">
+      <mat-card-header>
+        <mat-icon mat-card-avatar>trending_up</mat-icon>
+        <mat-card-title>{{
+          'field-management.dashboard.breakeven-title' | translate
+        }}</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        @if (finances(); as finances) {
+          @if (finances.expectedYield > 0) {
+            <p class="kpi-label">{{ 'field-management.dashboard.breakeven-point' | translate }}</p>
+            <p class="kpi-value">
+              {{ finances.breakeven.format() }}
+              <span class="kpi-unit">{{
+                'field-management.yield-unit.per-' + finances.yieldUnit | translate
+              }}</span>
+            </p>
+            <p class="kpi-note">
+              {{ 'field-management.dashboard.estimated' | translate }}:
+              {{ finances.expectedYield | number }}
+              {{ 'field-management.yield-unit.' + finances.yieldUnit | translate }}
+            </p>
+          } @else {
+            <p class="kpi-note">{{ 'field-management.dashboard.no-expected-yield' | translate }}</p>
+          }
+        } @else {
+          <p class="kpi-note">{{ 'field-management.dashboard.no-expenses' | translate }}</p>
+        }
+      </mat-card-content>
+      @if (finances(); as finances) {
+        @if (finances.expectedYield > 0) {
+          <mat-card-actions>
+            <mat-chip-set class="kpi-advice">
+              <mat-chip
+                [highlighted]="true"
+                [disableRipple]="true"
+                [matTooltip]="'field-management.dashboard.minimum-price-hint' | translate"
+              >
+                <mat-icon matChipAvatar>trending_up</mat-icon>
+                {{
+                  'field-management.dashboard.minimum-price'
+                    | translate: { price: finances.minimumPrice.format() }
+                }}
+              </mat-chip>
+            </mat-chip-set>
+          </mat-card-actions>
+        }
+      }
+    </mat-card>
+  </section>
+
+  <section class="charts-grid">
+    <!-- NDVI evolution: data of Crop Health, added in that phase -->
+    <mat-card appearance="outlined" class="chart-card">
+      <mat-card-header>
+        <mat-icon mat-card-avatar>show_chart</mat-icon>
+        <mat-card-title>{{
+          'field-management.dashboard.ndvi-evolution' | translate
+        }}</mat-card-title>
+        <mat-card-subtitle>{{
+          'field-management.dashboard.ndvi-subtitle' | translate
+        }}</mat-card-subtitle>
+      </mat-card-header>
+      <mat-divider />
+      <mat-card-content class="chart-placeholder">
+        <mat-icon>satellite_alt</mat-icon>
+        <p>{{ 'field-management.dashboard.ndvi-pending' | translate }}</p>
+        <a mat-stroked-button routerLink="/crop-health/monitoring">
+          <mat-icon>eco</mat-icon>
+          {{ 'option.crop-health' | translate }}
+        </a>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Cost distribution (US-16, US-17, US-19) -->
+    <mat-card appearance="outlined" class="chart-card">
+      <mat-card-header>
+        <mat-icon mat-card-avatar>donut_large</mat-icon>
+        <mat-card-title>{{
+          'field-management.dashboard.cost-distribution' | translate
+        }}</mat-card-title>
+        @if (finances()?.firstExpenseDate; as since) {
+          <mat-card-subtitle>
+            {{ 'field-management.dashboard.since' | translate }}
+            {{ since | date: 'longDate' : undefined : language() ?? 'es' }}
+          </mat-card-subtitle>
+        }
+      </mat-card-header>
+      <mat-divider />
+      <mat-card-content>
+        @if (costChartData(); as data) {
+          <div class="cost-body">
+            <div class="doughnut">
+              <canvas
+                baseChart
+                type="doughnut"
+                [data]="data"
+                [options]="costChartOptions"
+                [attr.aria-label]="'field-management.dashboard.cost-distribution' | translate"
+                role="img"
+              ></canvas>
+            </div>
+            <mat-list
+              class="legend"
+              [attr.aria-label]="'field-management.dashboard.cost-distribution' | translate"
+            >
+              @for (item of finances()!.categories; track item.label; let i = $index) {
+                <mat-list-item>
+                  <span matListItemAvatar [class]="'dot dot-' + i" aria-hidden="true"></span>
+                  <span matListItemTitle>{{ item.label | translate }}</span>
+                  <span matListItemLine>{{ item.amount.format() }}</span>
+                  <span matListItemMeta class="legend-percentage">
+                    {{ item.percentage | number: '1.0-0' }}%
+                  </span>
+                </mat-list-item>
+                <mat-progress-bar
+                  [class]="'share share-' + i"
+                  mode="determinate"
+                  [value]="item.percentage"
+                  [attr.aria-label]="item.label | translate"
+                />
+              }
+            </mat-list>
+          </div>
+        } @else {
+          <p class="kpi-note">{{ 'field-management.dashboard.no-expenses' | translate }}</p>
+        }
+      </mat-card-content>
+    </mat-card>
+  </section>
+}
