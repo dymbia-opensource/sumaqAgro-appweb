@@ -1,19 +1,39 @@
 {
   "app": {
-    "title": "SumaqAgro"
+    "title": "SumaqAgro",
+    "tagline": "Cultivating a better tomorrow"
+  },
+  "section": {
+    "major": "Major",
+    "agricultural-operation": "Agricultural operation",
+    "system": "System"
   },
   "option": {
-    "dashboard": "My plot",
-    "plots": "Plots",
-    "finances": "Campaign costs",
-    "crop-health": "Crop health",
-    "alerts": "Alerts",
-    "harvest": "Harvest and certificates",
-    "cooperative": "Cooperative",
-    "plans": "Plans",
-    "profile": "My profile"
+    "my-plot": "My Plot",
+    "crop-health": "Crop Health",
+    "expenses": "My Expenses and Earnings",
+    "advisor": "Consult the Advisor",
+    "harvest-certificates": "My Harvest Certificates",
+    "alerts": "Agricultural Alerts",
+    "settings": "Settings and Help"
+  },
+  "layout": {
+    "search": "Search within my plot...",
+    "menu": "Open menu",
+    "connection": "Connection status",
+    "connected": "Connected",
+    "disconnected": "Offline",
+    "offline-mode": "Offline Mode",
+    "offline-mode-on": "On",
+    "offline-mode-off": "Off",
+    "notifications": "Notifications",
+    "profile": "My profile",
+    "sign-out": "Log Out",
+    "offline-mode-on-hint": "No signal: what you record will sync when the connection returns",
+    "offline-mode-off-hint": "Connected: your data is saved online"
   },
   "language": {
+    "label": "Language",
     "es": "Spanish",
     "en": "English"
   },
@@ -23,6 +43,7 @@
     "edit": "Edit",
     "delete": "Delete",
     "back": "Back",
+    "next": "Next",
     "loading": "Loading...",
     "no-data": "No data to show."
   },

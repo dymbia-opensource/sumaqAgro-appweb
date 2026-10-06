@@ -1,19 +1,39 @@
 {
   "app": {
-    "title": "SumaqAgro"
+    "title": "SumaqAgro",
+    "tagline": "Cultivando un mejor mañana"
+  },
+  "section": {
+    "major": "Principal",
+    "agricultural-operation": "Operación agrícola",
+    "system": "Sistema"
   },
   "option": {
-    "dashboard": "Mi parcela",
-    "plots": "Parcelas",
-    "finances": "Costos de campaña",
+    "my-plot": "Mi parcela",
     "crop-health": "Salud del cultivo",
-    "alerts": "Alertas",
-    "harvest": "Acopio y certificados",
-    "cooperative": "Cooperativa",
-    "plans": "Planes",
-    "profile": "Mi perfil"
+    "expenses": "Mis gastos y ganancias",
+    "advisor": "Consultar al asesor",
+    "harvest-certificates": "Certificados de cosecha",
+    "alerts": "Alertas agrícolas",
+    "settings": "Configuración y ayuda"
+  },
+  "layout": {
+    "search": "Buscar en mi parcela...",
+    "menu": "Abrir menú",
+    "connection": "Estado de conexión",
+    "connected": "Conectado",
+    "disconnected": "Sin conexión",
+    "offline-mode": "Modo offline",
+    "offline-mode-on": "Activado",
+    "offline-mode-off": "Desactivado",
+    "notifications": "Notificaciones",
+    "profile": "Mi perfil",
+    "sign-out": "Cerrar sesión",
+    "offline-mode-on-hint": "Sin señal: lo que registres se sincronizará al volver la conexión",
+    "offline-mode-off-hint": "Hay conexión: tus datos se guardan en línea"
   },
   "language": {
+    "label": "Idioma",
     "es": "Español",
     "en": "Inglés"
   },
@@ -23,6 +43,7 @@
     "edit": "Editar",
     "delete": "Eliminar",
     "back": "Volver",
+    "next": "Siguiente",
     "loading": "Cargando...",
     "no-data": "No hay datos para mostrar."
   },
