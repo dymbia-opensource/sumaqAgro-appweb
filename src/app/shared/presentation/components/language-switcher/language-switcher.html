@@ -1,0 +1,16 @@
+<mat-button-toggle-group
+  class="language-switcher"
+  [value]="currentLang()"
+  (change)="useLanguage($event.value)"
+  hideSingleSelectionIndicator
+  [attr.aria-label]="'language.label' | translate"
+>
+  @for (language of languages; track language) {
+    <mat-button-toggle [value]="language" [matTooltip]="'language.' + language | translate">
+      @if (language === currentLang()) {
+        <mat-icon>language</mat-icon>
+      }
+      {{ language | uppercase }}
+    </mat-button-toggle>
+  }
+</mat-button-toggle-group>

@@ -1,12 +1,11 @@
-import { Component, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Component } from '@angular/core';
+import { Layout } from './shared/presentation/components/layout/layout';
 
+/** Root component: it only hosts the application shell. */
 @Component({
-  imports: [RouterOutlet],
+  imports: [Layout],
   selector: 'app-root',
   styleUrl: './app.css',
   templateUrl: './app.html',
 })
-export class App {
-  protected readonly title = signal('sumaqAgro-appweb');
-}
+export class App {}
