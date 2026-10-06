@@ -16,6 +16,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { fromEvent, map, merge } from 'rxjs';
+import { environment } from '../../../../../environments/environment';
 import { LanguageSwitcher } from '../language-switcher/language-switcher';
 
 /** One option of the side menu. */
@@ -116,7 +117,7 @@ export class Layout {
   ]);
 
   /** Name shown in the user menu. Replaced by the signed-in user in the IAM phase. */
-  readonly userName = signal('Guillermo');
+  readonly userName = signal(environment.demoUserName);
 
   /** Pending notifications. Connected to the agroclimatic alerts later. */
   readonly notificationCount = signal(0);

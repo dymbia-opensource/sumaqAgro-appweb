@@ -46,4 +46,5 @@ export const environment = {
 
   /** Demo user used until the IAM bounded context is implemented. */
   demoUserId: 1,
+  demoUserName: 'Guillermo',
 };

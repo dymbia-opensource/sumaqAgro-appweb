@@ -4,12 +4,17 @@ import {
   provideAppInitializer,
   provideBrowserGlobalErrorListeners,
 } from '@angular/core';
+import { registerLocaleData } from '@angular/common';
 import { provideHttpClient, withFetch } from '@angular/common/http';
+import localeEsPe from '@angular/common/locales/es-PE';
 import { MatIconRegistry } from '@angular/material/icon';
 import { provideRouter, withComponentInputBinding } from '@angular/router';
 import { provideTranslateService } from '@ngx-translate/core';
 import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
 import { routes } from './app.routes';
+
+/** Spanish (Peru) data for dates and numbers; English is built in. */
+registerLocaleData(localeEsPe, 'es');
 
 /**
  * Root application configuration.

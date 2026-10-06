@@ -1,0 +1,217 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.dashboard-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.breadcrumb {
+  font: var(--mat-sys-title-small);
+  color: var(--mat-sys-primary);
+}
+
+.dashboard-header h1 {
+  font: var(--mat-sys-display-small);
+  font-weight: 700;
+  margin: 4px 0;
+}
+
+.subtitle {
+  margin: 0;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.view-plots {
+  height: 48px;
+}
+
+.kpi-grid,
+.charts-grid {
+  display: grid;
+  gap: 24px;
+}
+
+.kpi-grid {
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+.charts-grid {
+  grid-template-columns: 3fr 2fr;
+}
+
+.kpi-card {
+  --mat-card-elevated-container-color: var(--mat-sys-on-tertiary-fixed-variant);
+  --mat-card-title-text-color: var(--mat-sys-on-tertiary);
+  color: var(--mat-sys-on-tertiary);
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.kpi-card mat-card-content {
+  flex: 1;
+}
+
+.kpi-card [mat-card-avatar] {
+  font-size: 32px;
+  width: 32px;
+  height: 32px;
+}
+
+.kpi-chip {
+  margin-left: auto;
+  --mat-chip-outline-width: 0;
+  --mat-chip-elevated-container-color: var(--mat-sys-secondary-container);
+  --mat-chip-label-text-color: var(--mat-sys-on-secondary-container);
+  --mat-chip-with-icon-icon-color: var(--mat-sys-on-secondary-container);
+}
+
+.kpi-label {
+  margin: 8px 0 0;
+  font: var(--mat-sys-label-large);
+}
+
+.kpi-value {
+  margin: 0;
+  font: var(--mat-sys-headline-medium);
+  font-weight: 600;
+  color: var(--mat-sys-tertiary-fixed-dim);
+}
+
+.kpi-unit {
+  font: var(--mat-sys-body-medium);
+  color: var(--mat-sys-on-tertiary);
+}
+
+.kpi-note {
+  margin: 4px 0 0;
+  opacity: 0.9;
+}
+
+.kpi-action {
+  --mat-button-filled-container-color: var(--mat-sys-surface);
+  --mat-button-filled-label-text-color: var(--mat-sys-on-surface);
+}
+
+.kpi-advice {
+  --mat-chip-elevated-selected-container-color: var(--mat-sys-secondary-container);
+  --mat-chip-selected-label-text-color: var(--mat-sys-on-secondary-container);
+  --mat-chip-with-icon-selected-icon-color: var(--mat-sys-on-secondary-container);
+  --mat-chip-outline-width: 0;
+}
+
+/* Grid items can shrink below the canvas width, so the charts follow the layout. */
+.kpi-grid > *,
+.charts-grid > * {
+  min-width: 0;
+}
+
+.chart-card {
+  border-radius: 20px;
+  container-type: inline-size;
+}
+
+.chart-card mat-divider {
+  margin-top: 16px;
+}
+
+.chart-placeholder {
+  min-height: 240px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-align: center;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.chart-placeholder > mat-icon {
+  font-size: 48px;
+  width: 48px;
+  height: 48px;
+}
+
+.cost-body {
+  display: grid;
+  gap: 16px;
+  padding-top: 16px;
+}
+
+/* Doughnut and legend side by side when the card is wide enough. */
+@container (min-width: 480px) {
+  .cost-body {
+    grid-template-columns: 200px 1fr;
+    align-items: center;
+  }
+}
+
+.doughnut {
+  position: relative;
+  height: 200px;
+  min-width: 0;
+}
+
+.legend {
+  --mat-list-list-item-two-line-container-height: 64px;
+  padding: 0;
+}
+
+.legend-percentage {
+  font: var(--mat-sys-title-medium);
+  color: var(--mat-sys-on-surface);
+}
+
+.share {
+  margin: 0 16px 12px;
+  width: auto;
+  --mat-progress-bar-track-color: var(--mat-sys-surface-container-high);
+  border-radius: 4px;
+}
+
+.share-0,
+.dot-0 {
+  --mat-progress-bar-active-indicator-color: var(--mat-sys-primary);
+  background-color: var(--mat-sys-primary);
+}
+
+.share-1,
+.dot-1 {
+  --mat-progress-bar-active-indicator-color: var(--mat-sys-tertiary);
+  background-color: var(--mat-sys-tertiary);
+}
+
+.share-2,
+.dot-2 {
+  --mat-progress-bar-active-indicator-color: var(--mat-sys-tertiary-fixed-dim);
+  background-color: var(--mat-sys-tertiary-fixed-dim);
+}
+
+.share {
+  background-color: transparent;
+}
+
+.dot {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+}
+
+.message-card mat-card-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+@media (max-width: 1024px) {
+  .charts-grid {
+    grid-template-columns: 1fr;
+  }
+}
