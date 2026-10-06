@@ -1,0 +1,13 @@
+<mat-card class="not-found" appearance="outlined">
+  <mat-card-content>
+    <mat-icon class="not-found-icon">travel_explore</mat-icon>
+    <h1>{{ 'page-not-found.title' | translate }}</h1>
+    <p>{{ 'page-not-found.message' | translate: { path: invalidPath } }}</p>
+  </mat-card-content>
+  <mat-card-actions align="end">
+    <button mat-flat-button (click)="navigateToHome()">
+      <mat-icon>home</mat-icon>
+      {{ 'page-not-found.go-home' | translate }}
+    </button>
+  </mat-card-actions>
+</mat-card>
