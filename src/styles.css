@@ -1,1 +1,19 @@
-/* You can add global styles to this file, and also import other style files */
+/* Global styles. Colors come from the Angular Material theme (--mat-sys-*). */
+
+* {
+  box-sizing: border-box;
+}
+
+/* Filled style for the active Material Symbols icons. */
+.icon-filled {
+  font-variation-settings: 'FILL' 1;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+/* Thin scrollbar for the side menu on very short screens. */
+.mat-drawer-inner-container {
+  scrollbar-width: thin;
+}
