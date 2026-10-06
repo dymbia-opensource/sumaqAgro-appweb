@@ -45,11 +45,58 @@
     "back": "Back",
     "next": "Next",
     "loading": "Loading...",
-    "no-data": "No data to show."
+    "no-data": "No data to show.",
+    "retry": "Try again"
   },
   "page-not-found": {
     "title": "Page not found",
     "message": "The path {{ path }} does not exist.",
     "go-home": "Go to home"
+  },
+  "field-management": {
+    "dashboard": {
+      "good-morning": "Good morning, {{ name }}!",
+      "good-afternoon": "Good afternoon, {{ name }}!",
+      "good-evening": "Good evening, {{ name }}!",
+      "campaign": "Season",
+      "view-all-plots": "View all my plots",
+      "summary": "My plot summary",
+      "leaf-health": "Leaf Health",
+      "leaf-health-pending": "Your crop vigor (NDVI) will show here once satellite monitoring is active.",
+      "view-satellite-map": "View satellite map",
+      "total-spend": "Total Spend",
+      "total-invested": "Total invested",
+      "view-expenses": "View my expenses",
+      "breakeven-title": "A price you can't afford to miss",
+      "breakeven-point": "Break-even point",
+      "estimated": "Estimated",
+      "minimum-price": "Do not sell for less than {{ price }}",
+      "minimum-price-hint": "Minimum price per unit to recover what you invested in the season.",
+      "no-expected-yield": "Enter your expected yield to calculate the break-even price.",
+      "no-expenses": "There are no expenses recorded in this season yet.",
+      "ndvi-evolution": "Evolution of Vegetation Vigor (NDVI)",
+      "ndvi-pending": "The NDVI history of your plot will show here with satellite monitoring.",
+      "cost-distribution": "Cost Allocation",
+      "since": "Since",
+      "load-error": "We couldn't load your plot. Check your connection and try again.",
+      "no-plots": "You don't have any registered plots yet.",
+      "register-plot": "Register my plot",
+      "ndvi-subtitle": "NDVI index of the current season"
+    },
+    "expense-category": {
+      "INPUTS": "Inputs",
+      "LABOR": "Labor",
+      "FREIGHT": "Freight"
+    },
+    "campaign-status": {
+      "IN_PROGRESS": "In progress",
+      "FINISHED": "Closed"
+    },
+    "yield-unit": {
+      "SACK": "sacks",
+      "QUINTAL": "quintals",
+      "per-SACK": "per sack",
+      "per-QUINTAL": "per quintal"
+    }
   }
 }

@@ -45,11 +45,58 @@
     "back": "Volver",
     "next": "Siguiente",
     "loading": "Cargando...",
-    "no-data": "No hay datos para mostrar."
+    "no-data": "No hay datos para mostrar.",
+    "retry": "Reintentar"
   },
   "page-not-found": {
     "title": "Página no encontrada",
     "message": "La ruta {{ path }} no existe.",
     "go-home": "Ir al inicio"
+  },
+  "field-management": {
+    "dashboard": {
+      "good-morning": "¡Buen día, {{ name }}!",
+      "good-afternoon": "¡Buenas tardes, {{ name }}!",
+      "good-evening": "¡Buenas noches, {{ name }}!",
+      "campaign": "Campaña",
+      "view-all-plots": "Ver todos mis lotes",
+      "summary": "Resumen de mi parcela",
+      "leaf-health": "Salud Foliar",
+      "leaf-health-pending": "El vigor de tu cultivo (NDVI) aparecerá aquí cuando se active el monitoreo satelital.",
+      "view-satellite-map": "Ver mapa satelital",
+      "total-spend": "Gasto Total",
+      "total-invested": "Total invertido",
+      "view-expenses": "Ver mis gastos",
+      "breakeven-title": "Precio para no perder",
+      "breakeven-point": "Punto de equilibrio",
+      "estimated": "Estimado",
+      "minimum-price": "No vendas a menos de {{ price }}",
+      "minimum-price-hint": "Precio mínimo por unidad para recuperar lo invertido en la campaña.",
+      "no-expected-yield": "Ingresa tu rendimiento esperado para calcular el precio para no perder.",
+      "no-expenses": "Todavía no hay gastos registrados en esta campaña.",
+      "ndvi-evolution": "Evolución del Vigor Vegetal (NDVI)",
+      "ndvi-pending": "El historial NDVI de tu parcela aparecerá aquí con el monitoreo satelital.",
+      "cost-distribution": "Distribución de Costos",
+      "since": "Desde el",
+      "load-error": "No pudimos cargar tu parcela. Revisa tu conexión e inténtalo de nuevo.",
+      "no-plots": "Aún no tienes parcelas registradas.",
+      "register-plot": "Registrar mi parcela",
+      "ndvi-subtitle": "Índice NDVI de la campaña actual"
+    },
+    "expense-category": {
+      "INPUTS": "Insumos",
+      "LABOR": "Mano de obra",
+      "FREIGHT": "Flete"
+    },
+    "campaign-status": {
+      "IN_PROGRESS": "En curso",
+      "FINISHED": "Cerrada"
+    },
+    "yield-unit": {
+      "SACK": "sacos",
+      "QUINTAL": "quintales",
+      "per-SACK": "por saco",
+      "per-QUINTAL": "por quintal"
+    }
   }
 }
