@@ -3,23 +3,23 @@
     {
       "id": 1,
       "ownerUserId": 1,
-      "name": "Parcela Huaypo",
-      "region": "Cusco",
+      "name": "Fundo Los Pinos",
+      "region": "Junín - Valle del Mantaro",
       "status": "ACTIVE_MONITORING",
       "boundary": [
-        [-13.4712, -72.1521],
-        [-13.4712, -72.1489],
-        [-13.4738, -72.1489],
-        [-13.4738, -72.1521]
+        [-12.0712, -75.2135],
+        [-12.0708, -75.2111],
+        [-12.0741, -75.2104],
+        [-12.0746, -75.2131]
       ],
-      "areaHectares": 1.2,
+      "areaHectares": 3.5,
       "agroMonitoringPolygonId": "5f9a1c2b7e1d3a0012ab34cd"
     },
     {
       "id": 2,
       "ownerUserId": 1,
       "name": "Finca San Ramón",
-      "region": "Junín",
+      "region": "Junín - Chanchamayo",
       "status": "ACTIVE_MONITORING",
       "boundary": [
         [-11.1245, -75.3561],
@@ -34,7 +34,7 @@
       "id": 3,
       "ownerUserId": 1,
       "name": "Parcela Pampa Alta",
-      "region": "Cusco",
+      "region": "Junín - Valle del Mantaro",
       "status": "WITHOUT_POLYGON",
       "boundary": [],
       "areaHectares": 0,
@@ -60,22 +60,25 @@
     {
       "id": 1,
       "plotId": 1,
+      "season": "2025-II",
       "cropType": "ANDEAN_POTATO",
-      "seedVariety": "Papa amarilla Tumbay",
+      "seedVariety": "Papa Yungay",
       "sowingDate": "2025-10-15",
       "status": "FINISHED"
     },
     {
       "id": 2,
       "plotId": 1,
+      "season": "2026-I",
       "cropType": "ANDEAN_POTATO",
-      "seedVariety": "Papa nativa Peruanita",
+      "seedVariety": "Papa Canchan",
       "sowingDate": "2026-09-20",
       "status": "IN_PROGRESS"
     },
     {
       "id": 3,
       "plotId": 2,
+      "season": "2026-I",
       "cropType": "SPECIALTY_COFFEE",
       "seedVariety": "Geisha",
       "sowingDate": "2026-03-10",
@@ -84,6 +87,7 @@
     {
       "id": 4,
       "plotId": 4,
+      "season": "2026-I",
       "cropType": "ANDEAN_POTATO",
       "seedVariety": "Papa Yungay",
       "sowingDate": "2026-09-05",
@@ -98,7 +102,7 @@
       "actualYield": 172,
       "yieldUnit": "SACK",
       "entries": [
-        { "id": 1, "category": "INPUTS", "description": "Semilla de papa Tumbay", "quantity": 20, "unitPrice": 45, "expenseDate": "2025-10-10", "clientSyncId": "" },
+        { "id": 1, "category": "INPUTS", "description": "Semilla de papa Yungay", "quantity": 20, "unitPrice": 45, "expenseDate": "2025-10-10", "clientSyncId": "" },
         { "id": 2, "category": "INPUTS", "description": "Guano de isla", "quantity": 15, "unitPrice": 60, "expenseDate": "2025-10-12", "clientSyncId": "" },
         { "id": 3, "category": "LABOR", "description": "Jornal de siembra", "quantity": 8, "unitPrice": 50, "expenseDate": "2025-10-15", "clientSyncId": "" },
         { "id": 4, "category": "LABOR", "description": "Jornal de cosecha", "quantity": 10, "unitPrice": 50, "expenseDate": "2026-04-20", "clientSyncId": "" },
@@ -108,36 +112,39 @@
     {
       "id": 2,
       "campaignId": 2,
-      "expectedYield": 200,
-      "actualYield": 0,
+      "expectedYield": 320,
+      "actualYield": null,
       "yieldUnit": "SACK",
       "entries": [
-        { "id": 6, "category": "INPUTS", "description": "Semilla de papa Peruanita", "quantity": 22, "unitPrice": 52, "expenseDate": "2026-09-15", "clientSyncId": "" },
-        { "id": 7, "category": "INPUTS", "description": "Fertilizante NPK 20-20-20", "quantity": 4, "unitPrice": 120, "expenseDate": "2026-09-18", "clientSyncId": "" },
-        { "id": 8, "category": "LABOR", "description": "Jornal de siembra", "quantity": 8, "unitPrice": 55, "expenseDate": "2026-09-20", "clientSyncId": "" },
-        { "id": 9, "category": "FREIGHT", "description": "Traslado de semilla", "quantity": 1, "unitPrice": 80, "expenseDate": "2026-09-14", "clientSyncId": "" }
+        { "id": 6, "category": "INPUTS", "description": "Semilla de papa Canchan", "quantity": 60, "unitPrice": 52, "expenseDate": "2026-09-15", "clientSyncId": "" },
+        { "id": 7, "category": "INPUTS", "description": "Fertilizante NPK 20-20-20", "quantity": 25, "unitPrice": 120, "expenseDate": "2026-09-18", "clientSyncId": "" },
+        { "id": 8, "category": "INPUTS", "description": "Guano de isla", "quantity": 30, "unitPrice": 93, "expenseDate": "2026-09-19", "clientSyncId": "" },
+        { "id": 9, "category": "LABOR", "description": "Jornal de siembra", "quantity": 48, "unitPrice": 55, "expenseDate": "2026-09-20", "clientSyncId": "" },
+        { "id": 10, "category": "LABOR", "description": "Jornal de deshierbe", "quantity": 32, "unitPrice": 66, "expenseDate": "2026-10-02", "clientSyncId": "" },
+        { "id": 11, "category": "FREIGHT", "description": "Traslado de semilla y abono", "quantity": 1, "unitPrice": 588, "expenseDate": "2026-09-14", "clientSyncId": "" },
+        { "id": 12, "category": "FREIGHT", "description": "Traslado de jornaleros", "quantity": 4, "unitPrice": 150, "expenseDate": "2026-09-20", "clientSyncId": "" }
       ]
     },
     {
       "id": 3,
       "campaignId": 3,
       "expectedYield": 40,
-      "actualYield": 0,
+      "actualYield": null,
       "yieldUnit": "QUINTAL",
       "entries": [
-        { "id": 10, "category": "INPUTS", "description": "Plantones de café Geisha", "quantity": 500, "unitPrice": 3.5, "expenseDate": "2026-03-05", "clientSyncId": "" },
-        { "id": 11, "category": "INPUTS", "description": "Abono orgánico", "quantity": 30, "unitPrice": 35, "expenseDate": "2026-03-08", "clientSyncId": "" },
-        { "id": 12, "category": "LABOR", "description": "Jornal de trasplante", "quantity": 12, "unitPrice": 50, "expenseDate": "2026-03-10", "clientSyncId": "" }
+        { "id": 13, "category": "INPUTS", "description": "Plantones de café Geisha", "quantity": 500, "unitPrice": 3.5, "expenseDate": "2026-03-05", "clientSyncId": "" },
+        { "id": 14, "category": "INPUTS", "description": "Abono orgánico", "quantity": 30, "unitPrice": 35, "expenseDate": "2026-03-08", "clientSyncId": "" },
+        { "id": 15, "category": "LABOR", "description": "Jornal de trasplante", "quantity": 12, "unitPrice": 50, "expenseDate": "2026-03-10", "clientSyncId": "" }
       ]
     },
     {
       "id": 4,
       "campaignId": 4,
       "expectedYield": 150,
-      "actualYield": 0,
+      "actualYield": null,
       "yieldUnit": "SACK",
       "entries": [
-        { "id": 13, "category": "INPUTS", "description": "Semilla de papa Yungay", "quantity": 18, "unitPrice": 40, "expenseDate": "2026-09-01", "clientSyncId": "" }
+        { "id": 16, "category": "INPUTS", "description": "Semilla de papa Yungay", "quantity": 18, "unitPrice": 40, "expenseDate": "2026-09-01", "clientSyncId": "" }
       ]
     }
   ]
