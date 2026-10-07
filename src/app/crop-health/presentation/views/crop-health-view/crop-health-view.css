@@ -1,0 +1,185 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.view-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.breadcrumb {
+  font: var(--mat-sys-title-small);
+  color: var(--mat-sys-primary);
+}
+
+.view-header h1 {
+  font: var(--mat-sys-display-small);
+  font-weight: 700;
+  margin: 4px 0;
+}
+
+.subtitle {
+  margin: 0;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.btn-change-plot {
+  height: 48px;
+}
+
+/* Layers toggle bar */
+.layers-bar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.layers-label {
+  font: var(--mat-sys-label-large);
+  color: var(--mat-sys-primary);
+}
+
+/* Two-column layout */
+.content-grid {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 24px;
+}
+
+@media (max-width: 1024px) {
+  .content-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Mock map card */
+.map-card {
+  background: var(--mat-sys-surface-container-low);
+  border-radius: 20px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 380px;
+}
+
+.mock-map {
+  position: relative;
+  flex: 1;
+}
+
+.zone {
+  position: absolute;
+  display: flex;
+  align-items: flex-start;
+  padding: 12px;
+}
+
+.zone-healthy {
+  inset: 8% 20% 30% 5%;
+  border: 3px solid var(--mat-sys-primary);
+  border-radius: 60% 40% 55% 45% / 50% 55% 45% 50%;
+  background: color-mix(in srgb, var(--mat-sys-primary) 12%, transparent);
+}
+
+.zone-deficit {
+  inset: 38% auto auto 40%;
+  width: 110px;
+  height: 90px;
+  border: 3px solid var(--mat-sys-primary);
+  border-radius: 40% 60% 65% 35% / 45% 55% 55% 45%;
+  background: color-mix(in srgb, var(--mat-sys-primary) 70%, transparent);
+  align-items: flex-end;
+}
+
+.zone-badge {
+  background: var(--mat-sys-surface);
+  color: var(--mat-sys-on-surface);
+  font: var(--mat-sys-label-small);
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 12px;
+  box-shadow: var(--mat-sys-level1);
+}
+
+/* Legend */
+.map-legend {
+  display: flex;
+  gap: 20px;
+  font: var(--mat-sys-label-medium);
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.dot {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-right: 6px;
+  vertical-align: middle;
+}
+
+.dot-critical { background: var(--mat-sys-error); }
+.dot-stress   { background: var(--mat-sys-primary); }
+.dot-optimum  { background: var(--mat-sys-surface-container-highest); border: 1px solid var(--mat-sys-outline); }
+
+/* Diagnosis sidebar */
+.diagnosis-aside {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.date-row {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
+  font: var(--mat-sys-label-large);
+}
+
+.diagnosis-card {
+  border-radius: 20px;
+}
+
+/* Metrics definition list */
+.metrics {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 4px 16px;
+  margin: 16px 0;
+  font: var(--mat-sys-body-large);
+}
+
+.metrics dt { color: var(--mat-sys-on-surface-variant); }
+.metrics dd { margin: 0; font-weight: 600; text-align: right; }
+.value-good { color: var(--mat-sys-primary); }
+
+/* Recommendation */
+.recommendation-box {
+  background: var(--mat-sys-surface-container);
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: 12px;
+  padding: 12px;
+  font: var(--mat-sys-body-medium);
+  margin-bottom: 8px;
+}
+
+.recommendation-box strong {
+  display: block;
+  font: var(--mat-sys-label-large);
+  color: var(--mat-sys-primary);
+  margin-bottom: 6px;
+}
+
+/* Action buttons */
+.btn-consult,
+.btn-download {
+  width: 100%;
+  margin-bottom: 8px;
+}

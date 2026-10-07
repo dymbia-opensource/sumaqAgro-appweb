@@ -1,0 +1,87 @@
+@if (store.loading()) {
+  <mat-progress-bar mode="indeterminate" [attr.aria-label]="'common.loading' | translate" />
+}
+
+<header class="view-header">
+  <div>
+    <span class="breadcrumb">{{ 'crop-health.eyebrow' | translate }}</span>
+    <h1>{{ 'crop-health.viewer-title' | translate }}</h1>
+    <p class="subtitle">{{ 'crop-health.viewer-subtitle' | translate }}</p>
+  </div>
+  <button mat-flat-button class="btn-change-plot">
+    {{ 'crop-health.change-plot' | translate }}
+    <mat-icon iconPositionEnd>keyboard_arrow_down</mat-icon>
+  </button>
+</header>
+
+<div class="layers-bar">
+  <span class="layers-label">{{ 'crop-health.layers' | translate }}</span>
+  <mat-radio-group color="primary" value="ndvi">
+    <mat-radio-button value="ndvi">{{ 'crop-health.foliage-vigor' | translate }}</mat-radio-button>
+    <mat-radio-button value="ndwi">{{ 'crop-health.soil-moisture' | translate }}</mat-radio-button>
+  </mat-radio-group>
+</div>
+
+@if (store.observations().length > 0) {
+  <div class="content-grid">
+
+    <!-- Left: mock satellite map canvas -->
+    <div class="map-card">
+      <div class="mock-map">
+        <div class="zone zone-healthy"><span class="zone-badge">Healthy Foliage</span></div>
+        <div class="zone zone-deficit"><span class="zone-badge">Moisture Deficit</span></div>
+      </div>
+      <div class="map-legend">
+        <span><span class="dot dot-critical"></span>{{ 'crop-health.legend-critical' | translate }}</span>
+        <span><span class="dot dot-stress"></span>{{ 'crop-health.legend-stress' | translate }}</span>
+        <span><span class="dot dot-optimum"></span>{{ 'crop-health.legend-optimum' | translate }}</span>
+      </div>
+    </div>
+
+    <!-- Right: diagnosis card -->
+    <aside class="diagnosis-aside">
+      <div class="date-row">
+        <mat-icon>calendar_today</mat-icon>
+        <span>{{ store.observations()[0].date | date: 'longDate' }}</span>
+      </div>
+
+      <mat-card appearance="outlined" class="diagnosis-card">
+        <mat-card-header>
+          <mat-card-title>{{ 'crop-health.satellite-diagnosis' | translate }}</mat-card-title>
+          <mat-card-subtitle>{{ 'crop-health.updated-ago' | translate }} 2 min</mat-card-subtitle>
+        </mat-card-header>
+
+        <mat-card-content>
+          <dl class="metrics">
+            <dt>{{ 'crop-health.avg-vigor' | translate }}</dt>
+            <dd class="value-good">
+              {{ store.observations()[0].ndviMean | number: '1.2-2' }}
+              ({{ 'crop-health.good' | translate }})
+            </dd>
+
+            <dt>{{ 'crop-health.stress-detected' | translate }}</dt>
+            <dd>
+              {{ store.observations()[0].stressAreaHectares | number: '1.1-1' }}
+              {{ 'crop-health.ha' | translate }}
+            </dd>
+          </dl>
+
+          <div class="recommendation-box">
+            <strong>{{ 'crop-health.recommendation' | translate }}</strong>
+            <p>{{ store.observations()[0].recommendation }}</p>
+          </div>
+        </mat-card-content>
+
+        <mat-card-actions>
+          <button mat-flat-button class="btn-consult">
+            {{ 'crop-health.btn-consult' | translate }}
+          </button>
+          <button mat-stroked-button class="btn-download">
+            {{ 'crop-health.btn-download' | translate }}
+          </button>
+        </mat-card-actions>
+      </mat-card>
+    </aside>
+
+  </div>
+}
