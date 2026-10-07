@@ -1,4 +1,3 @@
-import { DatePipe, NgClass } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
@@ -14,7 +13,7 @@ import { CropHealthStore } from '../../../application/crop-health.store';
  */
 @Component({
   selector: 'app-prescriptions-view',
-  imports: [DatePipe, NgClass, TranslatePipe, MatCardModule, MatIconModule, MatProgressBarModule],
+  imports: [TranslatePipe, MatCardModule, MatIconModule, MatProgressBarModule],
   templateUrl: './prescriptions-view.html',
   styleUrl: './prescriptions-view.css',
 })

@@ -1,4 +1,3 @@
-import { DatePipe, NgClass } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -16,7 +15,7 @@ import { CropHealthStore } from '../../../application/crop-health.store';
  */
 @Component({
   selector: 'app-diagnosis-inbox-view',
-  imports: [DatePipe, NgClass, TranslatePipe, MatButtonModule, MatCardModule, MatIconModule, MatProgressBarModule],
+  imports: [TranslatePipe, MatButtonModule, MatCardModule, MatIconModule, MatProgressBarModule],
   templateUrl: './diagnosis-inbox-view.html',
   styleUrl: './diagnosis-inbox-view.css',
 })

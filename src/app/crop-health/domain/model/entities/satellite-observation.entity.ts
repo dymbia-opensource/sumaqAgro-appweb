@@ -1,4 +1,4 @@
-﻿import { BaseEntity } from '../../../../shared/domain/model/base-entity';
+import { BaseEntity } from '../../../../shared/domain/model/base-entity';
 
 /**
  * Properties required to instantiate a {@link SatelliteObservation}.
@@ -11,6 +11,8 @@ export interface SatelliteObservationProps {
   ndwiMean: number;
   surfaceTempKelvin?: number;
   cloudCoveragePercent?: number;
+  stressAreaHectares?: number;
+  recommendation?: string;
 }
 
 /**
@@ -26,6 +28,8 @@ export class SatelliteObservation extends BaseEntity {
   private _ndwiMean: number;
   private _surfaceTempKelvin: number;
   private _cloudCoveragePercent: number;
+  private _stressAreaHectares: number;
+  private _recommendation: string;
 
   /**
    * Initializes a new instance of the {@link SatelliteObservation} class.
@@ -40,6 +44,8 @@ export class SatelliteObservation extends BaseEntity {
     this._ndwiMean = props.ndwiMean;
     this._surfaceTempKelvin = props.surfaceTempKelvin ?? 0;
     this._cloudCoveragePercent = props.cloudCoveragePercent ?? 0;
+    this._stressAreaHectares = props.stressAreaHectares ?? 0;
+    this._recommendation = props.recommendation ?? '';
   }
 
   /** Gets the plot identifier associated with the satellite imagery. */
@@ -59,4 +65,10 @@ export class SatelliteObservation extends BaseEntity {
 
   /** Gets the percentage of cloud interference across the polygon. */
   get cloudCoveragePercent(): number { return this._cloudCoveragePercent; }
+
+  /** Gets the estimated stressed area in hectares. */
+  get stressAreaHectares(): number { return this._stressAreaHectares; }
+
+  /** Gets the agronomic recommendation derived from the observation. */
+  get recommendation(): string { return this._recommendation; }
 }
