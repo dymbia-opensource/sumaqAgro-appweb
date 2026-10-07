@@ -1,0 +1,36 @@
+@if (store.loading()) {
+  <mat-progress-bar mode="indeterminate" [attr.aria-label]="'common.loading' | translate" />
+}
+
+<header class="view-header">
+  <span class="breadcrumb">{{ 'crop-health.eyebrow' | translate }}</span>
+  <h1>{{ 'crop-health.alerts-title' | translate }}</h1>
+</header>
+
+<div class="alerts-list">
+  @for (alert of store.alerts(); track alert.id) {
+    <mat-card appearance="outlined" class="alert-card" [ngClass]="alert.severity.toLowerCase()">
+      <mat-card-header>
+        <mat-icon mat-card-avatar>warning</mat-icon>
+        <mat-card-title>{{ alert.title }}</mat-card-title>
+        <mat-card-subtitle>
+          {{ alert.issuedAt | date: 'mediumDate' }} · {{ alert.source }}
+        </mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <p>{{ alert.description }}</p>
+        <p class="region-row">
+          <mat-icon>location_on</mat-icon>
+          {{ 'crop-health.region' | translate }}: {{ alert.region }}
+        </p>
+      </mat-card-content>
+    </mat-card>
+  } @empty {
+    <mat-card appearance="outlined" class="empty-card">
+      <mat-card-content>
+        <mat-icon>check_circle</mat-icon>
+        <p>{{ 'crop-health.no-alerts' | translate }}</p>
+      </mat-card-content>
+    </mat-card>
+  }
+</div>
