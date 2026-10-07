@@ -98,5 +98,38 @@
       "per-SACK": "por saco",
       "per-QUINTAL": "por quintal"
     }
+  },
+  "crop_health": {
+    "eyebrow": "Salud del Cultivo",
+    "viewer_title": "Visor Satelital Multiespectral",
+    "viewer_subtitle": "Imagen satelital procesada automáticamente para tu parcela",
+    "change_plot": "Cambiar Parcela",
+    "layers": "CAPAS",
+    "foliage_vigor": "Vigor del Follaje (NDVI)",
+    "soil_moisture": "Humedad del Suelo (NDWI)",
+    "satellite_diagnosis": "Diagnóstico Satelital",
+    "updated_ago": "Actualizado hace",
+    "avg_vigor": "Vigor Promedio",
+    "stress_detected": "Estrés Detectado",
+    "recommendation": "RECOMENDACIÓN",
+    "btn_consult": "Consultar al asesor",
+    "btn_download": "Descargar Ficha PDF",
+    "legend_critical": "Crítico",
+    "legend_stress": "Estrés Hídrico",
+    "legend_optimum": "Óptimo",
+    "good": "Bueno",
+    "ha": "Ha",
+    "alerts_title": "Alertas Agroclimáticas",
+    "no_alerts": "No hay alertas activas en este momento.",
+    "region": "Región",
+    "form_title": "Reportar Plaga / Enfermedad",
+    "form_describe": "Describe la plaga o síntomas",
+    "form_severity": "Severidad",
+    "form_photo": "URL de la Foto",
+    "btn_send_report": "Enviar Reporte al Agrónomo",
+    "severity_low": "Baja (Pocas plantas afectadas)",
+    "severity_medium": "Media (Esparcida en un sector)",
+    "severity_high": "Alta (Daño severo, rápida expansión)",
+    "desc_required": "La descripción es requerida"
   }
 }
