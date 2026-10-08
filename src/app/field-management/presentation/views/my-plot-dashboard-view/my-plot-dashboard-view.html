@@ -195,7 +195,7 @@
         @if (finances()?.firstExpenseDate; as since) {
           <mat-card-subtitle>
             {{ 'field-management.dashboard.since' | translate }}
-            {{ since | date: 'longDate' : undefined : language() ?? 'es' }}
+            {{ since | date: 'longDate' : undefined : language() ?? 'en' }}
           </mat-card-subtitle>
         }
       </mat-card-header>

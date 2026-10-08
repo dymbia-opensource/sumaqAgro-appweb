@@ -1,0 +1,75 @@
+{
+  "app": {
+    "title": "SumaqAgro",
+    "tagline": "Cultivating a better tomorrow"
+  },
+  "section": {
+    "major": "Major",
+    "agricultural-operation": "Agricultural operation",
+    "institutional-management": "Institutional management",
+    "system": "System"
+  },
+  "option": {
+    "my-plot": "My Plot",
+    "crop-health": "Crop Health",
+    "expenses": "My Expenses and Earnings",
+    "advisor": "Consult the Advisor",
+    "harvest-certificates": "My Harvest Certificates",
+    "alerts": "Agricultural Alerts",
+    "settings": "Settings and Help",
+    "cooperative-dashboard": "Dashboard",
+    "member-directory": "Member directory",
+    "cooperative-plot-health": "Plot health",
+    "cooperative-costs": "Costs",
+    "cooperative-certificates": "Certificates",
+    "cooperative-alerts": "Alerts",
+    "cooperative-settings": "Settings"
+  },
+  "layout": {
+    "search": "Search within my plot...",
+    "menu": "Open menu",
+    "connection": "Connection status",
+    "connected": "Connected",
+    "disconnected": "Offline",
+    "offline-mode": "Offline Mode",
+    "offline-mode-on": "On",
+    "offline-mode-off": "Off",
+    "notifications": "Notifications",
+    "profile": "My profile",
+    "sign-out": "Log Out",
+    "offline-mode-on-hint": "No signal: what you record will sync when the connection returns",
+    "offline-mode-off-hint": "Connected: your data is saved online"
+  },
+  "language": {
+    "label": "Language",
+    "es": "Spanish",
+    "en": "English"
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "edit": "Edit",
+    "delete": "Delete",
+    "back": "Back",
+    "next": "Next",
+    "loading": "Loading...",
+    "no-data": "No data to show.",
+    "retry": "Try again",
+    "actions": "Actions",
+    "required": "This field is required."
+  },
+  "page-not-found": {
+    "title": "Page not found",
+    "message": "The path {{ path }} does not exist.",
+    "go-home": "Go to home"
+  },
+  "paginator": {
+    "items-per-page": "Items per page",
+    "next-page": "Next page",
+    "previous-page": "Previous page",
+    "first-page": "First page",
+    "last-page": "Last page",
+    "range": "{{ start }} – {{ end }} of {{ length }}",
+    "range-empty": "0 of {{ length }}"
+  }
+}
