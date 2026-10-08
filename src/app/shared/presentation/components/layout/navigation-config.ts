@@ -47,7 +47,11 @@ export const cooperativeDirectorNavigationSections: NavigationSection[] = [
   {
     title: 'section.institutional-management',
     options: [
-      { link: '/cooperative/dashboard', label: 'option.cooperative-dashboard', icon: 'home' },
+      {
+        link: '/profiles/cooperative/dashboard',
+        label: 'option.cooperative-dashboard',
+        icon: 'home',
+      },
       { link: '/profiles/cooperative/members', label: 'option.member-directory', icon: 'group' },
       { link: '/crop-health/monitoring', label: 'option.cooperative-plot-health', icon: 'description' },
       { link: '/field-management/finances', label: 'option.cooperative-costs', icon: 'calendar_month' },
@@ -61,7 +65,7 @@ export const cooperativeDirectorNavigationSections: NavigationSection[] = [
   },
   {
     title: 'section.system',
-    options: [{ link: '/profiles/settings', label: 'option.cooperative-settings', icon: 'settings' }],
+    options: [{ link: '/profiles/cooperative/settings', label: 'option.cooperative-settings', icon: 'settings' }],
   },
 ];
 
