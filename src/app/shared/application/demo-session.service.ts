@@ -8,7 +8,7 @@ const DEMO_USERS: readonly DemoUser[] = [
     id: 1,
     displayName: 'Guillermo',
     experience: 'FARMER',
-    initialRoute: '/profiles/settings',
+    initialRoute: '/field-management/dashboard',
   },
   {
     id: 3,

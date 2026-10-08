@@ -18,13 +18,44 @@
       "ruc": "20612345678",
       "headquartersAddress": "Av. Ferrocarril 123, Huancayo",
       "switchboardPhone": "+51 64 555 200"
+    },
+    {
+      "directorUserId": 1,
+      "legalName": "RUC",
+      "region": "12",
+      "institutionalEmail": "correo@gmail.com",
+      "legalRepresentative": "1212121",
+      "ruc": "12121212212",
+      "headquartersAddress": "211212",
+      "switchboardPhone": "121211211",
+      "id": 2
     }
   ],
   "cooperative-members": [
-    { "id": 1, "cooperativeId": 1, "fullName": "Guillermo Quispe", "active": true },
-    { "id": 2, "cooperativeId": 1, "fullName": "Rosa Huamán", "active": true },
-    { "id": 3, "cooperativeId": 1, "fullName": "Elena Poma", "active": true },
-    { "id": 4, "cooperativeId": 1, "fullName": "Víctor Sullca", "active": false }
+    {
+      "id": 1,
+      "cooperativeId": 1,
+      "fullName": "Guillermo Quispe",
+      "active": true
+    },
+    {
+      "id": 2,
+      "cooperativeId": 1,
+      "fullName": "Rosa Huamán",
+      "active": true
+    },
+    {
+      "id": 3,
+      "cooperativeId": 1,
+      "fullName": "Elena Poma",
+      "active": true
+    },
+    {
+      "id": 4,
+      "cooperativeId": 1,
+      "fullName": "Víctor Sullca",
+      "active": false
+    }
   ],
   "cooperative-dashboards": [
     {
@@ -40,12 +71,30 @@
       "stressedPlotsPercentage": 12,
       "averageCostPerHectare": 4240,
       "ndviTrend": [
-        { "month": "May", "value": 0.3 },
-        { "month": "Jun", "value": 0.42 },
-        { "month": "Jul", "value": 0.63 },
-        { "month": "Ago", "value": 0.7 },
-        { "month": "Sep", "value": 0.59 },
-        { "month": "Oct", "value": 0.53 }
+        {
+          "month": "May",
+          "value": 0.3
+        },
+        {
+          "month": "Jun",
+          "value": 0.42
+        },
+        {
+          "month": "Jul",
+          "value": 0.63
+        },
+        {
+          "month": "Ago",
+          "value": 0.7
+        },
+        {
+          "month": "Sep",
+          "value": 0.59
+        },
+        {
+          "month": "Oct",
+          "value": 0.53
+        }
       ],
       "evaluatedLots": 64,
       "specialtyCoffeePercentage": 45,
@@ -61,10 +110,22 @@
       "region": "Junín - Valle del Mantaro",
       "status": "ACTIVE_MONITORING",
       "boundary": [
-        [-12.0712, -75.2135],
-        [-12.0708, -75.2111],
-        [-12.0741, -75.2104],
-        [-12.0746, -75.2131]
+        [
+          -12.0712,
+          -75.2135
+        ],
+        [
+          -12.0708,
+          -75.2111
+        ],
+        [
+          -12.0741,
+          -75.2104
+        ],
+        [
+          -12.0746,
+          -75.2131
+        ]
       ],
       "areaHectares": 3.5,
       "agroMonitoringPolygonId": "5f9a1c2b7e1d3a0012ab34cd"
@@ -76,10 +137,22 @@
       "region": "Junín - Chanchamayo",
       "status": "ACTIVE_MONITORING",
       "boundary": [
-        [-11.1245, -75.3561],
-        [-11.1241, -75.3524],
-        [-11.1272, -75.3519],
-        [-11.1279, -75.3557]
+        [
+          -11.1245,
+          -75.3561
+        ],
+        [
+          -11.1241,
+          -75.3524
+        ],
+        [
+          -11.1272,
+          -75.3519
+        ],
+        [
+          -11.1279,
+          -75.3557
+        ]
       ],
       "areaHectares": 2.5,
       "agroMonitoringPolygonId": "5f9a1c2b7e1d3a0012ab34ce"
@@ -101,10 +174,22 @@
       "region": "Huancavelica",
       "status": "ACTIVE_MONITORING",
       "boundary": [
-        [-12.7865, -74.9762],
-        [-12.7861, -74.9731],
-        [-12.7889, -74.9728],
-        [-12.7893, -74.9759]
+        [
+          -12.7865,
+          -74.9762
+        ],
+        [
+          -12.7861,
+          -74.9731
+        ],
+        [
+          -12.7889,
+          -74.9728
+        ],
+        [
+          -12.7893,
+          -74.9759
+        ]
       ],
       "areaHectares": 1.8,
       "agroMonitoringPolygonId": "5f9a1c2b7e1d3a0012ab34cf"
@@ -156,11 +241,51 @@
       "actualYield": 172,
       "yieldUnit": "SACK",
       "entries": [
-        { "id": 1, "category": "INPUTS", "description": "Semilla de papa Yungay", "quantity": 20, "unitPrice": 45, "expenseDate": "2025-10-10", "clientSyncId": "" },
-        { "id": 2, "category": "INPUTS", "description": "Guano de isla", "quantity": 15, "unitPrice": 60, "expenseDate": "2025-10-12", "clientSyncId": "" },
-        { "id": 3, "category": "LABOR", "description": "Jornal de siembra", "quantity": 8, "unitPrice": 50, "expenseDate": "2025-10-15", "clientSyncId": "" },
-        { "id": 4, "category": "LABOR", "description": "Jornal de cosecha", "quantity": 10, "unitPrice": 50, "expenseDate": "2026-04-20", "clientSyncId": "" },
-        { "id": 5, "category": "FREIGHT", "description": "Flete al acopio", "quantity": 1, "unitPrice": 250, "expenseDate": "2026-04-22", "clientSyncId": "" }
+        {
+          "id": 1,
+          "category": "INPUTS",
+          "description": "Semilla de papa Yungay",
+          "quantity": 20,
+          "unitPrice": 45,
+          "expenseDate": "2025-10-10",
+          "clientSyncId": ""
+        },
+        {
+          "id": 2,
+          "category": "INPUTS",
+          "description": "Guano de isla",
+          "quantity": 15,
+          "unitPrice": 60,
+          "expenseDate": "2025-10-12",
+          "clientSyncId": ""
+        },
+        {
+          "id": 3,
+          "category": "LABOR",
+          "description": "Jornal de siembra",
+          "quantity": 8,
+          "unitPrice": 50,
+          "expenseDate": "2025-10-15",
+          "clientSyncId": ""
+        },
+        {
+          "id": 4,
+          "category": "LABOR",
+          "description": "Jornal de cosecha",
+          "quantity": 10,
+          "unitPrice": 50,
+          "expenseDate": "2026-04-20",
+          "clientSyncId": ""
+        },
+        {
+          "id": 5,
+          "category": "FREIGHT",
+          "description": "Flete al acopio",
+          "quantity": 1,
+          "unitPrice": 250,
+          "expenseDate": "2026-04-22",
+          "clientSyncId": ""
+        }
       ]
     },
     {
@@ -170,13 +295,69 @@
       "actualYield": null,
       "yieldUnit": "SACK",
       "entries": [
-        { "id": 6, "category": "INPUTS", "description": "Semilla de papa Canchan", "quantity": 60, "unitPrice": 52, "expenseDate": "2026-09-15", "clientSyncId": "" },
-        { "id": 7, "category": "INPUTS", "description": "Fertilizante NPK 20-20-20", "quantity": 25, "unitPrice": 120, "expenseDate": "2026-09-18", "clientSyncId": "" },
-        { "id": 8, "category": "INPUTS", "description": "Guano de isla", "quantity": 30, "unitPrice": 93, "expenseDate": "2026-09-19", "clientSyncId": "" },
-        { "id": 9, "category": "LABOR", "description": "Jornal de siembra", "quantity": 48, "unitPrice": 55, "expenseDate": "2026-09-20", "clientSyncId": "" },
-        { "id": 10, "category": "LABOR", "description": "Jornal de deshierbe", "quantity": 32, "unitPrice": 66, "expenseDate": "2026-10-02", "clientSyncId": "" },
-        { "id": 11, "category": "FREIGHT", "description": "Traslado de semilla y abono", "quantity": 1, "unitPrice": 588, "expenseDate": "2026-09-14", "clientSyncId": "" },
-        { "id": 12, "category": "FREIGHT", "description": "Traslado de jornaleros", "quantity": 4, "unitPrice": 150, "expenseDate": "2026-09-20", "clientSyncId": "" }
+        {
+          "id": 6,
+          "category": "INPUTS",
+          "description": "Semilla de papa Canchan",
+          "quantity": 60,
+          "unitPrice": 52,
+          "expenseDate": "2026-09-15",
+          "clientSyncId": ""
+        },
+        {
+          "id": 7,
+          "category": "INPUTS",
+          "description": "Fertilizante NPK 20-20-20",
+          "quantity": 25,
+          "unitPrice": 120,
+          "expenseDate": "2026-09-18",
+          "clientSyncId": ""
+        },
+        {
+          "id": 8,
+          "category": "INPUTS",
+          "description": "Guano de isla",
+          "quantity": 30,
+          "unitPrice": 93,
+          "expenseDate": "2026-09-19",
+          "clientSyncId": ""
+        },
+        {
+          "id": 9,
+          "category": "LABOR",
+          "description": "Jornal de siembra",
+          "quantity": 48,
+          "unitPrice": 55,
+          "expenseDate": "2026-09-20",
+          "clientSyncId": ""
+        },
+        {
+          "id": 10,
+          "category": "LABOR",
+          "description": "Jornal de deshierbe",
+          "quantity": 32,
+          "unitPrice": 66,
+          "expenseDate": "2026-10-02",
+          "clientSyncId": ""
+        },
+        {
+          "id": 11,
+          "category": "FREIGHT",
+          "description": "Traslado de semilla y abono",
+          "quantity": 1,
+          "unitPrice": 588,
+          "expenseDate": "2026-09-14",
+          "clientSyncId": ""
+        },
+        {
+          "id": 12,
+          "category": "FREIGHT",
+          "description": "Traslado de jornaleros",
+          "quantity": 4,
+          "unitPrice": 150,
+          "expenseDate": "2026-09-20",
+          "clientSyncId": ""
+        }
       ]
     },
     {
@@ -186,9 +367,33 @@
       "actualYield": null,
       "yieldUnit": "QUINTAL",
       "entries": [
-        { "id": 13, "category": "INPUTS", "description": "Plantones de café Geisha", "quantity": 500, "unitPrice": 3.5, "expenseDate": "2026-03-05", "clientSyncId": "" },
-        { "id": 14, "category": "INPUTS", "description": "Abono orgánico", "quantity": 30, "unitPrice": 35, "expenseDate": "2026-03-08", "clientSyncId": "" },
-        { "id": 15, "category": "LABOR", "description": "Jornal de trasplante", "quantity": 12, "unitPrice": 50, "expenseDate": "2026-03-10", "clientSyncId": "" }
+        {
+          "id": 13,
+          "category": "INPUTS",
+          "description": "Plantones de café Geisha",
+          "quantity": 500,
+          "unitPrice": 3.5,
+          "expenseDate": "2026-03-05",
+          "clientSyncId": ""
+        },
+        {
+          "id": 14,
+          "category": "INPUTS",
+          "description": "Abono orgánico",
+          "quantity": 30,
+          "unitPrice": 35,
+          "expenseDate": "2026-03-08",
+          "clientSyncId": ""
+        },
+        {
+          "id": 15,
+          "category": "LABOR",
+          "description": "Jornal de trasplante",
+          "quantity": 12,
+          "unitPrice": 50,
+          "expenseDate": "2026-03-10",
+          "clientSyncId": ""
+        }
       ]
     },
     {
@@ -198,7 +403,15 @@
       "actualYield": null,
       "yieldUnit": "SACK",
       "entries": [
-        { "id": 16, "category": "INPUTS", "description": "Semilla de papa Yungay", "quantity": 18, "unitPrice": 40, "expenseDate": "2026-09-01", "clientSyncId": "" }
+        {
+          "id": 16,
+          "category": "INPUTS",
+          "description": "Semilla de papa Yungay",
+          "quantity": 18,
+          "unitPrice": 40,
+          "expenseDate": "2026-09-01",
+          "clientSyncId": ""
+        }
       ]
     }
   ]
