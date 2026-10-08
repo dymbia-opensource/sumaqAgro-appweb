@@ -1,0 +1,40 @@
+<header class="view-header">
+  <span class="breadcrumb">{{ 'crop-health.eyebrow' | translate }}</span>
+  <h1>{{ 'crop-health.form-title' | translate }}</h1>
+</header>
+
+<mat-card appearance="outlined" class="form-card">
+  <mat-card-content>
+    <form [formGroup]="reportForm" (ngSubmit)="onSubmit()">
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>{{ 'crop-health.form-describe' | translate }}</mat-label>
+        <textarea matInput formControlName="description" rows="4"></textarea>
+        @if (reportForm.controls.description.hasError('required')) {
+          <mat-error>{{ 'crop-health.desc-required' | translate }}</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>{{ 'crop-health.form-severity' | translate }}</mat-label>
+        <mat-select formControlName="severity">
+          <mat-option value="LOW">{{ 'crop-health.severity-low' | translate }}</mat-option>
+          <mat-option value="MEDIUM">{{ 'crop-health.severity-medium' | translate }}</mat-option>
+          <mat-option value="HIGH">{{ 'crop-health.severity-high' | translate }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>{{ 'crop-health.form-photo' | translate }}</mat-label>
+        <input matInput formControlName="photoUrl" placeholder="https://...">
+      </mat-form-field>
+
+      <div class="form-actions">
+        <button mat-flat-button type="submit" [disabled]="reportForm.invalid">
+          {{ 'crop-health.btn-send-report' | translate }}
+        </button>
+      </div>
+
+    </form>
+  </mat-card-content>
+</mat-card>

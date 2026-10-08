@@ -1,0 +1,33 @@
+<header class="view-header">
+  <span class="breadcrumb">{{ 'crop-health.eyebrow' | translate }}</span>
+  <h1>{{ 'crop-health.inbox-title' | translate }}</h1>
+  <p class="subtitle">{{ 'crop-health.inbox-subtitle' | translate }}</p>
+</header>
+
+<div class="inbox-list">
+  <!-- Mockup data iterating with @for; will use store.pestReports() when wired -->
+  @for (report of [1, 2]; track report) {
+    <mat-card appearance="outlined" class="report-card">
+      <mat-card-header>
+        <mat-icon mat-card-avatar class="icon-warning">pest_control</mat-icon>
+        <mat-card-title>Suspected Late Blight (Phytophthora infestans)</mat-card-title>
+        <mat-card-subtitle>Reported on: Sep 12, 2026 · Plot #{{ report }}</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <p><strong>{{ 'crop-health.form-severity' | translate }}:</strong> HIGH</p>
+        <p>"I am seeing black spots on the leaves spreading rapidly across the northern sector."</p>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-flat-button color="primary">{{ 'crop-health.btn-inspect' | translate }}</button>
+        <button mat-stroked-button>{{ 'crop-health.btn-prescribe' | translate }}</button>
+      </mat-card-actions>
+    </mat-card>
+  } @empty {
+    <mat-card appearance="outlined" class="empty-card">
+      <mat-card-content>
+        <mat-icon>inbox</mat-icon>
+        <p>{{ 'crop-health.no-reports' | translate }}</p>
+      </mat-card-content>
+    </mat-card>
+  }
+</div>

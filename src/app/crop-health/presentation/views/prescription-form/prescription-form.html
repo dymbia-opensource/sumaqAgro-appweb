@@ -1,0 +1,33 @@
+<header class="view-header">
+  <span class="breadcrumb">{{ 'crop-health.eyebrow' | translate }}</span>
+  <h1>{{ 'crop-health.prescribe-title' | translate }}</h1>
+</header>
+
+<mat-card appearance="outlined" class="form-card">
+  <mat-card-content>
+    <form [formGroup]="prescriptionForm" (ngSubmit)="onSubmit()">
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>{{ 'crop-health.form-agrochemical' | translate }}</mat-label>
+        <input matInput formControlName="agrochemical" placeholder="e.g. Mancozeb 80%">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>{{ 'crop-health.form-dosage' | translate }}</mat-label>
+        <input matInput formControlName="dosage" placeholder="e.g. 2.5 kg/Ha">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>{{ 'crop-health.form-instructions' | translate }}</mat-label>
+        <textarea matInput formControlName="instructions" rows="4"></textarea>
+      </mat-form-field>
+
+      <div class="form-actions">
+        <button mat-flat-button type="submit" [disabled]="prescriptionForm.invalid">
+          {{ 'crop-health.btn-issue-prescription' | translate }}
+        </button>
+      </div>
+
+    </form>
+  </mat-card-content>
+</mat-card>

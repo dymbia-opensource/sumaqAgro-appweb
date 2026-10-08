@@ -1,4 +1,4 @@
-﻿import { BaseResource, BaseResponse } from '../../../shared/infrastructure/base-response';
+import { BaseResource, BaseResponse } from '../../../shared/infrastructure/base-response';
 
 export interface SatelliteObservationResource extends BaseResource {
   id: number;
@@ -8,6 +8,8 @@ export interface SatelliteObservationResource extends BaseResource {
   ndwiMean: number;
   surfaceTempKelvin: number;
   cloudCoveragePercent: number;
+  stressAreaHectares?: number;
+  recommendation?: string;
 }
 
 export interface SatelliteObservationsResponse extends BaseResponse {
