@@ -1,6 +1,6 @@
-import { computed, inject, Injectable, Signal, signal } from '@angular/core';
+import { computed, effect, inject, Injectable, Signal, signal, untracked } from '@angular/core';
 import { forkJoin, map, Observable, of, retry, switchMap, throwError } from 'rxjs';
-import { environment } from '../../../environments/environment';
+import { DemoSessionService } from '../../shared/application/demo-session.service';
 import { DelineatePlotBoundaryCommand } from '../domain/model/commands/delineate-plot-boundary.command';
 import { RecordSowingDateCommand } from '../domain/model/commands/record-sowing-date.command';
 import { RegisterFieldPlotCommand } from '../domain/model/commands/register-field-plot.command';
@@ -48,6 +48,7 @@ export interface CropCampaignSetup {
 @Injectable({ providedIn: 'root' })
 export class FieldManagementStore {
   private readonly fieldManagementApi = inject(FieldManagementApi);
+  private readonly demoSession = inject(DemoSessionService);
 
   private readonly plotsSignal = signal<FieldPlot[]>([]);
   private readonly campaignsByPlotSignal = signal<Map<number, CropCampaign[]>>(new Map());
@@ -69,10 +70,11 @@ export class FieldManagementStore {
   readonly error = this.errorSignal.asReadonly();
 
   /**
-   * Producer signed in: the owner of the plots and of the new plots.
-   * It is the demo user until IAM is implemented; then it comes from IamStore.
+   * Producer signed in: the owner of the plots and of the new plots, or `null`.
+   * It is the user chosen in the demo access until IAM is implemented; then it
+   * comes from IamStore.
    */
-  readonly currentUserId = signal(environment.demoUserId).asReadonly();
+  readonly currentUserId = computed(() => this.demoSession.activeUser()?.id ?? null);
 
   /** Number of plots of the producer. */
   readonly plotCount = computed(() => this.plots().length);
@@ -97,10 +99,14 @@ export class FieldManagementStore {
   readonly activeCampaign = computed(() => FieldManagementStore.currentOf(this.campaigns()));
 
   /**
-   * Creates an instance of FieldManagementStore and loads the plots of the producer.
+   * Creates an instance of FieldManagementStore and loads the plots of the
+   * producer every time the signed-in user changes.
    */
   constructor() {
-    this.loadMyPlots(this.currentUserId());
+    effect(() => {
+      const userId = this.currentUserId();
+      untracked(() => (userId === null ? this.clearState() : this.loadMyPlots(userId)));
+    });
   }
 
   /**
@@ -148,6 +154,9 @@ export class FieldManagementStore {
           const first = plots[0];
           if (!keep && first) {
             this.selectPlot(first.id as number);
+          } else if (!first) {
+            this.selectedPlotIdSignal.set(null);
+            this.ledgerSignal.set(null);
           }
         },
         error: (error) => this.fail(error, 'field-management.errors.load-plots'),
@@ -343,6 +352,15 @@ export class FieldManagementStore {
       agroMonitoringPolygonId: plot.agroMonitoringPolygonId,
       soilBaseline: plot.soilBaseline,
     });
+  }
+
+  /** Forgets the plots of the previous user (after signing out). */
+  private clearState(): void {
+    this.plotsSignal.set([]);
+    this.campaignsByPlotSignal.set(new Map());
+    this.selectedPlotIdSignal.set(null);
+    this.ledgerSignal.set(null);
+    this.errorSignal.set(null);
   }
 
   /** Campaign in progress, or the most recent one. */

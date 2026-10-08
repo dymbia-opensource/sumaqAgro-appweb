@@ -122,7 +122,8 @@ export class PlotRegistrationForm {
    * Registers the plot with its first campaign and continues to step 2 (the map).
    */
   onNext() {
-    if (this.form.invalid) {
+    const ownerUserId = this.fieldManagementStore.currentUserId();
+    if (this.form.invalid || ownerUserId === null) {
       this.form.markAllAsTouched();
       return;
     }
@@ -131,7 +132,7 @@ export class PlotRegistrationForm {
     const sowingDate = new Date(year, month - 1, day);
 
     const command = new RegisterFieldPlotCommand({
-      ownerUserId: this.fieldManagementStore.currentUserId(),
+      ownerUserId,
       name: value.name,
       region: value.region,
       declaredAreaHectares: value.declaredArea ?? 0,
