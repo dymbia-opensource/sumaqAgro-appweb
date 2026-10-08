@@ -1,0 +1,340 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+  font: var(--mat-sys-title-small);
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.breadcrumb a {
+  color: var(--mat-sys-on-surface-variant);
+  text-decoration: none;
+}
+
+.breadcrumb a:hover {
+  text-decoration: underline;
+}
+
+.breadcrumb mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+}
+
+.breadcrumb .current {
+  color: var(--mat-sys-primary);
+}
+
+.page-header h1 {
+  font: var(--mat-sys-headline-large);
+  font-weight: 700;
+  margin: 4px 0;
+}
+
+.subtitle {
+  margin: 0;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+/* Steps of the registration, as pills joined by a line. */
+.steps {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.step {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 16px 6px 6px;
+  border-radius: 999px;
+  background: var(--mat-sys-surface-container-high);
+  color: var(--mat-sys-on-surface);
+  font: var(--mat-sys-label-large);
+  white-space: nowrap;
+}
+
+.step.active {
+  background: var(--mat-sys-primary);
+  color: var(--mat-sys-on-primary);
+}
+
+.step-number {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--mat-sys-surface);
+  color: var(--mat-sys-on-surface);
+  font-weight: 700;
+}
+
+.step-line {
+  flex: 1;
+  height: 1px;
+  background: var(--mat-sys-outline-variant);
+}
+
+.message-card mat-card-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.map-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 24px;
+  align-items: start;
+}
+
+.map-card,
+.summary-card {
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.map-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+}
+
+.search {
+  flex: 1;
+}
+
+.map-message {
+  margin: 0 12px 12px;
+  color: var(--mat-sys-error);
+}
+
+.map {
+  height: min(62vh, 560px);
+  min-height: 340px;
+  cursor: crosshair;
+}
+
+.map-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 12px 16px;
+}
+
+.map-footer p {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  color: var(--mat-sys-on-surface-variant);
+  font: var(--mat-sys-body-small);
+}
+
+.summary-card mat-card-title {
+  font: var(--mat-sys-title-medium);
+  font-weight: 700;
+}
+
+.summary-card h3 {
+  margin: 16px 0 8px;
+  font: var(--mat-sys-title-small);
+  font-weight: 700;
+}
+
+.summary-data {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 4px 8px;
+  margin: 8px 0 16px;
+}
+
+.summary-data dt {
+  font-weight: 600;
+  color: var(--mat-sys-primary);
+}
+
+.summary-data dd {
+  margin: 0;
+}
+
+.coordinates {
+  margin: 0 0 16px;
+  padding: 0;
+  list-style: none;
+  font: var(--mat-sys-body-medium);
+  max-height: 160px;
+  overflow-y: auto;
+}
+
+.empty,
+.declared {
+  margin: 0;
+  color: var(--mat-sys-on-surface-variant);
+  font: var(--mat-sys-body-small);
+}
+
+.area {
+  margin: 0 0 4px;
+  padding: 8px 16px;
+  border: 1px solid var(--mat-sys-primary);
+  border-radius: 12px;
+  background: var(--mat-sys-secondary-container);
+  color: var(--mat-sys-on-secondary-container);
+  font: var(--mat-sys-title-large);
+  font-weight: 700;
+  text-align: center;
+}
+
+.area-invalid {
+  border-color: var(--mat-sys-error);
+  background: var(--mat-sys-error-container);
+  color: var(--mat-sys-on-error-container);
+}
+
+.polygon-CLOSED {
+  --mat-chip-elevated-container-color: var(--mat-sys-secondary-container);
+  --mat-chip-label-text-color: var(--mat-sys-on-secondary-container);
+  --mat-chip-with-icon-icon-color: var(--mat-sys-on-secondary-container);
+}
+
+.polygon-CROSSED {
+  --mat-chip-elevated-container-color: var(--mat-sys-error-container);
+  --mat-chip-label-text-color: var(--mat-sys-on-error-container);
+  --mat-chip-with-icon-icon-color: var(--mat-sys-on-error-container);
+}
+
+.summary-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.summary-actions .save {
+  height: 48px;
+}
+
+/* Labels "V1", "V2"... of the vertices on the map. */
+:host ::ng-deep .vertex-label {
+  border-radius: 12px;
+  border-color: #1b5e20;
+  color: #1b5e20;
+  font-weight: 600;
+}
+
+/* Success dialog */
+.saved-dialog {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.saved-icon {
+  font-size: 72px;
+  width: 72px;
+  height: 72px;
+  color: var(--mat-sys-primary);
+}
+
+.saved-dialog h2 {
+  margin: 8px 0 0;
+  font: var(--mat-sys-headline-small);
+  font-weight: 700;
+}
+
+.saved-subtitle,
+.saved-next {
+  margin: 4px 0 16px;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.saved-next {
+  margin-top: 16px;
+  color: var(--mat-sys-on-surface);
+}
+
+.saved-summary {
+  width: 100%;
+  margin-bottom: 16px;
+  padding: 16px 20px;
+  border-radius: 16px;
+  background: var(--mat-sys-secondary-container);
+  color: var(--mat-sys-on-secondary-container);
+  text-align: left;
+}
+
+.saved-summary h3 {
+  margin: 0 0 12px;
+  font: var(--mat-sys-label-large);
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.saved-summary dl {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  margin: 0;
+}
+
+.saved-summary dt,
+.saved-summary dd {
+  margin: 0;
+  padding: 8px 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--mat-sys-primary) 25%, transparent);
+}
+
+.saved-summary dd {
+  text-align: right;
+  font-weight: 600;
+}
+
+.sync-pill {
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--mat-sys-surface);
+  color: var(--mat-sys-on-surface);
+}
+
+.saved-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  padding: 0 24px 24px;
+}
+
+@media (max-width: 959.98px) {
+  .map-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .map {
+    height: 50vh;
+  }
+
+  .map-toolbar {
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 479.98px) {
+  .saved-actions {
+    grid-template-columns: 1fr;
+  }
+}
