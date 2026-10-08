@@ -1,0 +1,6 @@
+@if (loading()) { <mat-progress-bar mode="indeterminate" /> }
+<header><span>{{ 'profiles.cooperative.settings.breadcrumb' | translate }}</span><h1>{{ 'profiles.cooperative.settings.title' | translate }}</h1><p>{{ 'profiles.cooperative.settings.subtitle' | translate }}</p></header>
+@if (cooperative(); as cooperative) {
+  <mat-card><mat-card-content class="details"><p><span>{{ 'profiles.cooperative.settings.legal-name' | translate }}</span>{{ cooperative.legalName }}</p><p><span>{{ 'profiles.cooperative.settings.ruc' | translate }}</span>{{ cooperative.ruc }}</p><p><span>{{ 'profiles.cooperative.settings.region' | translate }}</span>{{ cooperative.region }}</p><p><span>{{ 'profiles.cooperative.settings.representative' | translate }}</span>{{ cooperative.legalRepresentative }}</p><p><span>{{ 'profiles.cooperative.settings.email' | translate }}</span>{{ cooperative.institutionalEmail }}</p><p><span>{{ 'profiles.cooperative.settings.phone' | translate }}</span>{{ cooperative.switchboardPhone }}</p><p class="full"><span>{{ 'profiles.cooperative.settings.address' | translate }}</span>{{ cooperative.headquartersAddress }}</p></mat-card-content></mat-card>
+}
+@if (error(); as error) { <p class="error" role="alert">{{ error }}</p> }
