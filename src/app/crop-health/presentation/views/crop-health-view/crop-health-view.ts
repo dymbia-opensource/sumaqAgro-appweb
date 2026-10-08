@@ -1,5 +1,5 @@
 import { DatePipe, DecimalPipe } from '@angular/common';
-import { Component, inject, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
+import { Component, ElementRef, inject, OnInit, AfterViewInit, OnDestroy, viewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
@@ -32,6 +32,8 @@ import * as L from 'leaflet';
 export class CropHealthView implements OnInit, AfterViewInit, OnDestroy {
   readonly store = inject(CropHealthStore);
 
+  private readonly mapContainer = viewChild.required<ElementRef<HTMLDivElement>>('mapContainer');
+
   private map: L.Map | undefined;
   private sectorLayer: L.Polygon | undefined;
 
@@ -54,7 +56,7 @@ export class CropHealthView implements OnInit, AfterViewInit, OnDestroy {
 
   private initMap(): void {
     // Initial map centered over a sample plot coordinate
-    this.map = L.map('crop-map').setView([-13.4243, -76.0007], 15);
+    this.map = L.map(this.mapContainer().nativeElement).setView([-13.4243, -76.0007], 15);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '© OpenStreetMap contributors',

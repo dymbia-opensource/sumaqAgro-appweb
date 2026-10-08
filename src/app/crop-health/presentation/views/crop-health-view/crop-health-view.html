@@ -22,12 +22,11 @@
   </mat-radio-group>
 </div>
 
-@if (store.observations().length > 0) {
   <div class="content-grid">
 
     <!-- Left: interactive Leaflet map -->
     <div class="map-card">
-      <div id="crop-map" class="mock-map"></div>
+      <div #mapContainer class="mock-map"></div>
       
       <div class="map-legend">
         <span><span class="dot dot-critical"></span>{{ 'crop-health.legend-critical' | translate }}</span>
@@ -37,6 +36,7 @@
     </div>
 
     <!-- Right: diagnosis card -->
+    @if (store.observations().length > 0) {
     <aside class="diagnosis-aside">
       <div class="date-row">
         <mat-icon>calendar_today</mat-icon>
@@ -80,6 +80,6 @@
         </mat-card-actions>
       </mat-card>
     </aside>
+    }
 
   </div>
-}

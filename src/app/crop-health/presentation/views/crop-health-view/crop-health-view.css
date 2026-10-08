@@ -69,6 +69,7 @@
 }
 
 .mock-map {
+  min-height: 300px;
   position: relative;
   flex: 1;
   border-radius: 16px;
