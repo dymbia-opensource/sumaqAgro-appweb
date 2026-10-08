@@ -32,7 +32,7 @@
     },
     {
       "id": 3,
-      "ownerUserId": 1,
+      "ownerUserId": 2,
       "name": "Parcela Pampa Alta",
       "region": "Junín - Valle del Mantaro",
       "status": "WITHOUT_POLYGON",
