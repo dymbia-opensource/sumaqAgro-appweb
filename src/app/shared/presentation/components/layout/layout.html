@@ -1,130 +1,16 @@
 <mat-sidenav-container class="layout">
   <mat-sidenav
-    #sidenav
     class="sidebar"
-    [mode]="isHandset() ? 'over' : 'side'"
-    [opened]="!isHandset()"
-    [attr.role]="isHandset() ? 'dialog' : 'navigation'"
+    [mode]="layout.isHandset() ? 'over' : 'side'"
+    [opened]="layout.sidebarOpened()"
+    (openedChange)="layout.setSidebarOpened($event)"
+    [attr.role]="layout.isHandset() ? 'dialog' : 'navigation'"
   >
-    <div class="sidebar-inner">
-      <a class="brand" routerLink="/" (click)="closeOnHandset()">
-        <img src="images/logo-sumaqagro.png" alt="SumaqAgro" width="48" height="48" />
-        <span class="brand-text">
-          <span class="brand-name">Sumaq<span class="brand-accent">Agro</span></span>
-          <span class="brand-tagline">{{ 'app.tagline' | translate }}</span>
-        </span>
-      </a>
-
-      @for (section of sections(); track section.title; let last = $last) {
-        <mat-nav-list class="menu-section">
-          <h3 matSubheader>{{ section.title | translate }}</h3>
-          @for (option of section.options; track option.link) {
-            <a
-              mat-list-item
-              [routerLink]="option.link"
-              routerLinkActive
-              #rla="routerLinkActive"
-              [activated]="rla.isActive"
-              (click)="closeOnHandset()"
-            >
-              <mat-icon matListItemIcon [class.icon-filled]="rla.isActive">{{
-                option.icon
-              }}</mat-icon>
-              <span matListItemTitle>{{ option.label | translate }}</span>
-            </a>
-          }
-          @if (last) {
-            <mat-list-item
-              [matTooltip]="
-                (isOnline() ? 'layout.offline-mode-off-hint' : 'layout.offline-mode-on-hint')
-                  | translate
-              "
-              matTooltipPosition="right"
-            >
-              <mat-icon matListItemIcon>{{ isOnline() ? 'wifi' : 'wifi_off' }}</mat-icon>
-              <span matListItemTitle>{{ 'layout.offline-mode' | translate }}</span>
-              <span matListItemMeta class="offline-status" [class.offline-on]="!isOnline()">
-                {{
-                  (isOnline() ? 'layout.offline-mode-off' : 'layout.offline-mode-on') | translate
-                }}
-              </span>
-            </mat-list-item>
-          }
-        </mat-nav-list>
-        @if (!last) {
-          <mat-divider />
-        }
-      }
-
-      <div class="sidebar-footer">
-        <app-language-switcher />
-        <button mat-flat-button class="sign-out" (click)="signOut()">
-          <mat-icon>logout</mat-icon>
-          {{ 'layout.sign-out' | translate }}
-        </button>
-      </div>
-    </div>
+    <app-left-sidebar />
   </mat-sidenav>
 
   <mat-sidenav-content class="main-area">
-    <mat-toolbar class="topbar">
-      @if (isHandset()) {
-        <button
-          mat-icon-button
-          (click)="toggleSidebar()"
-          [attr.aria-label]="'layout.menu' | translate"
-        >
-          <mat-icon>menu</mat-icon>
-        </button>
-      }
-
-      <mat-form-field class="search" appearance="outline" subscriptSizing="dynamic">
-        <mat-icon matPrefix>search</mat-icon>
-        <input matInput type="search" [placeholder]="'layout.search' | translate" />
-      </mat-form-field>
-
-      <span class="spacer"></span>
-
-      <mat-chip-set class="connection" [attr.aria-label]="'layout.connection' | translate">
-        <mat-chip [highlighted]="isOnline()" [disableRipple]="true">
-          <mat-icon matChipAvatar>{{ isOnline() ? 'cloud_done' : 'cloud_off' }}</mat-icon>
-          {{ (isOnline() ? 'layout.connected' : 'layout.disconnected') | translate }}
-        </mat-chip>
-      </mat-chip-set>
-
-      <button
-        mat-icon-button
-        [matTooltip]="'layout.notifications' | translate"
-        [attr.aria-label]="'layout.notifications' | translate"
-      >
-        <mat-icon
-          aria-hidden="false"
-          [matBadge]="notificationCount()"
-          [matBadgeHidden]="notificationCount() === 0"
-          matBadgeColor="warn"
-          matBadgeSize="small"
-          >notifications</mat-icon
-        >
-      </button>
-
-      <button mat-button class="user-button" [matMenuTriggerFor]="userMenu">
-        <mat-icon class="avatar">account_circle</mat-icon>
-        <span class="user-name">{{ userName() }}</span>
-        <mat-icon iconPositionEnd>expand_more</mat-icon>
-      </button>
-      <mat-menu #userMenu="matMenu" xPosition="before">
-        <a mat-menu-item routerLink="/profiles/settings">
-          <mat-icon>person</mat-icon>
-          <span>{{ 'layout.profile' | translate }}</span>
-        </a>
-        <mat-divider />
-        <button mat-menu-item (click)="signOut()">
-          <mat-icon>logout</mat-icon>
-          <span>{{ 'layout.sign-out' | translate }}</span>
-        </button>
-      </mat-menu>
-    </mat-toolbar>
-
+    <app-toolbar />
     <main class="content">
       <router-outlet />
     </main>

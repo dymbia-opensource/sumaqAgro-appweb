@@ -1,5 +1,8 @@
 import { Routes } from '@angular/router';
 
+const layout = () =>
+  import('./shared/presentation/components/layout/layout').then((m) => m.Layout);
+
 const pageNotFound = () =>
   import('./shared/presentation/views/page-not-found/page-not-found').then((m) => m.PageNotFound);
 
@@ -32,19 +35,31 @@ const baseTitle = 'SumaqAgro';
  * Root routes. Each bounded context adds its own `*.routes.ts` with lazy loading.
  *
  * @remarks
- * Public routes until IAM is implemented: the demo access chooses the user.
+ * The private pages are children of the shell (`Layout`: side menu and top
+ * bar). The demo access and the public QR verification are shown without it.
+ * When IAM is implemented, the shell route gets `canActivate: [iamGuard]`
+ * and the demo access is replaced by the IAM routes.
  */
 export const routes: Routes = [
+  // Pages without the shell
   { path: 'demo-access', loadComponent: demoAccessView, title: `${baseTitle} - Acceso demo` },
-  { path: 'field-management', loadChildren: fieldManagementRoutes },
-  { path: 'crop-health', loadChildren: cropHealthRoutes },
-  { path: 'profiles', loadChildren: profilesRoutes },
-  { path: 'harvest-certification', loadChildren: harvestCertificationRoutes },
   {
     path: 'verify/:token',
     loadComponent: publicTraceabilityView,
     title: `Verificar certificado | ${baseTitle}`,
   },
   { path: '', redirectTo: '/demo-access', pathMatch: 'full' },
-  { path: '**', loadComponent: pageNotFound, title: `${baseTitle} - Page Not Found` },
+
+  // Pages inside the shell
+  {
+    path: '',
+    loadComponent: layout,
+    children: [
+      { path: 'field-management', loadChildren: fieldManagementRoutes },
+      { path: 'crop-health', loadChildren: cropHealthRoutes },
+      { path: 'profiles', loadChildren: profilesRoutes },
+      { path: 'harvest-certification', loadChildren: harvestCertificationRoutes },
+      { path: '**', loadComponent: pageNotFound, title: `${baseTitle} - Page Not Found` },
+    ],
+  },
 ];

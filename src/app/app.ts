@@ -1,9 +1,15 @@
 import { Component } from '@angular/core';
-import { Layout } from './shared/presentation/components/layout/layout';
+import { RouterOutlet } from '@angular/router';
 
-/** Root component: it only hosts the application shell. */
+/**
+ * Root component.
+ *
+ * @remarks
+ * It only hosts the router: the private pages are shown inside the shell
+ * (`Layout`), and the demo access and the public QR verification without it.
+ */
 @Component({
-  imports: [Layout],
+  imports: [RouterOutlet],
   selector: 'app-root',
   styleUrl: './app.css',
   templateUrl: './app.html',
