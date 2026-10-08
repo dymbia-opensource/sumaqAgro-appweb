@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { inject, Service } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { BaseApi } from '../../shared/infrastructure/base-api';
 import { CampaignLedger } from '../domain/model/entities/campaign-ledger.entity';
@@ -10,79 +10,99 @@ import { CropCampaignsApiEndpoint } from './endpoints/crop-campaigns.endpoint';
 import { FieldPlotsApiEndpoint } from './endpoints/field-plots.endpoint';
 
 /**
- * Facade of the Field Management infrastructure.
+ * Infrastructure facade for the field plot, crop campaign and cost ledger endpoints.
  *
  * @remarks
- * It groups the plots, campaigns and cost ledgers endpoints, so the
- * application layer only depends on this class.
+ * The application layer only depends on this class, never on the endpoints.
  */
-@Service()
+@Injectable({ providedIn: 'root' })
 export class FieldManagementApi extends BaseApi {
-  private readonly fieldPlotsEndpoint: FieldPlotsApiEndpoint;
-  private readonly cropCampaignsEndpoint: CropCampaignsApiEndpoint;
-  private readonly campaignLedgersEndpoint: CampaignLedgersApiEndpoint;
-
-  constructor() {
-    super();
-    const http = inject(HttpClient);
-    this.fieldPlotsEndpoint = new FieldPlotsApiEndpoint(http);
-    this.cropCampaignsEndpoint = new CropCampaignsApiEndpoint(http);
-    this.campaignLedgersEndpoint = new CampaignLedgersApiEndpoint(http);
-  }
+  private readonly http = inject(HttpClient);
+  private readonly plotsEndpoint = new FieldPlotsApiEndpoint(this.http);
+  private readonly campaignsEndpoint = new CropCampaignsApiEndpoint(this.http);
+  private readonly ledgersEndpoint = new CampaignLedgersApiEndpoint(this.http);
 
   // ---------- Field plots ----------
 
-  /** Loads the plots of one producer. */
-  getPlotsByOwner(ownerUserId: number): Observable<FieldPlot[]> {
-    return this.fieldPlotsEndpoint.getByOwner(ownerUserId);
-  }
+  /**
+   * Retrieves the plots of one producer.
+   * @param ownerUserId - Producer who owns the plots.
+   * @returns Stream with the plot collection.
+   */
+  getPlotsByOwner = (ownerUserId: number): Observable<FieldPlot[]> =>
+    this.plotsEndpoint.getByOwner(ownerUserId);
 
-  /** Loads one plot. */
-  getPlot(plotId: number): Observable<FieldPlot> {
-    return this.fieldPlotsEndpoint.getById(plotId);
-  }
+  /**
+   * Creates a new plot.
+   * @param plot - The plot to create.
+   * @returns An Observable of the created FieldPlot object.
+   */
+  createPlot = (plot: FieldPlot): Observable<FieldPlot> => this.plotsEndpoint.create(plot);
 
-  /** Registers a new plot. */
-  createPlot(plot: FieldPlot): Observable<FieldPlot> {
-    return this.fieldPlotsEndpoint.create(plot);
-  }
+  /**
+   * Saves the GPS polygon (and the area) of a plot.
+   * @param plot - The plot with its new polygon.
+   * @returns An Observable of the updated FieldPlot object.
+   */
+  updateBoundary = (plot: FieldPlot): Observable<FieldPlot> =>
+    this.plotsEndpoint.update(plot, plot.id);
 
-  /** Saves the changes of a plot (for example, its polygon). */
-  updatePlot(plot: FieldPlot): Observable<FieldPlot> {
-    return this.fieldPlotsEndpoint.update(plot, plot.id);
-  }
+  /**
+   * Deletes a plot by ID.
+   * @param id - The ID of the plot to delete.
+   * @returns An Observable of void.
+   */
+  deletePlot = (id: number): Observable<void> => this.plotsEndpoint.delete(id);
 
   // ---------- Crop campaigns ----------
 
-  /** Loads the campaigns of one plot. */
-  getCampaignsByPlot(plotId: number): Observable<CropCampaign[]> {
-    return this.cropCampaignsEndpoint.getByPlot(plotId);
-  }
+  /**
+   * Retrieves the campaigns of one plot.
+   * @param plotId - Plot where the campaigns take place.
+   * @returns Stream with the campaign collection.
+   */
+  getCampaignsByPlot = (plotId: number): Observable<CropCampaign[]> =>
+    this.campaignsEndpoint.getByPlot(plotId);
 
-  /** Starts a new campaign. */
-  createCampaign(campaign: CropCampaign): Observable<CropCampaign> {
-    return this.cropCampaignsEndpoint.create(campaign);
-  }
+  /**
+   * Creates a new campaign.
+   * @param campaign - The campaign to create.
+   * @returns An Observable of the created CropCampaign object.
+   */
+  createCampaign = (campaign: CropCampaign): Observable<CropCampaign> =>
+    this.campaignsEndpoint.create(campaign);
 
-  /** Saves the changes of a campaign. */
-  updateCampaign(campaign: CropCampaign): Observable<CropCampaign> {
-    return this.cropCampaignsEndpoint.update(campaign, campaign.id);
-  }
+  /**
+   * Updates an existing campaign.
+   * @param campaign - The campaign to update.
+   * @returns An Observable of the updated CropCampaign object.
+   */
+  updateCampaign = (campaign: CropCampaign): Observable<CropCampaign> =>
+    this.campaignsEndpoint.update(campaign, campaign.id);
 
   // ---------- Cost ledgers ----------
 
-  /** Loads the cost ledger of one campaign, or `null` if it has none. */
-  getLedgerByCampaign(campaignId: number): Observable<CampaignLedger | null> {
-    return this.campaignLedgersEndpoint.getByCampaign(campaignId);
-  }
+  /**
+   * Retrieves the cost ledger of one campaign.
+   * @param campaignId - Campaign of the ledger.
+   * @returns An Observable of the ledger, or `null` if the campaign has none.
+   */
+  getLedgerByCampaign = (campaignId: number): Observable<CampaignLedger | null> =>
+    this.ledgersEndpoint.getByCampaign(campaignId);
 
-  /** Opens the cost ledger of a campaign. */
-  createLedger(ledger: CampaignLedger): Observable<CampaignLedger> {
-    return this.campaignLedgersEndpoint.create(ledger);
-  }
+  /**
+   * Creates the cost ledger of a campaign.
+   * @param ledger - The ledger to create.
+   * @returns An Observable of the created CampaignLedger object.
+   */
+  createLedger = (ledger: CampaignLedger): Observable<CampaignLedger> =>
+    this.ledgersEndpoint.create(ledger);
 
-  /** Saves the ledger with its expenses and expected yield. */
-  updateLedger(ledger: CampaignLedger): Observable<CampaignLedger> {
-    return this.campaignLedgersEndpoint.update(ledger, ledger.id);
-  }
+  /**
+   * Saves the expected yield of a ledger.
+   * @param ledger - The ledger with its new expected yield.
+   * @returns An Observable of the updated CampaignLedger object.
+   */
+  updateExpectedYield = (ledger: CampaignLedger): Observable<CampaignLedger> =>
+    this.ledgersEndpoint.update(ledger, ledger.id);
 }

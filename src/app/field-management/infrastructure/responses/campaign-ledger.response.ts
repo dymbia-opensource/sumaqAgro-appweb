@@ -1,31 +1,22 @@
-import { BaseResource, BaseResponse } from '../../../shared/infrastructure/base-response';
+import { BaseResource } from '../../../shared/infrastructure/base-response';
+import { ExpenseEntryResource } from './expense-entry.response';
 
-/** One expense of the cost ledger as the RESTful API sends it. */
-export interface ExpenseEntryResource extends BaseResource {
-  id: number;
-  category: string;
-  description: string;
-  quantity: number;
-  /** Price per unit, in soles. */
-  unitPrice: number;
-  /** Date in `YYYY-MM-DD` format. */
-  expenseDate: string;
-  notes?: string;
-  clientSyncId: string;
-}
-
-/** Cost ledger of a campaign as the RESTful API sends it. */
+/**
+ * Resource representation of the cost ledger of a campaign.
+ */
 export interface CampaignLedgerResource extends BaseResource {
+  /** Unique identifier of the ledger. */
   id: number;
+  /** Campaign of the ledger. */
   campaignId: number;
+  /** Yield the producer expects to harvest. */
   expectedYield: number;
+  /** Yield actually harvested, or `null` before the harvest. */
   actualYield: number | null;
+  /** Unit of the yield (`SACK` or `QUINTAL`). */
   yieldUnit: string;
+  /** `true` when the ledger is closed. */
   frozen?: boolean;
+  /** Expenses of the ledger. */
   entries: ExpenseEntryResource[];
-}
-
-/** Response that wraps a list of cost ledgers. */
-export interface CampaignLedgersResponse extends BaseResponse {
-  ledgers: CampaignLedgerResource[];
 }

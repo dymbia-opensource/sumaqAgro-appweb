@@ -4,7 +4,8 @@ import { environment } from '../../../../environments/environment';
 import { BaseApiEndpoint } from '../../../shared/infrastructure/base-api-endpoint';
 import { CropCampaign } from '../../domain/model/entities/crop-campaign.entity';
 import { CropCampaignAssembler } from '../assemblers/crop-campaign.assembler';
-import { CropCampaignResource, CropCampaignsResponse } from '../responses/crop-campaign.response';
+import { CropCampaignResource } from '../responses/crop-campaign.response';
+import { CropCampaignsResponse } from '../responses/crop-campaigns.response';
 
 /** HTTP endpoint for the crop campaigns resource (`/crop-campaigns`). */
 export class CropCampaignsApiEndpoint extends BaseApiEndpoint<
