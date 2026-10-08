@@ -13,7 +13,6 @@ import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { CropHealthStore } from '../../../application/crop-health.store';
 import { CropPlotSelector } from '../../components/plot-selector/plot-selector';
 import { observationImage } from '../../../application/observation-image';
-import { observationCsv } from '../../../application/observation-report';
 import * as L from 'leaflet';
 
 @Component({
@@ -108,15 +107,5 @@ export class CropHealthView implements AfterViewInit, OnDestroy {
     } catch {
       this.snackBar.open(this.translate.instant('crop-health.image-error'), undefined, { duration: 6000 });
     } finally { this.exportingImage.set(false); }
-  }
-  downloadReport(): void {
-    const plot = this.store.selectedPlot();
-    const observation = this.store.latestObservation();
-    if (!plot || !observation || this.store.observationsLoading() || this.store.observationsError()) return;
-    const url = URL.createObjectURL(new Blob([observationCsv(plot.name, observation)], { type: 'text/csv;charset=utf-8' }));
-    const link = document.createElement('a');
-    link.href = url; link.download = 'crop-health-' + plot.id + '-' + observation.date.slice(0, 10) + '.csv';
-    document.body.appendChild(link); link.click(); link.remove();
-    setTimeout(() => URL.revokeObjectURL(url), 0);
   }
 }

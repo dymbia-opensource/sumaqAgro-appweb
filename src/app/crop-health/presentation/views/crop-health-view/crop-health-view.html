@@ -63,7 +63,6 @@
       <mat-card-actions>
         <button mat-flat-button (click)="consultAgronomist()">{{ 'crop-health.btn-consult' | translate }}</button>
         <button mat-stroked-button (click)="downloadImage()" [disabled]="!store.latestObservation() || store.observationsLoading() || !!store.observationsError() || exportingImage()"><mat-icon>image</mat-icon>{{ (exportingImage() ? 'common.loading' : 'crop-health.download-image') | translate }}</button>
-        <button mat-stroked-button (click)="downloadReport()" [disabled]="!store.latestObservation() || store.observationsLoading() || !!store.observationsError()">{{ 'crop-health.btn-download' | translate }}</button>
       </mat-card-actions>
     </mat-card>
   </aside>
