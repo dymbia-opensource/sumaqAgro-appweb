@@ -128,7 +128,7 @@
     "form_photo": "Photo URL",
     "btn_send_report": "Send Report to Agronomist",
     "severity_low": "Low (Few plants affected)",
-    "severity_medium": "Medium (Spread across a sector)",
+    "severity_medium": "Medium (Spread across a sector)", 
     "severity_high": "High (Spreading rapidly, severe damage)",
     "desc_required": "Description is required"
   },
