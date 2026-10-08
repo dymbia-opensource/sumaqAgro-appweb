@@ -4,6 +4,8 @@
     "tagline": "Cultivating a better tomorrow"
   },
   "section": {
+    "institutional-management": "Institutional management",
+
     "major": "Major",
     "agricultural-operation": "Agricultural operation",
     "system": "System"
@@ -15,7 +17,15 @@
     "advisor": "Consult the Advisor",
     "harvest-certificates": "My Harvest Certificates",
     "alerts": "Agricultural Alerts",
-    "settings": "Settings and Help"
+    "settings": "Settings and Help",
+
+    "cooperative-dashboard": "Dashboard",
+    "member-directory": "Member directory",
+    "cooperative-plot-health": "Plot health",
+    "cooperative-costs": "Costs",
+    "cooperative-certificates": "Certificates",
+    "cooperative-alerts": "Alerts",
+    "cooperative-settings": "Settings"
   },
   "layout": {
     "search": "Search within my plot...",

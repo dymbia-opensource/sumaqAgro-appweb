@@ -1,5 +1,5 @@
 import { BreakpointObserver } from '@angular/cdk/layout';
-import { Component, inject, signal, viewChild } from '@angular/core';
+import { Component, computed, inject, signal, viewChild } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule } from '@angular/material/button';
@@ -18,23 +18,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { fromEvent, map, merge } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
 import { LanguageSwitcher } from '../language-switcher/language-switcher';
-
-/** One option of the side menu. */
-export interface NavigationOption {
-  /** Route of the option. */
-  link: string;
-  /** i18n key of the label. */
-  label: string;
-  /** Material Symbols icon name. */
-  icon: string;
-}
-
-/** Group of options shown under a title in the side menu. */
-export interface NavigationSection {
-  /** i18n key of the section title. */
-  title: string;
-  options: NavigationOption[];
-}
+import { navigationFor, UserExperience } from './navigation-config';
 
 /**
  * Main shell of the app: side menu, top bar and the routed content.
@@ -88,33 +72,11 @@ export class Layout {
     { initialValue: navigator.onLine },
   );
 
-  /** Side menu options, grouped like in the Figma design. */
-  readonly sections = signal<NavigationSection[]>([
-    {
-      title: 'section.major',
-      options: [{ link: '/field-management/dashboard', label: 'option.my-plot', icon: 'home' }],
-    },
-    {
-      title: 'section.agricultural-operation',
-      options: [
-        { link: '/crop-health/monitoring', label: 'option.crop-health', icon: 'eco' },
-        { link: '/field-management/finances', label: 'option.expenses', icon: 'payments' },
-        { link: '/crop-health/advisor', label: 'option.advisor', icon: 'forum' },
-        {
-          link: '/harvest-certification/certificates',
-          label: 'option.harvest-certificates',
-          icon: 'workspace_premium',
-        },
-      ],
-    },
-    {
-      title: 'section.system',
-      options: [
-        { link: '/crop-health/alerts', label: 'option.alerts', icon: 'notification_important' },
-        { link: '/profiles/settings', label: 'option.settings', icon: 'settings' },
-      ],
-    },
-  ]);
+  /** Temporary role switch until IAM provides the authenticated user's role. */
+  readonly userExperience = signal<UserExperience>(environment.demoUserExperience);
+
+  /** Side menu options corresponding to the active user experience. */
+  readonly sections = computed(() => navigationFor(this.userExperience()));
 
   /** Name shown in the user menu. Replaced by the signed-in user in the IAM phase. */
   readonly userName = signal(environment.demoUserName);

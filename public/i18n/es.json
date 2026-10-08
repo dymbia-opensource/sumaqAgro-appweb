@@ -4,6 +4,8 @@
     "tagline": "Cultivando un mejor mañana"
   },
   "section": {
+    "institutional-management": "Gestión institucional",
+
     "major": "Principal",
     "agricultural-operation": "Operación agrícola",
     "system": "Sistema"
@@ -15,7 +17,15 @@
     "advisor": "Consultar al asesor",
     "harvest-certificates": "Certificados de cosecha",
     "alerts": "Alertas agrícolas",
-    "settings": "Configuración y ayuda"
+    "settings": "Configuración y ayuda",
+
+    "cooperative-dashboard": "Dashboard",
+    "member-directory": "Padrón",
+    "cooperative-plot-health": "Salud de Parcelas",
+    "cooperative-costs": "Costos",
+    "cooperative-certificates": "Certificados",
+    "cooperative-alerts": "Alertas",
+    "cooperative-settings": "Configuración"
   },
   "layout": {
     "search": "Buscar en mi parcela...",
