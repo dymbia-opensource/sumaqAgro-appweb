@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { catchError, map, Observable } from 'rxjs';
 import { BaseEntity } from '../domain/model/base-entity';
 import { BaseAssembler } from './base-assembler';
@@ -36,6 +36,23 @@ export abstract class BaseApiEndpoint<
     return this.http.get<TResponse | TResource[]>(this.endpointUrl).pipe(
       map((response) => this.toEntities(response)),
       catchError(this.handleError('Failed to fetch entities')),
+    );
+  }
+
+  /**
+   * Loads the records that match some filters, sent as query parameters
+   * (for example, `{ plotId: 1 }` becomes `?plotId=1`).
+   * @param filters - Field names and the values they must have.
+   * @param operation - Description of the query, used in the error message.
+   */
+  protected getAllBy(
+    filters: Record<string, string | number | boolean>,
+    operation = 'Failed to fetch entities',
+  ): Observable<TEntity[]> {
+    const params = new HttpParams({ fromObject: filters });
+    return this.http.get<TResponse | TResource[]>(this.endpointUrl, { params }).pipe(
+      map((response) => this.toEntities(response)),
+      catchError(this.handleError(operation)),
     );
   }
 

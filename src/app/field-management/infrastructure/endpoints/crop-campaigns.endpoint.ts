@@ -1,5 +1,5 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { catchError, map, Observable } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { BaseApiEndpoint } from '../../../shared/infrastructure/base-api-endpoint';
 import { CropCampaign } from '../../domain/model/entities/crop-campaign.entity';
@@ -27,12 +27,6 @@ export class CropCampaignsApiEndpoint extends BaseApiEndpoint<
    * @param plotId - Plot where the campaigns take place.
    */
   getByPlot(plotId: number): Observable<CropCampaign[]> {
-    const params = new HttpParams().set('plotId', plotId);
-    return this.http
-      .get<CropCampaignsResponse | CropCampaignResource[]>(this.endpointUrl, { params })
-      .pipe(
-        map((response) => this.toEntities(response)),
-        catchError(this.handleError('Failed to fetch the campaigns of the plot')),
-      );
+    return this.getAllBy({ plotId }, 'Failed to fetch the campaigns of the plot');
   }
 }

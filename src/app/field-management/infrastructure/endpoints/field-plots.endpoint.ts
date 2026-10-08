@@ -1,5 +1,5 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { catchError, map, Observable } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { BaseApiEndpoint } from '../../../shared/infrastructure/base-api-endpoint';
 import { FieldPlot } from '../../domain/model/entities/field-plot.entity';
@@ -27,12 +27,6 @@ export class FieldPlotsApiEndpoint extends BaseApiEndpoint<
    * @param ownerUserId - Producer who owns the plots.
    */
   getByOwner(ownerUserId: number): Observable<FieldPlot[]> {
-    const params = new HttpParams().set('ownerUserId', ownerUserId);
-    return this.http
-      .get<FieldPlotsResponse | FieldPlotResource[]>(this.endpointUrl, { params })
-      .pipe(
-        map((response) => this.toEntities(response)),
-        catchError(this.handleError('Failed to fetch the plots of the producer')),
-      );
+    return this.getAllBy({ ownerUserId }, 'Failed to fetch the plots of the producer');
   }
 }

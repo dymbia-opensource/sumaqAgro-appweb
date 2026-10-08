@@ -1,4 +1,5 @@
 import { Money } from '../../../shared/domain/model/money';
+import { fromApiDate, toApiDate } from '../../../shared/infrastructure/api-date';
 import { BaseAssembler } from '../../../shared/infrastructure/base-assembler';
 import { CampaignLedger } from '../../domain/model/entities/campaign-ledger.entity';
 import { ExpenseCategory } from '../../domain/model/entities/expense-category';
@@ -68,7 +69,7 @@ export class CampaignLedgerAssembler implements BaseAssembler<
       description: resource.description,
       quantity: resource.quantity,
       unitPrice: new Money(resource.unitPrice),
-      expenseDate: toLocalDate(resource.expenseDate),
+      expenseDate: fromApiDate(resource.expenseDate),
       notes: resource.notes,
       clientSyncId: resource.clientSyncId,
     });
@@ -83,21 +84,8 @@ export class CampaignLedgerAssembler implements BaseAssembler<
     description: entry.description,
     quantity: entry.quantity,
     unitPrice: entry.unitPrice.amount,
-    expenseDate: toIsoDate(entry.expenseDate),
+    expenseDate: toApiDate(entry.expenseDate),
     notes: entry.notes,
     clientSyncId: entry.clientSyncId,
   });
-}
-
-/** Reads a `YYYY-MM-DD` date as a local date (avoids the time zone shift). */
-function toLocalDate(value: string): Date {
-  const [year, month, day] = value.split('-').map(Number);
-  return new Date(year, month - 1, day);
-}
-
-/** Writes a date as `YYYY-MM-DD`. */
-function toIsoDate(date: Date): string {
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  return `${date.getFullYear()}-${month}-${day}`;
 }
