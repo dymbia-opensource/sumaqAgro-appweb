@@ -59,6 +59,8 @@ export class CropHealthApi extends BaseApi {
     return this.reportsEndpoint.getByPlot(plotId);
   }
 
+  deleteReport(id: number): Observable<void> { return this.reportsEndpoint.delete(id); }
+
   /** Loads agroclimatic alerts for a specific region. */
   getAlertsByRegion(region: string): Observable<AgroclimaticAlert[]> {
     return this.alertsEndpoint.getByRegion(region);

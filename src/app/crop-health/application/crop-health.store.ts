@@ -237,6 +237,19 @@ export class CropHealthStore {
     }, report => this.replaceReport(report), onSaved, onFailure, 'crop-health.errors.resolve-report');
   }
 
+  canDeleteReport(id: number): boolean {
+    const report = this.pestReports().find(item => item.id === id);
+    return this.canReport() && !this.clinicalLoading() && !this.clinicalError() && !!report &&
+      report.reporterId === this.activeUser()?.id && report.status === 'PENDING' &&
+      !this.inspections().some(item => item.reportId === id) && !this.prescriptions().some(item => item.reportId === id);
+  }
+
+  deleteReport(id: number, onSaved: () => void, onFailure: () => void): void {
+    this.mutate(() => {
+      if (!this.canDeleteReport(id)) this.denied();
+      return this.api.deleteReport(id);
+    }, () => this.reportsSignal.update(items => items.filter(item => item.id !== id)), onSaved, onFailure, 'crop-health.errors.delete-report');
+  }
   clearError(): void { this.setError('write', null); }
   reportLabel(id: number): string { const report = this.pestReports().find(item => item.id === id); return report ? '#' + id + ' · ' + report.plotName : '#' + id; }
   advisorName(id: number): string { return this.advisors().find(item => item.userId === id)?.name ?? this.session.users.find(user => user.id === id)?.displayName ?? '#' + id; }

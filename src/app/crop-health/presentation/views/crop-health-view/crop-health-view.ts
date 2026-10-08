@@ -8,9 +8,11 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatRadioModule } from '@angular/material/radio';
 import { FormsModule } from '@angular/forms';
-import { TranslatePipe } from '@ngx-translate/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { CropHealthStore } from '../../../application/crop-health.store';
 import { CropPlotSelector } from '../../components/plot-selector/plot-selector';
+import { observationImage } from '../../../application/observation-image';
 import { observationCsv } from '../../../application/observation-report';
 import * as L from 'leaflet';
 
@@ -23,6 +25,9 @@ import * as L from 'leaflet';
 export class CropHealthView implements AfterViewInit, OnDestroy {
   readonly store = inject(CropHealthStore);
   private readonly router = inject(Router);
+  private readonly translate = inject(TranslateService);
+  private readonly snackBar = inject(MatSnackBar);
+  readonly exportingImage = signal(false);
   private readonly mapContainer = viewChild.required<ElementRef<HTMLDivElement>>('mapContainer');
   private readonly mapReady = signal(false);
   private map?: L.Map;
@@ -86,6 +91,24 @@ export class CropHealthView implements AfterViewInit, OnDestroy {
   }
   onLayerChange(): void { this.drawSector(); }
   consultAgronomist(): void { void this.router.navigate(['/crop-health/inbox']); }
+  async downloadImage(): Promise<void> {
+    const plot = this.store.selectedPlot();
+    const observation = this.store.latestObservation();
+    if (!plot || !observation || this.exportingImage() || this.store.observationsLoading() || this.store.observationsError()) return;
+    this.exportingImage.set(true);
+    try {
+      const keys: Record<string, string> = { title: 'image-title', plot: 'plot', capture: 'capture-date', area: 'plot-area', stress: 'stress-detected', clouds: 'cloud-coverage', temperature: 'surface-temperature', recommendation: 'recommendation', noData: 'no-data', footer: 'image-footer' };
+      const labels = Object.fromEntries(Object.entries(keys).map(([key, value]) => [key, this.translate.instant('crop-health.' + value)]));
+      const blob = await observationImage(plot, observation, labels, this.translate.getCurrentLang() === 'en' ? 'en-US' : 'es-PE');
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url; link.download = 'sumaqagro-' + plot.id + '-' + observation.date.slice(0, 10) + '.png';
+      document.body.appendChild(link); link.click(); link.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 0);
+    } catch {
+      this.snackBar.open(this.translate.instant('crop-health.image-error'), undefined, { duration: 6000 });
+    } finally { this.exportingImage.set(false); }
+  }
   downloadReport(): void {
     const plot = this.store.selectedPlot();
     const observation = this.store.latestObservation();

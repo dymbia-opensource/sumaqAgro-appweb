@@ -60,3 +60,5 @@
 .full-width { width: 100%; margin-bottom: 8px; }
 form { max-width: 680px; }
 form > a { margin-left: 12px; }
+
+.back-nav { display: flex; align-items: center; }
