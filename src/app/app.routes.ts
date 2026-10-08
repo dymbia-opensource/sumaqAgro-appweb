@@ -6,6 +6,8 @@ const pageNotFound = () =>
 const fieldManagementRoutes = () =>
   import('./field-management/field-management.routes').then((m) => m.fieldManagementRoutes);
 
+const profilesRoutes = () => import('./profiles/profiles.routes').then((m) => m.profilesRoutes);
+
 const baseTitle = 'SumaqAgro';
 
 /**
@@ -17,5 +19,6 @@ const baseTitle = 'SumaqAgro';
 export const routes: Routes = [
   { path: '', redirectTo: '/field-management/dashboard', pathMatch: 'full' },
   { path: 'field-management', loadChildren: fieldManagementRoutes },
+  { path: 'profiles', loadChildren: profilesRoutes },
   { path: '**', loadComponent: pageNotFound, title: `${baseTitle} - Page Not Found` },
 ];

@@ -53,6 +53,27 @@
     "message": "La ruta {{ path }} no existe.",
     "go-home": "Ir al inicio"
   },
+  "profiles": {
+    "settings": {
+      "title": "Ajustes de Cuenta y Asistencia al Agricultor",
+      "subtitle": "Revisa y actualiza los datos de tu parcela y cuenta.",
+      "plot-tab": "Datos de mi Parcela",
+      "account-tab": "Cuenta",
+      "help-tab": "Manuales de Ayuda",
+      "contact-title": "Datos de Contacto",
+      "phone": "Número de teléfono",
+      "email": "Correo electrónico",
+      "phone-error": "Ingresa un teléfono válido.",
+      "email-error": "Ingresa un correo válido.",
+      "saving": "Guardando...",
+      "security-title": "Seguridad y Acceso",
+      "current-password": "Contraseña actual",
+      "new-password": "Nueva contraseña",
+      "confirm-password": "Confirmar nueva contraseña",
+      "security-description": "El cambio de contraseña estará disponible cuando se incorpore la autenticación de la plataforma.",
+      "change-password": "Cambiar contraseña"
+    }
+  },
   "field-management": {
     "dashboard": {
       "good-morning": "¡Buen día, {{ name }}!",

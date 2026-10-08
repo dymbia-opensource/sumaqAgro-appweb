@@ -53,6 +53,27 @@
     "message": "The path {{ path }} does not exist.",
     "go-home": "Go to home"
   },
+  "profiles": {
+    "settings": {
+      "title": "Account Settings and Farmer Support",
+      "subtitle": "Review and update your plot and account information.",
+      "plot-tab": "My Plot Data",
+      "account-tab": "Account",
+      "help-tab": "Help Manuals",
+      "contact-title": "Contact Details",
+      "phone": "Phone number",
+      "email": "Email address",
+      "phone-error": "Enter a valid phone number.",
+      "email-error": "Enter a valid email address.",
+      "saving": "Saving...",
+      "security-title": "Security and Access",
+      "current-password": "Current password",
+      "new-password": "New password",
+      "confirm-password": "Confirm new password",
+      "security-description": "Password changes will be available when platform authentication is added.",
+      "change-password": "Change password"
+    }
+  },
   "field-management": {
     "dashboard": {
       "good-morning": "Good morning, {{ name }}!",
