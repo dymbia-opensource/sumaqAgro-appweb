@@ -48,10 +48,4 @@ export const environment = {
   platformProviderHarvestBatchesEndpointPath: '/harvest-batches',
   platformProviderQualityCertificatesEndpointPath: '/quality-certificates',
   platformProviderPublicTraceabilityEndpointPath: '/public-traceability',
-
-  /** Demo user used until the IAM bounded context is implemented. */
-  demoUserId: 3,
-  demoUserName: 'Cristian Santana',
-  /** Temporary experience selector until IAM provides the authenticated user's role. */
-  demoUserExperience: 'COOPERATIVE_DIRECTOR' as const,
 };

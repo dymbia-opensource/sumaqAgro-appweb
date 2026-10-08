@@ -5,7 +5,7 @@
 <header class="dashboard-header">
   <div>
     <span class="breadcrumb">{{ 'option.my-plot' | translate }}</span>
-    <h1>{{ greetingKey() | translate: { name: userName } }}</h1>
+    <h1>{{ greetingKey() | translate: { name: userName() } }}</h1>
     @if (plot(); as plot) {
       <p class="subtitle">
         {{ plot.name }}

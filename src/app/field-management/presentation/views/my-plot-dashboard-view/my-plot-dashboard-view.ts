@@ -14,7 +14,7 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { ChartConfiguration } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
 import { map, startWith } from 'rxjs';
-import { environment } from '../../../../../environments/environment';
+import { DemoSessionService } from '../../../../shared/application/demo-session.service';
 import { FieldManagementStore } from '../../../application/field-management.store';
 import { ExpenseCategory } from '../../../domain/model/entities/expense-category';
 
@@ -56,8 +56,10 @@ const CATEGORIES: { category: ExpenseCategory; label: string }[] = [
 export class MyPlotDashboardView {
   private readonly store = inject(FieldManagementStore);
   private readonly translate = inject(TranslateService);
+  private readonly demoSession = inject(DemoSessionService);
 
-  readonly userName = environment.demoUserName;
+  /** Name of the signed-in user, for the greeting. */
+  readonly userName = computed(() => this.demoSession.activeUser()?.displayName ?? '');
   readonly loading = this.store.loading;
   readonly error = this.store.error;
   readonly plots = this.store.plots;
@@ -139,7 +141,10 @@ export class MyPlotDashboardView {
 
   /** Reloads the data when the API failed. */
   retry(): void {
-    this.store.loadMyPlots(this.store.currentUserId());
+    const userId = this.store.currentUserId();
+    if (userId !== null) {
+      this.store.loadMyPlots(userId);
+    }
   }
 
   /**
