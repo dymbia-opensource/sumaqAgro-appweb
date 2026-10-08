@@ -139,13 +139,7 @@ export class MyPlotDashboardView {
 
   /** Reloads the data when the API failed. */
   retry(): void {
-    this.store.loadMyPlots(environment.demoUserId);
-  }
-
-  constructor() {
-    if (this.store.plotCount() === 0) {
-      this.store.loadMyPlots(environment.demoUserId);
-    }
+    this.store.loadMyPlots(this.store.currentUserId());
   }
 
   /**

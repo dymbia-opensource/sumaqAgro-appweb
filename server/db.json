@@ -166,7 +166,7 @@
     },
     {
       "id": 3,
-      "ownerUserId": 1,
+      "ownerUserId": 2,
       "name": "Parcela Pampa Alta",
       "region": "Junín - Valle del Mantaro",
       "status": "WITHOUT_POLYGON",
@@ -420,6 +420,217 @@
           "clientSyncId": ""
         }
       ]
+    }
+  ],
+  "cooperative-members": [
+    {
+      "id": 1,
+      "cooperativeId": 1,
+      "name": "Alex Nina Condori",
+      "plots": [
+        {
+          "id": 1,
+          "name": "Chacra Pampa Chica",
+          "region": "Concepción, Junín",
+          "coordinates": "-11.9810, -75.2450",
+          "campaignId": 2,
+          "variety": "Papa Yungay",
+          "cropType": "ANDEAN_POTATO"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "cooperativeId": 1,
+      "name": "Mateo Florez",
+      "plots": [
+        {
+          "id": 2,
+          "name": "Fundo Los Pinos",
+          "region": "Junín",
+          "coordinates": "-12.0712, -75.2135",
+          "campaignId": 3,
+          "variety": "Café geisha",
+          "cropType": "SPECIALTY_COFFEE"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "cooperativeId": 1,
+      "name": "Rosa Melgar",
+      "plots": [
+        {
+          "id": 3,
+          "name": "El Mirador",
+          "region": "Junín",
+          "coordinates": "-12.0741, -75.2104",
+          "campaignId": 4,
+          "variety": "Papa Canchán",
+          "cropType": "ANDEAN_POTATO"
+        }
+      ]
+    }
+  ],
+  "harvest-batches": [
+    {
+      "id": 1,
+      "code": "BATCH-2026-08",
+      "cooperativeId": 1,
+      "memberId": 1,
+      "memberName": "Alex Nina Condori",
+      "plotId": 1,
+      "plotName": "Chacra Pampa Chica",
+      "plotRegion": "Concepción, Junín",
+      "coordinates": "-11.9810, -75.2450",
+      "campaignId": 2,
+      "cropType": "ANDEAN_POTATO",
+      "variety": "Papa Yungay",
+      "collectedAt": "2026-10-02",
+      "grossKg": 8568,
+      "tareKg": 168,
+      "sampleKg": 10,
+      "potatoGrading": {
+        "firstPercentage": 72,
+        "secondPercentage": 20,
+        "thirdPercentage": 8,
+        "weevilDamagePercentage": 1.2
+      },
+      "coffeeCupping": null,
+      "qualityCategory": "PREMIUM_GOLD",
+      "status": "CERTIFIED"
+    },
+    {
+      "id": 2,
+      "code": "BATCH-2026-07",
+      "cooperativeId": 1,
+      "memberId": 2,
+      "memberName": "Mateo Florez",
+      "plotId": 2,
+      "plotName": "Fundo Los Pinos",
+      "plotRegion": "Junín",
+      "coordinates": "-12.0712, -75.2135",
+      "campaignId": 3,
+      "cropType": "SPECIALTY_COFFEE",
+      "variety": "Café geisha",
+      "collectedAt": "2026-09-28",
+      "grossKg": 2600,
+      "tareKg": 100,
+      "sampleKg": 1,
+      "potatoGrading": null,
+      "coffeeCupping": {
+        "aroma": 8.5,
+        "flavor": 8.5,
+        "acidity": 8.5,
+        "body": 8.5,
+        "totalScore": 86.5
+      },
+      "qualityCategory": "SPECIALTY_COFFEE",
+      "status": "CERTIFIED"
+    },
+    {
+      "id": 3,
+      "code": "BATCH-2026-06",
+      "cooperativeId": 1,
+      "memberId": 3,
+      "memberName": "Rosa Melgar",
+      "plotId": 3,
+      "plotName": "El Mirador",
+      "plotRegion": "Junín",
+      "coordinates": "-12.0741, -75.2104",
+      "campaignId": 4,
+      "cropType": "ANDEAN_POTATO",
+      "variety": "Papa Canchán",
+      "collectedAt": "2026-09-22",
+      "grossKg": 6150,
+      "tareKg": 150,
+      "sampleKg": 10,
+      "potatoGrading": {
+        "firstPercentage": 45,
+        "secondPercentage": 45,
+        "thirdPercentage": 10,
+        "weevilDamagePercentage": 7
+      },
+      "coffeeCupping": null,
+      "qualityCategory": "STANDARD",
+      "status": "CERTIFIED"
+    },
+    {
+      "code": "BATCH-2026-886325",
+      "cooperativeId": 1,
+      "memberId": 3,
+      "memberName": "Rosa Melgar",
+      "plotId": 3,
+      "plotName": "El Mirador",
+      "plotRegion": "Junín",
+      "coordinates": "-12.0741, -75.2104",
+      "campaignId": 4,
+      "cropType": "ANDEAN_POTATO",
+      "variety": "Papa Canchán",
+      "collectedAt": "2026-10-08",
+      "grossKg": 2600,
+      "tareKg": 100,
+      "sampleKg": 1,
+      "potatoGrading": {
+        "firstPercentage": 72,
+        "secondPercentage": 20,
+        "thirdPercentage": 8,
+        "weevilDamagePercentage": 1.4
+      },
+      "coffeeCupping": null,
+      "qualityCategory": "PREMIUM_GOLD",
+      "status": "CERTIFIED",
+      "id": 4
+    }
+  ],
+  "quality-certificates": [
+    {
+      "id": 1,
+      "harvestBatchId": 1,
+      "certificateNumber": "CERT-BATCH-2026-08",
+      "sha256Hash": "8f4c2e6b3a10d74f5c2ab9087e6f1d4c3b2a1908e7d6c5b4a392817061504f3e",
+      "verificationToken": "demo-batch-2026-08",
+      "issuedByUserId": 2,
+      "issuedByName": "Cristian Santana",
+      "issuedAt": "2026-10-02T18:30:00.000Z",
+      "status": "ACTIVE",
+      "revokedReason": null
+    },
+    {
+      "id": 2,
+      "harvestBatchId": 2,
+      "certificateNumber": "CERT-BATCH-2026-07",
+      "sha256Hash": "19a2b3c4d5e6f708192a3b4c5d6e7f8091a2b3c4d5e6f708192a3b4c5d6e7f80",
+      "verificationToken": "demo-batch-2026-07",
+      "issuedByUserId": 2,
+      "issuedByName": "Cristian Santana",
+      "issuedAt": "2026-09-28T16:15:00.000Z",
+      "status": "ACTIVE",
+      "revokedReason": null
+    },
+    {
+      "id": 3,
+      "harvestBatchId": 3,
+      "certificateNumber": "CERT-BATCH-2026-06",
+      "sha256Hash": "28b3c4d5e6f708192a3b4c5d6e7f8091a2b3c4d5e6f708192a3b4c5d6e7f8091",
+      "verificationToken": "demo-batch-2026-06",
+      "issuedByUserId": 2,
+      "issuedByName": "Cristian Santana",
+      "issuedAt": "2026-09-22T14:00:00.000Z",
+      "status": "ACTIVE",
+      "revokedReason": null
+    },
+    {
+      "harvestBatchId": 4,
+      "certificateNumber": "CERT-BATCH-2026-886325",
+      "sha256Hash": "802f3609592a5e25e2415fe0cf2494ebb035e5748867072416e4460421805863",
+      "verificationToken": "5cddefec-096d-4e7b-81ae-e09a7ac22dfb",
+      "issuedByUserId": 2,
+      "issuedByName": "Cristian Santana",
+      "issuedAt": "2026-10-08T01:44:46.325Z",
+      "status": "ACTIVE",
+      "revokedReason": null,
+      "id": 4
     }
   ]
 }

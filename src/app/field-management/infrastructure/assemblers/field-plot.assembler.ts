@@ -2,16 +2,32 @@ import { BaseAssembler } from '../../../shared/infrastructure/base-assembler';
 import { FieldPlot } from '../../domain/model/entities/field-plot.entity';
 import { GeoCoordinate } from '../../domain/model/entities/geo-coordinate.entity';
 import { PlotStatus } from '../../domain/model/entities/plot-status';
-import { FieldPlotResource, FieldPlotsResponse } from '../responses/field-plot.response';
+import { FieldPlotResource } from '../responses/field-plot.response';
+import { FieldPlotsResponse } from '../responses/field-plots.response';
 
-/** Maps field plots between the RESTful API and the domain. */
+/**
+ * Maps field plot entities to and from API resources.
+ */
 export class FieldPlotAssembler implements BaseAssembler<
   FieldPlot,
   FieldPlotResource,
   FieldPlotsResponse
 > {
-  toEntityFromResource(resource: FieldPlotResource): FieldPlot {
-    return new FieldPlot({
+  /**
+   * Converts a FieldPlotsResponse to an array of FieldPlot entities.
+   * @param response - The API response containing plots.
+   * @returns An array of FieldPlot entities.
+   */
+  toEntitiesFromResponse = (response: FieldPlotsResponse): FieldPlot[] =>
+    response.plots.map((resource) => this.toEntityFromResource(resource));
+
+  /**
+   * Converts a FieldPlotResource to a FieldPlot entity.
+   * @param resource - The resource to convert.
+   * @returns The converted FieldPlot entity.
+   */
+  toEntityFromResource = (resource: FieldPlotResource): FieldPlot =>
+    new FieldPlot({
       id: resource.id,
       ownerUserId: resource.ownerUserId,
       name: resource.name,
@@ -23,22 +39,20 @@ export class FieldPlotAssembler implements BaseAssembler<
       areaHectares: resource.areaHectares,
       agroMonitoringPolygonId: resource.agroMonitoringPolygonId || null,
     });
-  }
 
-  toResourceFromEntity(entity: FieldPlot): FieldPlotResource {
-    return {
-      id: entity.id as number,
-      ownerUserId: entity.ownerUserId,
-      name: entity.name,
-      region: entity.region,
-      status: entity.status,
-      boundary: entity.boundary.map((vertex) => [vertex.latitude, vertex.longitude]),
-      areaHectares: entity.areaHectares,
-      agroMonitoringPolygonId: entity.agroMonitoringPolygonId ?? '',
-    };
-  }
-
-  toEntitiesFromResponse(response: FieldPlotsResponse): FieldPlot[] {
-    return response.plots.map((resource) => this.toEntityFromResource(resource));
-  }
+  /**
+   * Converts a FieldPlot entity to a FieldPlotResource.
+   * @param entity - The entity to convert.
+   * @returns The converted FieldPlotResource.
+   */
+  toResourceFromEntity = (entity: FieldPlot): FieldPlotResource => ({
+    id: entity.id as number,
+    ownerUserId: entity.ownerUserId,
+    name: entity.name,
+    region: entity.region,
+    status: entity.status,
+    boundary: entity.boundary.map((vertex) => [vertex.latitude, vertex.longitude]),
+    areaHectares: entity.areaHectares,
+    agroMonitoringPolygonId: entity.agroMonitoringPolygonId ?? '',
+  });
 }

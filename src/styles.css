@@ -17,3 +17,8 @@
 .mat-drawer-inner-container {
   scrollbar-width: thin;
 }
+
+/* Rounded corners of the "plot saved" dialog, as in the Figma design. */
+.saved-plot-dialog {
+  --mat-dialog-container-shape: 40px;
+}

@@ -1,5 +1,6 @@
 import { BaseEntity } from '../../../../shared/domain/model/base-entity';
 import { Money } from '../../../../shared/domain/model/money';
+import { CropType } from './crop-type';
 import { ExpenseCategory } from './expense-category';
 import { ExpenseEntry } from './expense-entry.entity';
 import { YieldUnit } from './yield-unit';
@@ -112,5 +113,29 @@ export class CampaignLedger extends BaseEntity {
   /** `true` when the ledger is closed and does not accept new expenses. */
   isFrozen(): boolean {
     return this._frozen;
+  }
+
+  /**
+   * Sets the yield the producer expects to harvest, used by the breakeven price (US-40).
+   * @param expectedYield - Number of sacks or quintals, greater than zero.
+   * @param unit - Sack (potato) or quintal (coffee).
+   */
+  setExpectedYield(expectedYield: number, unit: YieldUnit): void {
+    if (this._frozen) {
+      throw new Error('The cost ledger is closed.');
+    }
+    if (expectedYield <= 0) {
+      throw new Error('The expected yield must be greater than zero.');
+    }
+    this._expectedYield = expectedYield;
+    this._yieldUnit = unit;
+  }
+
+  /**
+   * Unit of the yield of a crop: sacks for potato and quintals for coffee.
+   * @param cropType - Crop of the campaign.
+   */
+  static yieldUnitOf(cropType: CropType): YieldUnit {
+    return cropType === CropType.SPECIALTY_COFFEE ? YieldUnit.QUINTAL : YieldUnit.SACK;
   }
 }
