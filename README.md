@@ -61,6 +61,25 @@ Abre `http://localhost:4200`. La aplicación entra directo al dashboard **Mi Par
 
 Para comprobar la fake API: `http://localhost:3000/api/v1/field-plots`.
 
+## Despliegue
+
+| Qué | Dónde | URL |
+|---|---|---|
+| Aplicación web (Static Content) | Firebase Hosting | https://sumaqagro-appweb.web.app |
+| Fake API (json-server) | Render | https://sumaqagro-fake-api.onrender.com/api/v1 |
+
+**Fake API.** Render despliega solo la rama `develop` en cada push, con el comando `npx json-server server/db.json --routes server/routes.json --host 0.0.0.0 --port $PORT`. En el plan gratuito el servicio se suspende tras 15 minutos sin uso: la primera petición tarda unos segundos en responder. Los cambios hechos desde la aplicación se pierden al reiniciarse y vuelven a los datos de `server/db.json`.
+
+**Aplicación web.** `src/environments/environment.ts` apunta a la fake API de Render. Para publicar una nueva versión (requiere [Firebase CLI](https://firebase.google.com/docs/cli) y acceso al proyecto `sumaqagro-appweb`):
+
+```bash
+firebase login
+npm run build
+firebase deploy --only hosting
+```
+
+`firebase.json` publica la carpeta `dist/sumaqAgro-appweb/browser` y redirige cualquier ruta a `index.html`, para que Angular abra la vista correcta al recargar la página.
+
 ## Scripts
 
 | Comando | Qué hace |
@@ -90,7 +109,7 @@ Para comprobar la fake API: `http://localhost:3000/api/v1/field-plots`.
 
 Estructura final de la **Web Application** de SumaqAgro. Sigue lo definido en el reporte:
 
-* **C4 (sección 4.6):** cada carpeta de `src/app` es un componente del diagrama de componentes de la Web Application. La carpeta `public/` y el resultado de `ng build` forman el contenedor **Static Content** (Cloudflare Pages).
+* **C4 (sección 4.6):** cada carpeta de `src/app` es un componente del diagrama de componentes de la Web Application. La carpeta `public/` y el resultado de `ng build` forman el contenedor **Static Content** (Firebase Hosting).
 * **DDD:** una carpeta por bounded context (IAM, Profiles, Subscriptions and Payments, Field Management, Crop Health y Harvest Certification) más `shared`. Cada una tiene las capas `domain/model`, `application`, `infrastructure` y `presentation`.
 * **Diagramas de clases (sección 4.7):** los nombres de archivo son los mismos que aparecen junto a cada clase en los diagramas de la Web Application.
 
@@ -124,7 +143,6 @@ sumaqagro-app-web/
 │   │   └── logo-sumaqagro.png
 │   ├── icons/                                  # Íconos de la PWA
 │   ├── manifest.webmanifest                    # Datos de la PWA (nombre, íconos, colores)
-│   ├── _redirects                              # Cloudflare Pages: /* /index.html 200 (rutas de la SPA)
 │   └── favicon.ico
 ├── src/
 │   ├── app/
@@ -479,10 +497,12 @@ sumaqagro-app-web/
 │   ├── material-theme.scss                     # Tema de Angular Material
 │   └── styles.css
 ├── .editorconfig
+├── .firebaserc                                 # Proyecto de Firebase al que se despliega
 ├── .gitignore
 ├── angular.json
 ├── CHANGELOG.md                                # Notas de cada versión
 ├── CONTRIBUTING.md                             # Guía para colaborar y convenciones de código
+├── firebase.json                               # Firebase Hosting: carpeta del build y rewrite de la SPA a index.html
 ├── LICENSE
 ├── ngsw-config.json                            # Caché del Service Worker (@angular/pwa)
 ├── package.json
@@ -519,5 +539,5 @@ sumaqagro-app-web/
   * Cada contexto llama solo al contexto del mismo nombre en la RESTful API.
 * **Modo sin conexión:** `offline-sync.service.ts` guarda en IndexedDB los gastos (Field Management) y los reportes de plagas (Crop Health) hechos sin señal, cada uno con un `clientSyncId` para no duplicarse, y los envía cuando vuelve la conexión. `ngsw-config.json` deja en caché la aplicación y los mapas.
 * **Dependencias principales (`package.json`):** `@angular/material`, `@angular/pwa` (`@angular/service-worker`), `leaflet`, `dexie` y `@ngx-translate/core`; en desarrollo, `json-server`.
-* **Despliegue:** `ng build` genera la carpeta `dist/`, que se publica en Cloudflare Pages (contenedor Static Content). El archivo `_redirects` hace que cualquier ruta de la SPA cargue `index.html`.
+* **Despliegue:** `ng build` genera la carpeta `dist/sumaqAgro-appweb/browser`, que se publica en Firebase Hosting (contenedor Static Content). `firebase.json` hace que cualquier ruta de la SPA cargue `index.html`.
 * **Fake API:** `server/db.json` simula el backend con json-server mientras la RESTful API no está lista. Sus colecciones usan los mismos nombres que los endpoints (`field-plots`, `crop-campaigns`, `pest-reports`, etc.).
