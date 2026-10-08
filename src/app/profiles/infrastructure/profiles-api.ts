@@ -6,7 +6,6 @@ import { CooperativeMember } from '../domain/model/entities/cooperative-member.e
 import { Cooperative } from '../domain/model/entities/cooperative.entity';
 import { CooperativeDashboard } from '../domain/model/entities/cooperative-dashboard.entity';
 import { FarmerProfile } from '../domain/model/entities/farmer-profile.entity';
-import { RegisterCooperativeCommand } from '../domain/model/commands/register-cooperative.command';
 import { CooperativeMembersApiEndpoint } from './endpoints/cooperative-members.endpoint';
 import { CooperativeDashboardApiEndpoint } from './endpoints/cooperative-dashboard.endpoint';
 import { CooperativesApiEndpoint } from './endpoints/cooperatives.endpoint';
@@ -49,7 +48,4 @@ export class ProfilesApi extends BaseApi {
     return this.cooperativeDashboardEndpoint.getByDirector(directorUserId);
   }
 
-  registerCooperative(command: RegisterCooperativeCommand): Observable<Cooperative> {
-    return this.cooperativesEndpoint.register(command);
-  }
 }

@@ -1,6 +1,5 @@
 import { computed, inject, Service, signal } from '@angular/core';
 import { finalize, of, switchMap, throwError } from 'rxjs';
-import { RegisterCooperativeCommand } from '../domain/model/commands/register-cooperative.command';
 import { UpdateFarmerContactCommand } from '../domain/model/commands/update-farmer-contact.command';
 import { CooperativeMember } from '../domain/model/entities/cooperative-member.entity';
 import { Cooperative } from '../domain/model/entities/cooperative.entity';
@@ -97,26 +96,5 @@ export class ProfilesStore {
       });
   }
 
-  /** Registers the director's cooperative and makes it the active institutional profile. */
-  registerCooperative(command: RegisterCooperativeCommand): void {
-    this.savingSignal.set(true);
-    this.errorSignal.set(null);
-    this.profilesApi
-      .getCooperativeByDirector(command.directorUserId)
-      .pipe(
-        switchMap((existingCooperative) =>
-          existingCooperative
-            ? throwError(() => new Error('The director already has a registered cooperative.'))
-            : this.profilesApi.registerCooperative(command),
-        ),
-      )
-      .pipe(finalize(() => this.savingSignal.set(false)))
-      .subscribe({
-        next: (cooperative) => {
-          this.cooperativeSignal.set(cooperative);
-          this.membersSignal.set([]);
-        },
-        error: (error: Error) => this.errorSignal.set(error.message),
-      });
-  }
+
 }

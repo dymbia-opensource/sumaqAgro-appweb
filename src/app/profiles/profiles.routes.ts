@@ -6,7 +6,6 @@ const farmerSettingsView = () =>
     (module) => module.FarmerSettingsView,
   );
 const cooperativeDashboardView = () => import('./presentation/views/cooperative-dashboard-view/cooperative-dashboard-view').then((module) => module.CooperativeDashboardView);
-const cooperativeRegistrationView = () => import('./presentation/views/cooperative-registration-view/cooperative-registration-view').then((module) => module.CooperativeRegistrationView);
 const cooperativeSettingsView = () => import('./presentation/views/cooperative-settings-view/cooperative-settings-view').then((module) => module.CooperativeSettingsView);
 
 /** Routes owned by the Profiles bounded context. */
@@ -22,7 +21,6 @@ export const profilesRoutes: Routes = [
     loadComponent: cooperativeDashboardView,
     title: 'Dashboard institucional | SumaqAgro',
   },
-  { path: 'cooperative/registration', loadComponent: cooperativeRegistrationView, title: 'Registrar cooperativa | SumaqAgro' },
   { path: 'cooperative/settings', loadComponent: cooperativeSettingsView, title: 'Configuración institucional | SumaqAgro' },
   { path: '', redirectTo: 'cooperative/dashboard', pathMatch: 'full' },
 ];
