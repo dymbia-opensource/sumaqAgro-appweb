@@ -134,6 +134,10 @@
       "SEVERE": "Severa"
     },
     "no-polygon": "Esta parcela aún no tiene un polígono registrado.",
+    "plot-boundary": "Límite de la parcela",
+    "map-background": "Fondo del mapa",
+    "hybrid-satellite": "Satélite híbrido",
+    "street-map": "Mapa",
     "map-boundary-note": "El mapa muestra el límite registrado de la parcela. Los colores distinguen el índice seleccionado; no representan una imagen satelital ni zonas de estrés calculadas.",
     "no-data": "Sin datos",
     "observation-pending": "Los valores y la descarga estarán disponibles cuando se registre una observación satelital para esta parcela.",

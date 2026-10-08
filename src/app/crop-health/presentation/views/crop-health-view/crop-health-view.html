@@ -22,7 +22,16 @@
 </div>
 <p>{{ 'crop-health.map-boundary-note' | translate }}</p>
 <div class="content-grid">
-  <div class="map-card"><div #mapContainer class="mock-map"></div></div>
+  <div class="map-card">
+    <div #mapContainer class="mock-map"></div>
+    <div class="map-toolbar">
+      <span class="boundary-legend"><mat-icon>crop_free</mat-icon>{{ 'crop-health.plot-boundary' | translate }}</span>
+      <mat-button-toggle-group [(ngModel)]="selectedBase" (change)="onBaseLayerChange()" [attr.aria-label]="'crop-health.map-background' | translate">
+        <mat-button-toggle value="satellite">{{ 'crop-health.hybrid-satellite' | translate }}</mat-button-toggle>
+        <mat-button-toggle value="streets">{{ 'crop-health.street-map' | translate }}</mat-button-toggle>
+      </mat-button-toggle-group>
+    </div>
+  </div>
   <aside class="diagnosis-aside">
     <mat-card appearance="outlined" class="diagnosis-card">
       <mat-card-header>

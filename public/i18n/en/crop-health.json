@@ -134,6 +134,10 @@
       "SEVERE": "Severe"
     },
     "no-polygon": "This plot does not have a recorded boundary yet.",
+    "plot-boundary": "Plot boundary",
+    "map-background": "Map background",
+    "hybrid-satellite": "Hybrid satellite",
+    "street-map": "Map",
     "map-boundary-note": "The map shows the recorded plot boundary. Colors distinguish the selected index; they do not represent satellite imagery or calculated stress zones.",
     "no-data": "No data",
     "observation-pending": "Values and download will be available once a satellite observation is recorded for this plot.",

@@ -82,11 +82,11 @@ export class PlotBoundaryMapView implements AfterViewInit, OnDestroy {
     satellite: L.layerGroup([
       L.tileLayer(
         'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-        { maxZoom: 19, attribution: 'Tiles © Esri — Esri, Maxar, Earthstar Geographics' },
+        { maxZoom: 19, maxNativeZoom: 17, attribution: 'Tiles © Esri — Esri, Maxar, Earthstar Geographics' },
       ),
       L.tileLayer(
         'https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}',
-        { maxZoom: 19 },
+        { maxZoom: 19, maxNativeZoom: 17 },
       ),
     ]),
     streets: L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {

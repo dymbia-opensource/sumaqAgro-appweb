@@ -944,6 +944,17 @@
       "photo": "https://www.facebook.com/AgenciaAgrariaViru/posts/agencia-agraria-vir%C3%BA-te-recomienda-a-conocer-a-los-insectos-qu%C3%A9-se-encuentran-en/1101984545288457/",
       "clientSyncId": "96aced2b-2c22-4bb6-9139-82757749a7ec",
       "id": 3
+    },
+    {
+      "plotId": 7,
+      "plotName": "Parcela demo Apurímac",
+      "reporterId": 1,
+      "description": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "severity": "MEDIUM",
+      "status": "PENDING",
+      "photo": "",
+      "clientSyncId": "b20a1e5b-9d8e-44b5-8de4-61ff540eb2a3",
+      "id": 4
     }
   ],
   "field-inspections": [],
