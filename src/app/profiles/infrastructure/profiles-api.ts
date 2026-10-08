@@ -6,10 +6,12 @@ import { CooperativeMember } from '../domain/model/entities/cooperative-member.e
 import { Cooperative } from '../domain/model/entities/cooperative.entity';
 import { CooperativeDashboard } from '../domain/model/entities/cooperative-dashboard.entity';
 import { FarmerProfile } from '../domain/model/entities/farmer-profile.entity';
+import { TechnicalAdvisor } from '../domain/model/entities/technical-advisor.entity';
 import { CooperativeMembersApiEndpoint } from './endpoints/cooperative-members.endpoint';
 import { CooperativeDashboardApiEndpoint } from './endpoints/cooperative-dashboard.endpoint';
 import { CooperativesApiEndpoint } from './endpoints/cooperatives.endpoint';
 import { FarmerProfilesApiEndpoint } from './endpoints/farmer-profiles.endpoint';
+import { TechnicalAdvisorsApiEndpoint } from './endpoints/technical-advisors.endpoint';
 
 /** Facade that exposes only the Profile data required by its application layer. */
 @Service()
@@ -18,6 +20,7 @@ export class ProfilesApi extends BaseApi {
   private readonly cooperativesEndpoint: CooperativesApiEndpoint;
   private readonly cooperativeMembersEndpoint: CooperativeMembersApiEndpoint;
   private readonly cooperativeDashboardEndpoint: CooperativeDashboardApiEndpoint;
+  private readonly technicalAdvisorsEndpoint: TechnicalAdvisorsApiEndpoint;
 
   constructor() {
     super();
@@ -26,6 +29,7 @@ export class ProfilesApi extends BaseApi {
     this.cooperativesEndpoint = new CooperativesApiEndpoint(http);
     this.cooperativeMembersEndpoint = new CooperativeMembersApiEndpoint(http);
     this.cooperativeDashboardEndpoint = new CooperativeDashboardApiEndpoint(http);
+    this.technicalAdvisorsEndpoint = new TechnicalAdvisorsApiEndpoint(http);
   }
 
   getFarmerProfile(userId: number): Observable<FarmerProfile> {
@@ -52,4 +56,19 @@ export class ProfilesApi extends BaseApi {
     return this.cooperativeDashboardEndpoint.getByDirector(directorUserId);
   }
 
+  getTechnicalAdvisors(cooperativeId: number): Observable<TechnicalAdvisor[]> {
+    return this.technicalAdvisorsEndpoint.getByCooperative(cooperativeId);
+  }
+
+  createTechnicalAdvisor(advisor: TechnicalAdvisor): Observable<TechnicalAdvisor> {
+    return this.technicalAdvisorsEndpoint.create(advisor);
+  }
+
+  updateTechnicalAdvisor(advisor: TechnicalAdvisor): Observable<TechnicalAdvisor> {
+    return this.technicalAdvisorsEndpoint.update(advisor, advisor.id);
+  }
+
+  deleteTechnicalAdvisor(id: number): Observable<void> {
+    return this.technicalAdvisorsEndpoint.delete(id);
+  }
 }

@@ -20,6 +20,24 @@
       "switchboardPhone": "+51 64 555 200"
     }
   ],
+  "agronomist-assignments": [
+    {
+      "id": 1,
+      "cooperativeId": 1,
+      "name": "Ing. Juan A. Morales",
+      "cipCode": "184029",
+      "phone": "964 811 200",
+      "assignedPlotsCount": 32
+    },
+    {
+      "id": 2,
+      "cooperativeId": 1,
+      "name": "Ing. Sofia Ramos",
+      "cipCode": "201844",
+      "phone": "951 324 112",
+      "assignedPlotsCount": 20
+    }
+  ],
   "cooperative-members": [
     {
       "id": 1,

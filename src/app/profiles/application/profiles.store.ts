@@ -2,10 +2,13 @@ import { computed, inject, Service, signal } from '@angular/core';
 import { finalize, of, switchMap } from 'rxjs';
 import { UpdateFarmerContactCommand } from '../domain/model/commands/update-farmer-contact.command';
 import { UpdateCooperativeCommand } from '../domain/model/commands/update-cooperative.command';
+import { InviteTechnicalAdvisorCommand } from '../domain/model/commands/invite-technical-advisor.command';
+import { ReassignTechnicalAdvisorCommand } from '../domain/model/commands/reassign-technical-advisor.command';
 import { CooperativeMember } from '../domain/model/entities/cooperative-member.entity';
 import { Cooperative } from '../domain/model/entities/cooperative.entity';
 import { CooperativeDashboard } from '../domain/model/entities/cooperative-dashboard.entity';
 import { FarmerProfile } from '../domain/model/entities/farmer-profile.entity';
+import { TechnicalAdvisor } from '../domain/model/entities/technical-advisor.entity';
 import { ProfilesApi } from '../infrastructure/profiles-api';
 
 /** Coordinates the institutional Profile read models for a cooperative director. */
@@ -15,6 +18,7 @@ export class ProfilesStore {
   private readonly profileSignal = signal<FarmerProfile | null>(null);
   private readonly cooperativeSignal = signal<Cooperative | null>(null);
   private readonly membersSignal = signal<CooperativeMember[]>([]);
+  private readonly technicalAdvisorsSignal = signal<TechnicalAdvisor[]>([]);
   private readonly dashboardSignal = signal<CooperativeDashboard | null>(null);
   private readonly loadingSignal = signal(false);
   private readonly savingSignal = signal(false);
@@ -23,6 +27,7 @@ export class ProfilesStore {
   readonly profile = this.profileSignal.asReadonly();
   readonly cooperative = this.cooperativeSignal.asReadonly();
   readonly members = this.membersSignal.asReadonly();
+  readonly technicalAdvisors = this.technicalAdvisorsSignal.asReadonly();
   readonly dashboard = this.dashboardSignal.asReadonly();
   readonly loading = this.loadingSignal.asReadonly();
   readonly saving = this.savingSignal.asReadonly();
@@ -81,19 +86,51 @@ export class ProfilesStore {
     });
   }
 
-  /** Loads the cooperative and its member summary for the active director. */
+  /** Loads the cooperative, member summary, and technical team for the active director. */
   loadInstitutionalDashboard(directorUserId: number): void {
     this.loadingSignal.set(true);
     this.errorSignal.set(null);
     this.profilesApi
       .getCooperativeByDirector(directorUserId)
-      .pipe(switchMap((cooperative) => {
-        this.cooperativeSignal.set(cooperative);
-        return cooperative ? this.profilesApi.getCooperativeMembers(cooperative.id as number) : of([]);
-      }))
+      .pipe(
+        switchMap((cooperative) => {
+          this.cooperativeSignal.set(cooperative);
+          if (!cooperative) {
+            return of({ members: [], advisors: [] });
+          }
+          const coopId = cooperative.id as number;
+          return this.profilesApi.getCooperativeMembers(coopId).pipe(
+            switchMap((members) =>
+              this.profilesApi.getTechnicalAdvisors(coopId).pipe(
+                switchMap((advisors) => of({ members, advisors }))
+              )
+            )
+          );
+        })
+      )
       .subscribe({
-        next: (members) => { this.membersSignal.set(members); this.loadingSignal.set(false); },
-        error: (error: Error) => { this.errorSignal.set(error.message); this.loadingSignal.set(false); },
+        next: (result) => {
+          this.membersSignal.set(result.members);
+          this.technicalAdvisorsSignal.set(result.advisors);
+          this.loadingSignal.set(false);
+        },
+        error: (error: Error) => {
+          this.errorSignal.set(error.message);
+          this.loadingSignal.set(false);
+        },
+      });
+  }
+
+  /** Loads technical advisors specifically for a cooperative. */
+  loadTechnicalAdvisors(cooperativeId: number): void {
+    this.loadingSignal.set(true);
+    this.errorSignal.set(null);
+    this.profilesApi
+      .getTechnicalAdvisors(cooperativeId)
+      .pipe(finalize(() => this.loadingSignal.set(false)))
+      .subscribe({
+        next: (advisors) => this.technicalAdvisorsSignal.set(advisors),
+        error: (error: Error) => this.errorSignal.set(error.message),
       });
   }
 
@@ -120,5 +157,69 @@ export class ProfilesStore {
       });
   }
 
+  /** Invites a new technical advisor to the cooperative team. */
+  inviteTechnicalAdvisor(command: InviteTechnicalAdvisorCommand): void {
+    const newAdvisor = new TechnicalAdvisor({
+      cooperativeId: command.cooperativeId,
+      name: command.name,
+      cipCode: command.cipCode,
+      phone: command.phone,
+      assignedPlotsCount: command.assignedPlotsCount,
+    });
 
+    this.savingSignal.set(true);
+    this.errorSignal.set(null);
+    this.profilesApi
+      .createTechnicalAdvisor(newAdvisor)
+      .pipe(finalize(() => this.savingSignal.set(false)))
+      .subscribe({
+        next: (createdAdvisor) => {
+          this.technicalAdvisorsSignal.update((current) => [...current, createdAdvisor]);
+        },
+        error: (error: Error) => this.errorSignal.set(error.message),
+      });
+  }
+
+  /** Reassigns or edits details for an existing technical advisor. */
+  reassignTechnicalAdvisor(command: ReassignTechnicalAdvisorCommand): void {
+    const advisors = this.technicalAdvisorsSignal();
+    const advisor = advisors.find((item) => item.id === command.id);
+    if (!advisor) return;
+
+    try {
+      advisor.updateDetails(command.name, command.cipCode, command.phone, command.assignedPlotsCount);
+    } catch (error) {
+      this.errorSignal.set(error instanceof Error ? error.message : 'Datos inválidos.');
+      return;
+    }
+
+    this.savingSignal.set(true);
+    this.errorSignal.set(null);
+    this.profilesApi
+      .updateTechnicalAdvisor(advisor)
+      .pipe(finalize(() => this.savingSignal.set(false)))
+      .subscribe({
+        next: (updatedAdvisor) => {
+          this.technicalAdvisorsSignal.update((current) =>
+            current.map((item) => (item.id === updatedAdvisor.id ? updatedAdvisor : item))
+          );
+        },
+        error: (error: Error) => this.errorSignal.set(error.message),
+      });
+  }
+
+  /** Removes a technical advisor from the cooperative team. */
+  removeTechnicalAdvisor(id: number): void {
+    this.savingSignal.set(true);
+    this.errorSignal.set(null);
+    this.profilesApi
+      .deleteTechnicalAdvisor(id)
+      .pipe(finalize(() => this.savingSignal.set(false)))
+      .subscribe({
+        next: () => {
+          this.technicalAdvisorsSignal.update((current) => current.filter((item) => item.id !== id));
+        },
+        error: (error: Error) => this.errorSignal.set(error.message),
+      });
+  }
 }
