@@ -4,6 +4,7 @@ import { BaseResource, BaseResponse } from '../../../shared/infrastructure/base-
 export interface TechnicalAdvisorResource extends BaseResource {
   id: number;
   cooperativeId: number;
+  userId?: number;
   name: string;
   cipCode: string;
   phone: string;

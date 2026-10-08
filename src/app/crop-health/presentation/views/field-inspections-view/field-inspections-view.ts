@@ -1,5 +1,6 @@
+import { FormsModule } from '@angular/forms';
 import { DatePipe } from '@angular/common';
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, effect, inject, untracked, signal } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
@@ -14,22 +15,35 @@ import { ScheduleFieldInspectionCommand } from '../../../domain/model/commands/s
 
 @Component({
   selector: 'app-field-inspections-view',
-  imports: [DatePipe, ReactiveFormsModule, RouterLink, TranslatePipe, MatButtonModule, MatCardModule,
+  imports: [FormsModule, DatePipe, ReactiveFormsModule, RouterLink, TranslatePipe, MatButtonModule, MatCardModule,
     MatFormFieldModule, MatInputModule, MatSelectModule, MatProgressBarModule],
   templateUrl: './field-inspections-view.html', styleUrl: './field-inspections-view.css',
 })
-export class FieldInspectionsView implements OnInit {
+export class FieldInspectionsView {
   private readonly fb = inject(NonNullableFormBuilder);
   private readonly route = inject(ActivatedRoute);
   readonly store = inject(CropHealthStore);
   readonly saved = signal(false);
+  readonly savedMessage = signal('crop-health.inspection-saved');
+  completionNotes: Record<number, string> = {};
   readonly inspectionForm = this.fb.group({
     reportId: [0, Validators.min(1)], scheduledAt: ['', Validators.required], notes: [''],
   });
-  ngOnInit(): void {
+  constructor() {
+    effect(() => {
+      const ready = this.store.scopeReady();
+      untracked(() => {
+        this.saved.set(false);
+        if (ready) this.load();
+      });
+    });
+  }
+  private load(): void {
     this.store.loadClinicalData(() => {
+      this.inspectionForm.enable(); this.inspectionForm.reset();
+      this.completionNotes = {};
       const reportId = Number(this.route.snapshot.queryParamMap.get('reportId'));
-      if (this.store.pestReports().some(report => report.id === reportId)) {
+      if (this.store.schedulableReports().some(report => report.id === reportId)) {
         this.inspectionForm.controls.reportId.setValue(reportId);
       }
     });
@@ -38,7 +52,7 @@ export class FieldInspectionsView implements OnInit {
     this.saved.set(false);
     this.inspectionForm.markAllAsTouched();
     const value = this.inspectionForm.getRawValue();
-    if (this.inspectionForm.invalid || this.store.loading() || this.store.saving()) return;
+    if (this.inspectionForm.invalid || !this.store.canSchedule() || this.store.clinicalLoading() || this.store.saving()) return;
     if (!this.store.pestReports().some(report => report.id === value.reportId)) return;
     const date = new Date(value.scheduledAt);
     if (!Number.isFinite(date.getTime())) {
@@ -49,7 +63,11 @@ export class FieldInspectionsView implements OnInit {
       reportId: value.reportId, scheduledAt: date.toISOString(), notes: value.notes.trim(),
     }), () => {
       this.inspectionForm.reset({ reportId: value.reportId });
-      this.inspectionForm.enable(); this.saved.set(true);
+      this.inspectionForm.enable(); this.savedMessage.set('crop-health.inspection-saved'); this.saved.set(true);
     }, () => this.inspectionForm.enable());
+  }
+  complete(id: number): void {
+    this.saved.set(false);
+    this.store.completeInspection(id, this.completionNotes[id] ?? '', () => { this.savedMessage.set('crop-health.inspection-completed'); this.saved.set(true); }, () => {});
   }
 }

@@ -1,18 +1,19 @@
 <header class="view-header"><span class="breadcrumb">{{ 'crop-health.eyebrow' | translate }}</span><h1>{{ 'crop-health.inbox-title' | translate }}</h1></header>
+@if (store.writeError(); as error) { <p role="alert">{{ error | translate }}</p> }
 <p>{{ 'crop-health.workflow-demo' | translate }}</p>
 <nav>
-  <a mat-flat-button routerLink="/crop-health/report-pest">{{ 'crop-health.form-title' | translate }}</a>
+  @if (store.canReport()) { <a mat-flat-button routerLink="/crop-health/report-pest">{{ 'crop-health.form-title' | translate }}</a> }
   <a mat-stroked-button routerLink="/crop-health/inspections">{{ 'crop-health.inspections-title' | translate }}</a>
   <a mat-stroked-button routerLink="/crop-health/prescriptions">{{ 'crop-health.history-title' | translate }}</a>
 </nav>
-@if (store.loading() || store.saving()) {
+@if (store.clinicalLoading() || store.saving()) {
   <mat-progress-bar mode="indeterminate" [attr.aria-label]="'common.loading' | translate" />
 }
-@if (store.error(); as error) {
+@if (store.clinicalError(); as error) {
   <mat-card appearance="outlined" role="alert"><mat-card-content><p>{{ error | translate }}</p></mat-card-content></mat-card>
 }
 
-@if (!store.loading() && !store.error()) {
+@if (!store.clinicalLoading() && !store.clinicalError()) {
 <div class="inbox-list">
   @for (report of store.pestReports(); track report.id) {
     <mat-card appearance="outlined" class="report-card">
@@ -27,8 +28,9 @@
         @if (report.photo) { <a [href]="report.photo" target="_blank" rel="noopener noreferrer">{{ 'crop-health.view-photo' | translate }}</a> }
       </mat-card-content>
       <mat-card-actions>
-        <a mat-flat-button routerLink="/crop-health/inspections" [queryParams]="{ reportId: report.id }">{{ 'crop-health.schedule-inspection' | translate }}</a>
-        <a mat-stroked-button routerLink="/crop-health/prescribe" [queryParams]="{ reportId: report.id }">{{ 'crop-health.btn-prescribe' | translate }}</a>
+        @if (store.canSchedule() && report.status === 'PENDING') { <a mat-flat-button routerLink="/crop-health/inspections" [queryParams]="{ reportId: report.id }">{{ 'crop-health.schedule-inspection' | translate }}</a> }
+        @if (store.canPrescribe() && report.status === 'INSPECTED') { <a mat-stroked-button routerLink="/crop-health/prescribe" [queryParams]="{ reportId: report.id }">{{ 'crop-health.btn-prescribe' | translate }}</a> }
+        @if (store.canResolve(+report.id)) { <button mat-stroked-button [disabled]="store.saving()" (click)="resolve(+report.id)">{{ 'crop-health.resolve-report' | translate }}</button> }
       </mat-card-actions>
     </mat-card>
   } @empty {

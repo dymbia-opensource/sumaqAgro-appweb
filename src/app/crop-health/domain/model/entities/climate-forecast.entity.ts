@@ -1,4 +1,5 @@
-﻿import { BaseEntity } from '../../../../shared/domain/model/base-entity';
+import { requireText, requireRange, requireDate } from '../validation';
+import { BaseEntity } from '../../../../shared/domain/model/base-entity';
 
 /**
  * Properties required to instantiate a {@link ClimateForecast}.
@@ -29,6 +30,8 @@ export class ClimateForecast extends BaseEntity {
    */
   constructor(props: ClimateForecastProps) {
     super({ id: props.id ?? 0 });
+    requireText(props.region); requireRange(props.temperature, -273.15);
+    requireRange(props.rainChance, 0, 100); requireDate(props.forecastDate);
     this._region = props.region;
     this._temperature = props.temperature;
     this._rainChance = props.rainChance;

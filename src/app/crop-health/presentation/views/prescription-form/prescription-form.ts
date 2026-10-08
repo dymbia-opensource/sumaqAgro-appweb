@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, effect, inject, untracked, signal } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
@@ -17,7 +17,7 @@ import { IssueTechnicalPrescriptionCommand } from '../../../domain/model/command
     MatFormFieldModule, MatInputModule, MatSelectModule, MatProgressBarModule],
   templateUrl: './prescription-form.html', styleUrl: './prescription-form.css',
 })
-export class PrescriptionForm implements OnInit {
+export class PrescriptionForm {
   private readonly fb = inject(NonNullableFormBuilder);
   private readonly route = inject(ActivatedRoute);
   readonly store = inject(CropHealthStore);
@@ -29,10 +29,21 @@ export class PrescriptionForm implements OnInit {
     instructions: ['', [Validators.required, Validators.pattern(/\S/)]],
     applicationDate: ['', Validators.required],
   });
-  ngOnInit(): void {
+  constructor() {
+    effect(() => {
+      const ready = this.store.scopeReady();
+      untracked(() => {
+        this.saved.set(false);
+        if (ready) this.load();
+      });
+    });
+  }
+  private load(): void {
     this.store.loadClinicalData(() => {
+      this.prescriptionForm.enable();
+      this.prescriptionForm.reset({ agronomistId: this.store.activeUser()?.id ?? 0 });
       const reportId = Number(this.route.snapshot.queryParamMap.get('reportId'));
-      if (this.store.pestReports().some(report => report.id === reportId)) {
+      if (this.store.treatableReports().some(report => report.id === reportId)) {
         this.prescriptionForm.controls.reportId.setValue(reportId);
       }
     });
@@ -41,9 +52,9 @@ export class PrescriptionForm implements OnInit {
     this.saved.set(false);
     this.prescriptionForm.markAllAsTouched();
     const value = this.prescriptionForm.getRawValue();
-    if (this.prescriptionForm.invalid || this.store.loading() || this.store.saving()) return;
+    if (this.prescriptionForm.invalid || !this.store.canPrescribe() || this.store.clinicalLoading() || this.store.saving()) return;
     if (!this.store.pestReports().some(report => report.id === value.reportId) ||
-        !this.store.advisors().some(advisor => advisor.id === value.agronomistId)) return;
+        !this.store.advisors().some(advisor => advisor.userId === value.agronomistId)) return;
     if (!Number.isFinite(Date.parse(value.applicationDate))) {
       this.prescriptionForm.controls.applicationDate.setErrors({ invalidDate: true }); return;
     }

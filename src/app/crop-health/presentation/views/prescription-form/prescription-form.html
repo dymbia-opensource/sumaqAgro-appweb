@@ -1,33 +1,28 @@
 <header class="view-header"><span class="breadcrumb">{{ 'crop-health.eyebrow' | translate }}</span><h1>{{ 'crop-health.prescribe-title' | translate }}</h1></header>
+@if (store.writeError(); as error) { <p role="alert">{{ error | translate }}</p> }
 <p>{{ 'crop-health.workflow-demo' | translate }}</p>
-@if (store.loading() || store.saving()) {
+@if (store.clinicalLoading() || store.saving()) {
   <mat-progress-bar mode="indeterminate" [attr.aria-label]="'common.loading' | translate" />
 }
-@if (store.error(); as error) {
+@if (store.clinicalError(); as error) {
   <mat-card appearance="outlined" role="alert"><mat-card-content><p>{{ error | translate }}</p></mat-card-content></mat-card>
 }
 
 @if (saved()) { <p role="status">{{ 'crop-health.prescription-saved' | translate }}</p> }
-@if (!store.loading() && !store.error() && store.pestReports().length === 0) { <p>{{ 'crop-health.no-reports' | translate }}</p> }
-@if (!store.loading() && !store.error() && store.advisors().length === 0) { <p>{{ 'crop-health.no-advisors' | translate }}</p> }
+@if (!store.clinicalLoading() && !store.clinicalError() && store.treatableReports().length === 0) { <p>{{ 'crop-health.inspection-required' | translate }}</p> }
+@if (!store.clinicalLoading() && !store.clinicalError() && store.advisors().length === 0) { <p>{{ 'crop-health.no-advisors' | translate }}</p> }
 <mat-card appearance="outlined" class="form-card"><mat-card-content>
 <form [formGroup]="prescriptionForm" (ngSubmit)="onSubmit()">
   <mat-form-field appearance="outline" class="full-width">
   <mat-label>{{ 'crop-health.related-report' | translate }}</mat-label>
   <mat-select formControlName="reportId">
-    @for (report of store.pestReports(); track report.id) {
+    @for (report of store.treatableReports(); track report.id) {
       <mat-option [value]="report.id">{{ store.reportLabel(+report.id) }} · {{ report.description }}</mat-option>
     }
   </mat-select>
   <mat-error>{{ 'crop-health.required-field' | translate }}</mat-error>
 </mat-form-field>
-  <mat-form-field appearance="outline" class="full-width">
-    <mat-label>{{ 'crop-health.agronomist' | translate }}</mat-label>
-    <mat-select formControlName="agronomistId">
-      @for (advisor of store.advisors(); track advisor.id) { <mat-option [value]="advisor.id">{{ advisor.name }}</mat-option> }
-    </mat-select>
-    <mat-error>{{ 'crop-health.required-field' | translate }}</mat-error>
-  </mat-form-field>
+  <p>{{ 'crop-health.agronomist' | translate }}: {{ store.currentAdvisor()?.name }}</p>
   <mat-form-field appearance="outline" class="full-width">
   <mat-label>{{ 'crop-health.form-agrochemical' | translate }}</mat-label>
   <input matInput type="text" formControlName="agrochemical">
@@ -49,7 +44,7 @@
   <mat-error>{{ 'crop-health.required-field' | translate }}</mat-error>
 </mat-form-field>
   <div class="form-actions">
-    <button mat-flat-button type="submit" [disabled]="prescriptionForm.invalid || prescriptionForm.disabled || store.loading() || store.saving() || store.pestReports().length === 0 || store.advisors().length === 0">{{ 'crop-health.btn-issue-prescription' | translate }}</button>
+    <button mat-flat-button type="submit" [disabled]="prescriptionForm.invalid || prescriptionForm.disabled || store.clinicalLoading() || store.saving() || store.treatableReports().length === 0 || store.advisors().length === 0">{{ 'crop-health.btn-issue-prescription' | translate }}</button>
     <a mat-stroked-button routerLink="/crop-health/prescriptions">{{ 'crop-health.history-title' | translate }}</a>
   </div>
 </form>

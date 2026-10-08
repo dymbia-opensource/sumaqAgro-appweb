@@ -1,20 +1,21 @@
 <header class="view-header"><span class="breadcrumb">{{ 'crop-health.eyebrow' | translate }}</span><h1>{{ 'crop-health.inspections-title' | translate }}</h1></header>
+@if (store.writeError(); as error) { <p role="alert">{{ error | translate }}</p> }
 <p>{{ 'crop-health.workflow-demo' | translate }}</p>
-@if (store.loading() || store.saving()) {
+@if (store.clinicalLoading() || store.saving()) {
   <mat-progress-bar mode="indeterminate" [attr.aria-label]="'common.loading' | translate" />
 }
-@if (store.error(); as error) {
+@if (store.clinicalError(); as error) {
   <mat-card appearance="outlined" role="alert"><mat-card-content><p>{{ error | translate }}</p></mat-card-content></mat-card>
 }
 
-@if (saved()) { <p role="status">{{ 'crop-health.inspection-saved' | translate }}</p> }
-@if (!store.loading()) {
+@if (saved()) { <p role="status">{{ savedMessage() | translate }}</p> }
+@if (!store.clinicalLoading() && !store.clinicalError() && store.canSchedule()) {
 <mat-card appearance="outlined"><mat-card-content>
 <form [formGroup]="inspectionForm" (ngSubmit)="onSubmit()">
   <mat-form-field appearance="outline" class="full-width">
   <mat-label>{{ 'crop-health.related-report' | translate }}</mat-label>
   <mat-select formControlName="reportId">
-    @for (report of store.pestReports(); track report.id) {
+    @for (report of store.schedulableReports(); track report.id) {
       <mat-option [value]="report.id">{{ store.reportLabel(+report.id) }} · {{ report.description }}</mat-option>
     }
   </mat-select>
@@ -29,12 +30,12 @@
     <mat-label>{{ 'crop-health.inspection-notes' | translate }}</mat-label>
     <textarea matInput formControlName="notes" rows="3"></textarea>
   </mat-form-field>
-  <button mat-flat-button type="submit" [disabled]="inspectionForm.invalid || inspectionForm.disabled || store.loading() || store.saving() || store.pestReports().length === 0">{{ 'crop-health.schedule-inspection' | translate }}</button>
+  <button mat-flat-button type="submit" [disabled]="inspectionForm.invalid || inspectionForm.disabled || store.clinicalLoading() || store.saving() || store.schedulableReports().length === 0">{{ 'crop-health.schedule-inspection' | translate }}</button>
   <a mat-stroked-button routerLink="/crop-health/inbox">{{ 'crop-health.inbox-title' | translate }}</a>
 </form>
 </mat-card-content></mat-card>
 }
-@if (!store.loading() && !store.error()) {
+@if (!store.clinicalLoading() && !store.clinicalError()) {
 <div class="list-container">
   @for (inspection of store.inspections(); track inspection.id) {
     <mat-card appearance="outlined" class="inspection-card">
@@ -42,7 +43,18 @@
         <mat-card-title>{{ store.reportLabel(inspection.reportId) }}</mat-card-title>
         <mat-card-subtitle>{{ 'crop-health.scheduled-at' | translate }}: {{ inspection.scheduledAt | date: 'medium' }}</mat-card-subtitle>
       </mat-card-header>
-      <mat-card-content><p>{{ inspection.notes }}</p></mat-card-content>
+      <mat-card-content>
+        <p>{{ 'crop-health.inspection-statuses.' + inspection.status | translate }}</p>
+        <p>{{ inspection.notes }}</p>
+        @if (inspection.completedAt) { <p>{{ 'crop-health.completed-at' | translate }}: {{ inspection.completedAt | date: 'medium' }}</p> }
+        @if (store.canComplete(inspection)) {
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>{{ 'crop-health.completion-notes' | translate }}</mat-label>
+            <textarea matInput [(ngModel)]="completionNotes[+inspection.id]" rows="3" [disabled]="store.saving()"></textarea>
+          </mat-form-field>
+          <button mat-flat-button [disabled]="store.saving()" (click)="complete(+inspection.id)">{{ (inspection.status === 'COMPLETED' ? 'crop-health.sync-report' : 'crop-health.complete-inspection') | translate }}</button>
+        }
+      </mat-card-content>
     </mat-card>
   } @empty {
     <mat-card appearance="outlined"><mat-card-content><p>{{ 'crop-health.no-inspections' | translate }}</p></mat-card-content></mat-card>

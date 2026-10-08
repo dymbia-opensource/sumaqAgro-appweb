@@ -1,7 +1,7 @@
 <header class="view-header"><span class="breadcrumb">{{ 'crop-health.eyebrow' | translate }}</span><h1>{{ 'crop-health.form-title' | translate }}</h1></header>
 @if (loadingPlots() || store.saving()) { <mat-progress-bar mode="indeterminate" /> }
 @if (optionsError(); as error) { <p role="alert">{{ error | translate }}</p> }
-@if (store.error(); as error) { <p role="alert">{{ error | translate }}</p> }
+@if (store.writeError(); as error) { <p role="alert">{{ error | translate }}</p> }
 @if (saved()) { <p role="status">{{ 'crop-health.report-saved' | translate }}</p> }
 @if (!loadingPlots() && !optionsError() && plots().length === 0) { <p>{{ 'crop-health.no-plots' | translate }}</p> }
 <mat-card appearance="outlined" class="form-card"><mat-card-content>
@@ -32,7 +32,7 @@
       <mat-error>{{ 'crop-health.invalid-photo' | translate }}</mat-error>
     </mat-form-field>
     <div class="form-actions">
-      <button mat-flat-button type="submit" [disabled]="reportForm.invalid || reportForm.disabled || store.saving() || loadingPlots() || !!optionsError()">{{ 'crop-health.btn-send-report' | translate }}</button>
+      <button mat-flat-button type="submit" [disabled]="reportForm.invalid || reportForm.disabled || store.saving() || loadingPlots() || !!optionsError() || !store.canReport()">{{ 'crop-health.btn-send-report' | translate }}</button>
       <a mat-stroked-button routerLink="/crop-health/inbox">{{ 'crop-health.inbox-title' | translate }}</a>
     </div>
   </form>

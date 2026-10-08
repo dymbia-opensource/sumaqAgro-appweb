@@ -51,7 +51,7 @@
     "ha": "Ha",
     "recommendation": "Recommendation",
     "btn-consult": "Consult Advisor",
-    "btn-download": "Download Report",
+    "btn-download": "Download data (CSV)",
     "alerts-title": "Agricultural Alerts",
     "btn-inspect": "Inspect Field",
     "btn-issue-prescription": "Issue Prescription",
@@ -79,7 +79,21 @@
       "save-inspection": "The inspection could not be scheduled. Your data was kept; please try again.",
       "save-prescription": "The prescription could not be saved. Your data was kept; please try again.",
       "session-required": "Select a user on the demo access page to submit a report.",
-      "load-plots": "Your plots could not be loaded."
+      "load-plots": "Your plots could not be loaded.",
+      "not-authorized": "Your role does not permit this action or the record is outside your plots.",
+      "advisor-not-assigned": "The agronomist is not assigned to a cooperative.",
+      "no-cooperative": "The director is not assigned to a cooperative.",
+      "invalid-data": "The data contains invalid values, dates or fields.",
+      "invalid-transition": "The current record status does not permit this action.",
+      "future-visit": "Schedule the visit for a future date and time.",
+      "visit-already-scheduled": "This report already has a recorded visit.",
+      "visit-not-due": "The visit cannot be completed before its scheduled time.",
+      "inspection-required": "Complete an inspection before issuing a prescription.",
+      "past-application": "The application date cannot be earlier than today.",
+      "prescription-required": "The report needs a prescription before it can be marked as resolved.",
+      "complete-inspection": "The visit could not be completed. Keep your notes and try again.",
+      "inspection-status-partial": "The visit was saved, but the report could not be updated. Use Synchronize report status to retry.",
+      "resolve-report": "The report could not be updated. Please try again."
     },
     "no-inspections": "No inspections",
     "no-prescriptions": "No prescriptions",
@@ -107,7 +121,7 @@
     "inspection-saved": "The inspection was scheduled successfully.",
     "report-status": "Status",
     "view-photo": "View photo",
-    "workflow-demo": "Demo workflow: records are saved to the test API. The agronomist assignment is selected manually.",
+    "workflow-demo": "Records are saved to the test API. Available actions depend on the selected demo role.",
     "report-statuses": {
       "PENDING": "Pending",
       "INSPECTED": "Inspected",
@@ -118,6 +132,21 @@
       "MEDIUM": "Medium",
       "HIGH": "High",
       "SEVERE": "Severe"
+    },
+    "no-polygon": "This plot does not have a recorded boundary yet.",
+    "map-boundary-note": "The map shows the recorded plot boundary. Colors distinguish the selected index; they do not represent satellite imagery or calculated stress zones.",
+    "observation-values": "Recorded values",
+    "capture-date": "Capture date",
+    "inspection-required": "No inspected reports are available. Complete a visit before issuing a prescription.",
+    "resolve-report": "Mark as resolved",
+    "complete-inspection": "Complete visit",
+    "sync-report": "Synchronize report status",
+    "completion-notes": "Visit findings (at least 10 characters)",
+    "completed-at": "Visit completed",
+    "inspection-completed": "The visit and report status were updated successfully.",
+    "inspection-statuses": {
+      "SCHEDULED": "Scheduled",
+      "COMPLETED": "Completed"
     }
   }
 }

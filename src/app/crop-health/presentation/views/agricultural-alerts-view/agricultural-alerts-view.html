@@ -1,17 +1,19 @@
-@if (store.loading()) {
+@if (store.alertsLoading()) {
   <mat-progress-bar mode="indeterminate" [attr.aria-label]="'common.loading' | translate" />
 }
 
 <header class="view-header">
   <span class="breadcrumb">{{ 'crop-health.eyebrow' | translate }}</span>
   <h1>{{ 'crop-health.alerts-title' | translate }}</h1>
+<app-crop-plot-selector />
+  <p>{{ store.selectedPlot()?.region }}</p>
 </header>
 
-@if (store.error(); as error) {
+@if (store.alertsError(); as error) {
   <mat-card appearance="outlined" role="alert">
     <mat-card-content><p>{{ error | translate }}</p></mat-card-content>
   </mat-card>
-} @else if (!store.loading()) {
+} @else if (!store.alertsLoading() && store.selectedPlot()) {
 <div class="alerts-list">
   @for (alert of store.alerts(); track alert.id) {
     <mat-card appearance="outlined" class="alert-card" [ngClass]="alert.severity.toLowerCase()">
@@ -40,3 +42,5 @@
   }
 </div>
 }
+
+@if (!store.alertsLoading() && !store.alertsError() && !store.selectedPlot()) { <p>{{ 'crop-health.no-plots' | translate }}</p> }

@@ -1,4 +1,5 @@
-﻿import { BaseEntity } from '../../../../shared/domain/model/base-entity';
+import { requireId, requireText, requireChoice } from '../validation';
+import { BaseEntity } from '../../../../shared/domain/model/base-entity';
 
 /**
  * Properties required to instantiate a {@link PestReport}.
@@ -35,6 +36,10 @@ export class PestReport extends BaseEntity {
    */
   constructor(props: PestReportProps) {
     super({ id: props.id ?? 0 });
+    requireId(props.plotId); requireId(props.reporterId); requireText(props.description, 10);
+    requireChoice(props.severity ?? 'MEDIUM', ['LOW', 'MEDIUM', 'HIGH', 'SEVERE']);
+    requireChoice(props.status ?? 'PENDING', ['PENDING', 'INSPECTED', 'RESOLVED']);
+    if (props.photo && !/^https?:\/\/\S+$/.test(props.photo)) throw new Error('crop-health.errors.invalid-data');
     this._plotId = props.plotId;
     this._plotName = props.plotName ?? '';
     this._reporterId = props.reporterId;
@@ -83,5 +88,13 @@ export class PestReport extends BaseEntity {
   /** Gets the client-side UUID used for offline synchronization. */
   get clientSyncId(): string {
     return this._clientSyncId;
+  }
+  markInspected(): void {
+    if (this._status !== 'PENDING') throw new Error('crop-health.errors.invalid-transition');
+    this._status = 'INSPECTED';
+  }
+  resolve(): void {
+    if (this._status !== 'INSPECTED') throw new Error('crop-health.errors.invalid-transition');
+    this._status = 'RESOLVED';
   }
 }

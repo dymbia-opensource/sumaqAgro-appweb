@@ -27,7 +27,8 @@
       "name": "Ing. Juan A. Morales",
       "cipCode": "184029",
       "phone": "964 811 200",
-      "assignedPlotsCount": 32
+      "assignedPlotsCount": 32,
+      "userId": 4
     },
     {
       "id": 2,
@@ -121,60 +122,6 @@
   ],
   "field-plots": [
     {
-      "id": 1,
-      "ownerUserId": 1,
-      "name": "Fundo Los Pinos",
-      "region": "Junín - Valle del Mantaro",
-      "status": "ACTIVE_MONITORING",
-      "boundary": [
-        [
-          -12.0712,
-          -75.2135
-        ],
-        [
-          -12.0708,
-          -75.2111
-        ],
-        [
-          -12.0741,
-          -75.2104
-        ],
-        [
-          -12.0746,
-          -75.2131
-        ]
-      ],
-      "areaHectares": 3.5,
-      "agroMonitoringPolygonId": "5f9a1c2b7e1d3a0012ab34cd"
-    },
-    {
-      "id": 2,
-      "ownerUserId": 1,
-      "name": "Finca San Ramón",
-      "region": "Junín - Chanchamayo",
-      "status": "ACTIVE_MONITORING",
-      "boundary": [
-        [
-          -11.1245,
-          -75.3561
-        ],
-        [
-          -11.1241,
-          -75.3524
-        ],
-        [
-          -11.1272,
-          -75.3519
-        ],
-        [
-          -11.1279,
-          -75.3557
-        ]
-      ],
-      "areaHectares": 2.5,
-      "agroMonitoringPolygonId": "5f9a1c2b7e1d3a0012ab34ce"
-    },
-    {
       "id": 3,
       "ownerUserId": 2,
       "name": "Parcela Pampa Alta",
@@ -210,6 +157,33 @@
       ],
       "areaHectares": 1.8,
       "agroMonitoringPolygonId": "5f9a1c2b7e1d3a0012ab34cf"
+    },
+    {
+      "id": 5,
+      "ownerUserId": 1,
+      "name": "Apurimac",
+      "region": "Chincheros",
+      "status": "ACTIVE_MONITORING",
+      "boundary": [
+        [
+          -13.814053400148119,
+          -73.35493947827563
+        ],
+        [
+          -13.819971040070364,
+          -73.35470337902713
+        ],
+        [
+          -13.819387617461931,
+          -73.34843601715804
+        ],
+        [
+          -13.813845029805849,
+          -73.3496594405366
+        ]
+      ],
+      "areaHectares": 39.87807021484375,
+      "agroMonitoringPolygonId": "682ef2a96cf44cbc9727b868"
     }
   ],
   "crop-campaigns": [
@@ -247,6 +221,33 @@
       "cropType": "ANDEAN_POTATO",
       "seedVariety": "Papa Yungay",
       "sowingDate": "2026-09-05",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": 5,
+      "plotId": 5,
+      "season": "2027-I",
+      "cropType": "SPECIALTY_COFFEE",
+      "seedVariety": "Bourbon",
+      "sowingDate": "2027-02-10",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": 6,
+      "plotId": 5,
+      "season": "2026-II",
+      "cropType": "ANDEAN_POTATO",
+      "seedVariety": "Papa Canchán",
+      "sowingDate": "2026-11-10",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": 7,
+      "plotId": 5,
+      "season": "2026-II",
+      "cropType": "ANDEAN_POTATO",
+      "seedVariety": "Papa Canchán",
+      "sowingDate": "2026-10-10",
       "status": "IN_PROGRESS"
     }
   ],
@@ -430,6 +431,33 @@
           "clientSyncId": ""
         }
       ]
+    },
+    {
+      "id": 5,
+      "campaignId": 5,
+      "expectedYield": 280,
+      "actualYield": null,
+      "yieldUnit": "QUINTAL",
+      "frozen": false,
+      "entries": []
+    },
+    {
+      "id": 6,
+      "campaignId": 6,
+      "expectedYield": 29,
+      "actualYield": null,
+      "yieldUnit": "SACK",
+      "frozen": false,
+      "entries": []
+    },
+    {
+      "id": 7,
+      "campaignId": 7,
+      "expectedYield": 10,
+      "actualYield": null,
+      "yieldUnit": "SACK",
+      "frozen": false,
+      "entries": []
     }
   ],
   "harvest-batches": [

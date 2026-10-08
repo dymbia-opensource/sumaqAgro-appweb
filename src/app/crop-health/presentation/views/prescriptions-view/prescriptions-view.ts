@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, effect, inject, untracked } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -12,7 +12,16 @@ import { CropHealthStore } from '../../../application/crop-health.store';
   imports: [DatePipe, RouterLink, TranslatePipe, MatButtonModule, MatCardModule, MatProgressBarModule],
   templateUrl: './prescriptions-view.html', styleUrl: './prescriptions-view.css',
 })
-export class PrescriptionsView implements OnInit {
+export class PrescriptionsView {
   readonly store = inject(CropHealthStore);
-  ngOnInit(): void { this.store.loadClinicalData(); }
+  constructor() {
+    effect(() => {
+      const ready = this.store.scopeReady();
+      untracked(() => {
+
+        if (ready) this.load();
+      });
+    });
+  }
+  private load(): void { this.store.loadClinicalData(); }
 }

@@ -1,4 +1,5 @@
-﻿import { BaseEntity } from '../../../../shared/domain/model/base-entity';
+import { requireText, requireDate, requireChoice } from '../validation';
+import { BaseEntity } from '../../../../shared/domain/model/base-entity';
 
 /**
  * Properties required to create or hydrate an {@link AgroclimaticAlert}.
@@ -34,6 +35,9 @@ export class AgroclimaticAlert extends BaseEntity {
    */
   constructor(props: AgroclimaticAlertProps) {
     super({ id: props.id ?? 0 });
+    requireText(props.title); requireText(props.description); requireText(props.region);
+    requireChoice(props.severity ?? 'LOW', ['LOW', 'MEDIUM', 'HIGH', 'CRITICAL']);
+    if (props.issuedAt !== undefined) requireDate(props.issuedAt);
     this._title = props.title;
     this._description = props.description;
     this._severity = props.severity ?? 'LOW';

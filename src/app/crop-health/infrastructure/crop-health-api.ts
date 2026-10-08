@@ -1,7 +1,7 @@
 import { RecordPestReportCommand } from '../domain/model/commands/record-pest-report.command';
 import { ScheduleFieldInspectionCommand } from '../domain/model/commands/schedule-field-inspection.command';
 import { IssueTechnicalPrescriptionCommand } from '../domain/model/commands/issue-technical-prescription.command';
-﻿import { HttpClient } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { inject, Service } from '@angular/core';
 import { Observable } from 'rxjs';
 import { BaseApi } from '../../shared/infrastructure/base-api';
@@ -93,5 +93,11 @@ export class CropHealthApi extends BaseApi {
 
   issuePrescription(command: IssueTechnicalPrescriptionCommand): Observable<TechnicalPrescription> {
     return this.prescriptionsEndpoint.create(new TechnicalPrescription({ ...command }));
+  }
+  updateReport(report: PestReport): Observable<PestReport> {
+    return this.reportsEndpoint.update(report, report.id);
+  }
+  updateInspection(inspection: FieldInspection): Observable<FieldInspection> {
+    return this.inspectionsEndpoint.update(inspection, inspection.id);
   }
 }

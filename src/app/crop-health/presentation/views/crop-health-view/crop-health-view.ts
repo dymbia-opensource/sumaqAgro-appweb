@@ -1,6 +1,6 @@
 import { Router } from '@angular/router';
 import { DatePipe, DecimalPipe } from '@angular/common';
-import { Component, ElementRef, inject, OnInit, AfterViewInit, OnDestroy, viewChild } from '@angular/core';
+import { afterRenderEffect, Component, effect, ElementRef, inject, AfterViewInit, OnDestroy, signal, untracked, viewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
@@ -9,104 +9,65 @@ import { MatRadioModule } from '@angular/material/radio';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
 import { CropHealthStore } from '../../../application/crop-health.store';
+import { CropPlotSelector } from '../../components/plot-selector/plot-selector';
+import { observationCsv } from '../../../application/observation-report';
 import * as L from 'leaflet';
 
-/**
- * Satellite Monitoring View — the main Crop Health screen.
- */
 @Component({
   selector: 'app-crop-health-view',
-  imports: [
-    DatePipe,
-    DecimalPipe,
-    TranslatePipe,
-    FormsModule,
-    MatButtonModule,
-    MatCardModule,
-    MatIconModule,
-    MatProgressBarModule,
-    MatRadioModule,
-  ],
-  templateUrl: './crop-health-view.html',
-  styleUrl: './crop-health-view.css',
+  imports: [DatePipe, DecimalPipe, TranslatePipe, FormsModule, MatButtonModule, MatCardModule,
+    MatIconModule, MatProgressBarModule, MatRadioModule, CropPlotSelector],
+  templateUrl: './crop-health-view.html', styleUrl: './crop-health-view.css',
 })
-export class CropHealthView implements OnInit, AfterViewInit, OnDestroy {
+export class CropHealthView implements AfterViewInit, OnDestroy {
   readonly store = inject(CropHealthStore);
   private readonly router = inject(Router);
-
   private readonly mapContainer = viewChild.required<ElementRef<HTMLDivElement>>('mapContainer');
-
-  private map: L.Map | undefined;
-  private sectorLayer: L.Polygon | undefined;
-
-  /** Selected layer type */
+  private readonly mapReady = signal(false);
+  private map?: L.Map;
+  private sectorLayer?: L.Polygon;
   selectedLayer: 'ndvi' | 'ndwi' = 'ndvi';
 
-  ngOnInit(): void {
-    this.store.loadObservations(1);
+  constructor() {
+    effect(() => {
+      const plot = this.store.selectedPlot();
+      untracked(() => { if (plot) this.store.loadObservations(plot.id as number); });
+    });
+    afterRenderEffect(() => {
+      this.store.selectedPlot();
+      if (this.mapReady()) untracked(() => this.drawSector());
+    });
   }
-
   ngAfterViewInit(): void {
-    this.initMap();
-  }
-
-  ngOnDestroy(): void {
-    if (this.map) {
-      this.map.remove();
-    }
-  }
-
-  private initMap(): void {
-    // Initial map centered over a sample plot coordinate
-    this.map = L.map(this.mapContainer().nativeElement).setView([-13.4243, -76.0007], 15);
-
+    this.map = L.map(this.mapContainer().nativeElement).setView([-9.19, -75.015], 5);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '© OpenStreetMap contributors',
-      maxZoom: 19
+      attribution: '© OpenStreetMap contributors', maxZoom: 19,
     }).addTo(this.map);
-
-    // Initial polygon representing the plot sector
-    this.drawSector();
+    this.mapReady.set(true);
   }
-
+  ngOnDestroy(): void { this.map?.remove(); }
   private drawSector(): void {
     if (!this.map) return;
-
-    if (this.sectorLayer) {
-      this.map.removeLayer(this.sectorLayer);
-    }
-
-    const latlngs: L.LatLngExpression[] = [
-      [-13.422, -76.004],
-      [-13.422, -75.996],
-      [-13.427, -75.996],
-      [-13.427, -76.004]
-    ];
-
+    if (this.sectorLayer) { this.map.removeLayer(this.sectorLayer); this.sectorLayer = undefined; }
+    const plot = this.store.selectedPlot();
+    if (!plot?.hasPolygon()) { this.map.setView([-9.19, -75.015], 5); return; }
     const color = this.selectedLayer === 'ndvi' ? 'green' : 'blue';
-
-    this.sectorLayer = L.polygon(latlngs, {
-      color: color,
-      fillColor: color,
-      fillOpacity: 0.4
+    this.sectorLayer = L.polygon(plot.boundary.map(vertex => [vertex.latitude, vertex.longitude] as L.LatLngTuple), {
+      color, fillColor: color, fillOpacity: 0.12,
     }).addTo(this.map);
-    
-    // Auto-fit to the plot area
     this.map.fitBounds(this.sectorLayer.getBounds(), { padding: [20, 20] });
+    this.map.invalidateSize();
   }
-
-  /**
-   * Called when the user switches between NDVI and NDWI
-   */
-  onLayerChange(): void {
-    this.drawSector();
-  }
-
-  consultAgronomist(): void {
-    void this.router.navigate(['/crop-health/inbox']);
-  }
-
+  onLayerChange(): void { this.drawSector(); }
+  consultAgronomist(): void { void this.router.navigate(['/crop-health/inbox']); }
   downloadReport(): void {
-    console.log('Download report clicked');
+    const plot = this.store.selectedPlot();
+    const observation = this.store.latestObservation();
+    if (!plot || !observation || this.store.observationsLoading() || this.store.observationsError()) return;
+    const url = URL.createObjectURL(new Blob([observationCsv(plot.name, observation)], { type: 'text/csv;charset=utf-8' }));
+    const link = document.createElement('a');
+    link.href = url; link.download = 'crop-health-' + plot.id + '-' + observation.date.slice(0, 10) + '.csv';
+    document.body.appendChild(link); link.click(); link.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 0);
   }
 }
