@@ -17,15 +17,28 @@ const publicTraceabilityView = () =>
 const baseTitle = 'SumaqAgro';
 
 /**
- * Root routes. Each bounded context adds its own `*.routes.ts` with lazy loading.
- *
- * @remarks
- * The app starts on the plot dashboard of Field Management, not on a login page.
+ * Root route configuration that composes the bounded-context routes.
  */
+/*
+// IAM-enabled Routes version to replace when IAM is implemented
+import { iamGuard } from './iam/infrastructure/iam.guard';
+const iamRoutes = () => import('./iam/iam.routes').then((m) => m.iamRoutes);
+
 export const routes: Routes = [
+  { path: 'field-management', loadChildren: fieldManagementRoutes, canActivate: [iamGuard] },
+  { path: 'harvest-certification', loadChildren: harvestCertificationRoutes, canActivate: [iamGuard] },
+  { path: 'verify/:token', loadComponent: publicTraceabilityView, title: 'Verificar certificado | SumaqAgro' },
+  { path: 'iam', loadChildren: iamRoutes },
   { path: '', redirectTo: '/field-management/dashboard', pathMatch: 'full' },
+  { path: '**', loadComponent: pageNotFound, title: `${baseTitle} - Page Not Found` },
+];
+*/
+
+// Public Routes version to use until IAM is implemented
+export const routes: Routes = [
   { path: 'field-management', loadChildren: fieldManagementRoutes },
   { path: 'harvest-certification', loadChildren: harvestCertificationRoutes },
   { path: 'verify/:token', loadComponent: publicTraceabilityView, title: 'Verificar certificado | SumaqAgro' },
+  { path: '', redirectTo: '/field-management/dashboard', pathMatch: 'full' },
   { path: '**', loadComponent: pageNotFound, title: `${baseTitle} - Page Not Found` },
 ];

@@ -4,10 +4,8 @@ import { environment } from '../../../../environments/environment';
 import { BaseApiEndpoint } from '../../../shared/infrastructure/base-api-endpoint';
 import { CampaignLedger } from '../../domain/model/entities/campaign-ledger.entity';
 import { CampaignLedgerAssembler } from '../assemblers/campaign-ledger.assembler';
-import {
-  CampaignLedgerResource,
-  CampaignLedgersResponse,
-} from '../responses/campaign-ledger.response';
+import { CampaignLedgerResource } from '../responses/campaign-ledger.response';
+import { CampaignLedgersResponse } from '../responses/campaign-ledgers.response';
 
 /** HTTP endpoint for the cost ledgers resource (`/campaign-ledgers`). */
 export class CampaignLedgersApiEndpoint extends BaseApiEndpoint<
