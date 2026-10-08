@@ -40,6 +40,10 @@ export class ProfilesApi extends BaseApi {
     return this.cooperativesEndpoint.getByDirector(userId);
   }
 
+  updateCooperative(cooperative: Cooperative): Observable<Cooperative> {
+    return this.cooperativesEndpoint.update(cooperative, cooperative.id);
+  }
+
   getCooperativeMembers(cooperativeId: number): Observable<CooperativeMember[]> {
     return this.cooperativeMembersEndpoint.getByCooperative(cooperativeId);
   }

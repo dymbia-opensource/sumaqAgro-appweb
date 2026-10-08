@@ -1,6 +1,7 @@
 import { computed, inject, Service, signal } from '@angular/core';
-import { finalize, of, switchMap, throwError } from 'rxjs';
+import { finalize, of, switchMap } from 'rxjs';
 import { UpdateFarmerContactCommand } from '../domain/model/commands/update-farmer-contact.command';
+import { UpdateCooperativeCommand } from '../domain/model/commands/update-cooperative.command';
 import { CooperativeMember } from '../domain/model/entities/cooperative-member.entity';
 import { Cooperative } from '../domain/model/entities/cooperative.entity';
 import { CooperativeDashboard } from '../domain/model/entities/cooperative-dashboard.entity';
@@ -93,6 +94,29 @@ export class ProfilesStore {
       .subscribe({
         next: (members) => { this.membersSignal.set(members); this.loadingSignal.set(false); },
         error: (error: Error) => { this.errorSignal.set(error.message); this.loadingSignal.set(false); },
+      });
+  }
+
+  /** Validates and persists the director's institutional configuration. */
+  saveCooperative(command: UpdateCooperativeCommand): void {
+    const cooperative = this.cooperativeSignal();
+    if (!cooperative) return;
+
+    try {
+      cooperative.updateInstitutionalData(command);
+    } catch (error) {
+      this.errorSignal.set(error instanceof Error ? error.message : 'Invalid institutional data.');
+      return;
+    }
+
+    this.savingSignal.set(true);
+    this.errorSignal.set(null);
+    this.profilesApi
+      .updateCooperative(cooperative)
+      .pipe(finalize(() => this.savingSignal.set(false)))
+      .subscribe({
+        next: (updatedCooperative) => this.cooperativeSignal.set(updatedCooperative),
+        error: (error: Error) => this.errorSignal.set(error.message),
       });
   }
 

@@ -18,17 +18,6 @@
       "ruc": "20612345678",
       "headquartersAddress": "Av. Ferrocarril 123, Huancayo",
       "switchboardPhone": "+51 64 555 200"
-    },
-    {
-      "directorUserId": 1,
-      "legalName": "RUC",
-      "region": "12",
-      "institutionalEmail": "correo@gmail.com",
-      "legalRepresentative": "1212121",
-      "ruc": "12121212212",
-      "headquartersAddress": "211212",
-      "switchboardPhone": "121211211",
-      "id": 2
     }
   ],
   "cooperative-members": [

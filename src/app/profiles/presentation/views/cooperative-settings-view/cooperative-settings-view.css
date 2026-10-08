@@ -1,11 +1,20 @@
-:host { display: flex; flex-direction: column; gap: 24px; max-width: 960px; }
-header span { color: var(--mat-sys-primary); font: var(--mat-sys-title-small); }
-header h1 { margin: 6px 0; font: var(--mat-sys-display-small); font-weight: 700; }
-header p { margin: 0; color: var(--mat-sys-on-surface-variant); }
-mat-card { border-radius: 20px; }
-.details { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
-.details p { display: grid; gap: 6px; margin: 0; }
-.details span { color: var(--mat-sys-on-surface-variant); font: var(--mat-sys-label-large); }
-.full { grid-column: 1 / -1; }
-.error { color: var(--mat-sys-error); }
-@media (max-width: 720px) { .details { grid-template-columns: 1fr; } .full { grid-column: auto; } }
+:host { display: flex; flex-direction: column; gap: 24px; max-width: 1160px; }
+.settings-header { display: grid; gap: 8px; }
+.settings-header h1 { margin: 0; font: var(--mat-sys-headline-large); font-weight: 700; }
+.settings-header > p:not(.breadcrumb) { margin: 0; color: var(--mat-sys-on-surface-variant); }
+.breadcrumb { display: flex; align-items: center; gap: 6px; margin: 0; color: var(--mat-sys-on-surface-variant); font: var(--mat-sys-label-large); }
+.breadcrumb mat-icon { width: 16px; height: 16px; font-size: 16px; }
+.breadcrumb strong { color: var(--mat-sys-primary); }
+.settings-tabs { display: flex; gap: 20px; }
+.settings-tab { min-width: 205px; min-height: 48px; border: 1px solid var(--mat-sys-outline-variant); border-radius: 12px; color: var(--mat-sys-on-surface); background: var(--mat-sys-surface); font: inherit; }
+.settings-tab--active { border-color: #2f8d42; color: #fff; background: #2f8d42; font-weight: 700; }
+.settings-tab:disabled { opacity: 1; cursor: default; }
+.settings-card { border: 1px solid var(--mat-sys-outline-variant); border-radius: 16px; box-shadow: none; }
+.settings-card mat-card-content { padding: 24px; }
+.settings-card h2 { margin: 0; font: var(--mat-sys-title-large); font-weight: 700; }
+.settings-card__description { margin: 6px 0 32px; color: var(--mat-sys-on-surface-variant); }
+.settings-form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 44px; row-gap: 12px; }
+.settings-form__actions { display: flex; grid-column: 1 / -1; justify-content: flex-end; margin-top: 34px; }
+.settings-form__actions button { color: #fff; background: #247a40; text-transform: uppercase; }
+.error { margin: 0; color: var(--mat-sys-error); }
+@media (max-width: 720px) { .settings-tabs { flex-direction: column; gap: 8px; } .settings-tab { width: 100%; } .settings-form { grid-template-columns: 1fr; } .settings-form__actions { justify-content: stretch; } .settings-form__actions button { width: 100%; } }

@@ -9,13 +9,13 @@ import { BaseEntity } from '../../../../shared/domain/model/base-entity';
  */
 export class Cooperative extends BaseEntity {
   private readonly _directorUserId: number;
-  private readonly _legalName: string;
-  private readonly _region: string;
-  private readonly _institutionalEmail: string;
-  private readonly _legalRepresentative: string;
-  private readonly _ruc: string;
-  private readonly _headquartersAddress: string;
-  private readonly _switchboardPhone: string;
+  private _legalName: string;
+  private _region: string;
+  private _institutionalEmail: string;
+  private _legalRepresentative: string;
+  private _ruc: string;
+  private _headquartersAddress: string;
+  private _switchboardPhone: string;
 
   constructor(props: {
     id: number;
@@ -47,4 +47,37 @@ export class Cooperative extends BaseEntity {
   get ruc(): string { return this._ruc; }
   get headquartersAddress(): string { return this._headquartersAddress; }
   get switchboardPhone(): string { return this._switchboardPhone; }
+
+  /** Updates the legal and contact information managed by the director. */
+  updateInstitutionalData(data: {
+    legalName: string;
+    region: string;
+    institutionalEmail: string;
+    legalRepresentative: string;
+    ruc: string;
+    headquartersAddress: string;
+    switchboardPhone: string;
+  }): void {
+    const values = Object.fromEntries(
+      Object.entries(data).map(([key, value]) => [key, value.trim()]),
+    ) as typeof data;
+
+    if (Object.values(values).some((value) => !value)) {
+      throw new Error('All institutional data is required.');
+    }
+    if (!/^\d{11}$/.test(values.ruc)) {
+      throw new Error('The RUC must have eleven digits.');
+    }
+    if (!/^\S+@\S+\.\S+$/.test(values.institutionalEmail)) {
+      throw new Error('The institutional email is invalid.');
+    }
+
+    this._legalName = values.legalName;
+    this._region = values.region;
+    this._institutionalEmail = values.institutionalEmail.toLowerCase();
+    this._legalRepresentative = values.legalRepresentative;
+    this._ruc = values.ruc;
+    this._headquartersAddress = values.headquartersAddress;
+    this._switchboardPhone = values.switchboardPhone;
+  }
 }
