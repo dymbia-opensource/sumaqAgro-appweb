@@ -1,6 +1,6 @@
 import { DatePipe, DecimalPipe } from '@angular/common';
 import { Component, computed, inject } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
@@ -13,9 +13,11 @@ import { RouterLink } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { ChartConfiguration } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
-import { map, startWith } from 'rxjs';
+import { catchError, map, of, startWith, switchMap } from 'rxjs';
 import { DemoSessionService } from '../../../../shared/application/demo-session.service';
 import { FieldManagementStore } from '../../../application/field-management.store';
+import { CropHealthApi } from '../../../../crop-health/infrastructure/crop-health-api';
+import { SatelliteObservation } from '../../../../crop-health/domain/model/entities/satellite-observation.entity';
 import { ExpenseCategory } from '../../../domain/model/entities/expense-category';
 
 /** Order and translation key of each expense category in the cost chart. */
@@ -30,8 +32,8 @@ const CATEGORIES: { category: ExpenseCategory; label: string }[] = [
  *
  * @remarks
  * It shows the selected plot with its active campaign, the total investment
- * and the breakeven price (US-16 to US-19). The leaf health card and the NDVI
- * chart belong to Crop Health and are added in that phase.
+ * and the breakeven price (US-16 to US-19). Satellite observations supply the NDVI
+ * card and history chart for the selected plot.
  */
 @Component({
   selector: 'app-my-plot-dashboard-view',
@@ -67,6 +69,41 @@ export class MyPlotDashboardView {
   readonly campaign = this.store.activeCampaign;
   readonly ledger = this.store.ledger;
 
+  private readonly cropHealthApi = inject(CropHealthApi);
+  readonly satellite = toSignal(
+    toObservable(this.plot).pipe(
+      switchMap(plot => {
+        const empty = { observations: [] as SatelliteObservation[], loading: false, error: false };
+        if (!plot?.hasPolygon()) return of(empty);
+        return this.cropHealthApi.getObservationsByPlot(plot.id as number).pipe(
+          map(observations => ({
+            observations: observations.filter(item => item.plotId === plot.id && item.stressAreaHectares <= plot.areaHectares)
+              .sort((a, b) => Date.parse(a.date) - Date.parse(b.date)),
+            loading: false, error: false,
+          })),
+          startWith({ ...empty, loading: true }),
+          catchError(() => of({ ...empty, error: true })),
+        );
+      }),
+    ),
+    { initialValue: { observations: [] as SatelliteObservation[], loading: false, error: false } },
+  );
+  readonly latestObservation = computed(() => this.satellite().observations.at(-1));
+  readonly ndviChartData = computed<ChartConfiguration<'line'>['data']>(() => {
+    const locale = this.language() === 'en' ? 'en-US' : 'es-PE';
+    const campaign = this.campaign();
+    const observations = this.satellite().observations.filter(item => !campaign?.sowingDate || Date.parse(item.date) >= campaign.sowingDate.getTime());
+    return {
+      labels: observations.map(item => new Intl.DateTimeFormat(locale, { day: '2-digit', month: 'short', timeZone: 'America/Lima' }).format(new Date(item.date))),
+      datasets: [{ label: 'NDVI', data: observations.map(item => item.ndviMean), borderColor: '#008000', backgroundColor: 'rgba(0, 128, 0, 0.12)', fill: true, tension: 0.25, pointRadius: 4 }],
+    };
+  });
+  readonly ndviChartOptions: ChartConfiguration<'line'>['options'] = {
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: { y: { min: -1, max: 1 } },
+    plugins: { legend: { display: false } },
+  };
   /** i18n key of the greeting, depending on the time of day. */
   readonly greetingKey = computed(() => {
     const hour = new Date().getHours();

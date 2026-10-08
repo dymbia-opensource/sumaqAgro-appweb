@@ -211,6 +211,16 @@
       ],
       "areaHectares": 4.82,
       "agroMonitoringPolygonId": ""
+    },
+    {
+      "id": 8,
+      "ownerUserId": 1,
+      "name": "aa",
+      "region": "Apurimac",
+      "status": "WITHOUT_POLYGON",
+      "boundary": [],
+      "areaHectares": 2.5,
+      "agroMonitoringPolygonId": ""
     }
   ],
   "crop-campaigns": [
@@ -275,6 +285,33 @@
       "cropType": "ANDEAN_POTATO",
       "seedVariety": "Papa Canchán",
       "sowingDate": "2026-10-10",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": 8,
+      "plotId": 6,
+      "season": "2026-II",
+      "cropType": "ANDEAN_POTATO",
+      "seedVariety": "Papa Canchan",
+      "sowingDate": "2026-09-05",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": 9,
+      "plotId": 7,
+      "season": "2026-II",
+      "cropType": "ANDEAN_POTATO",
+      "seedVariety": "Papa Yungay",
+      "sowingDate": "2026-09-05",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": 10,
+      "plotId": 8,
+      "season": "2005-I",
+      "cropType": "ANDEAN_POTATO",
+      "seedVariety": "Papa Canchán",
+      "sowingDate": "2005-02-12",
       "status": "IN_PROGRESS"
     }
   ],
@@ -485,6 +522,107 @@
       "yieldUnit": "SACK",
       "frozen": false,
       "entries": []
+    },
+    {
+      "id": 8,
+      "campaignId": 8,
+      "expectedYield": 300,
+      "actualYield": null,
+      "yieldUnit": "SACK",
+      "frozen": false,
+      "entries": [
+        {
+          "id": 17,
+          "category": "INPUTS",
+          "description": "Demo: semilla de papa",
+          "quantity": 40,
+          "unitPrice": 50,
+          "expenseDate": "2026-09-03",
+          "clientSyncId": ""
+        },
+        {
+          "id": 18,
+          "category": "INPUTS",
+          "description": "Demo: abono orgánico",
+          "quantity": 20,
+          "unitPrice": 60,
+          "expenseDate": "2026-09-04",
+          "clientSyncId": ""
+        },
+        {
+          "id": 19,
+          "category": "LABOR",
+          "description": "Demo: jornales de siembra",
+          "quantity": 24,
+          "unitPrice": 55,
+          "expenseDate": "2026-09-05",
+          "clientSyncId": ""
+        },
+        {
+          "id": 20,
+          "category": "FREIGHT",
+          "description": "Demo: transporte de insumos",
+          "quantity": 1,
+          "unitPrice": 350,
+          "expenseDate": "2026-09-04",
+          "clientSyncId": ""
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "campaignId": 9,
+      "expectedYield": 280,
+      "actualYield": null,
+      "yieldUnit": "SACK",
+      "frozen": false,
+      "entries": [
+        {
+          "id": 21,
+          "category": "INPUTS",
+          "description": "Demo: semilla de papa",
+          "quantity": 40,
+          "unitPrice": 45,
+          "expenseDate": "2026-09-03",
+          "clientSyncId": ""
+        },
+        {
+          "id": 22,
+          "category": "INPUTS",
+          "description": "Demo: abono orgánico",
+          "quantity": 20,
+          "unitPrice": 60,
+          "expenseDate": "2026-09-04",
+          "clientSyncId": ""
+        },
+        {
+          "id": 23,
+          "category": "LABOR",
+          "description": "Demo: jornales de siembra",
+          "quantity": 24,
+          "unitPrice": 55,
+          "expenseDate": "2026-09-05",
+          "clientSyncId": ""
+        },
+        {
+          "id": 24,
+          "category": "FREIGHT",
+          "description": "Demo: transporte de insumos",
+          "quantity": 1,
+          "unitPrice": 350,
+          "expenseDate": "2026-09-04",
+          "clientSyncId": ""
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "campaignId": 10,
+      "expectedYield": 2,
+      "actualYield": null,
+      "yieldUnit": "SACK",
+      "frozen": false,
+      "entries": []
     }
   ],
   "harvest-batches": [
@@ -681,6 +819,94 @@
       "cloudCoveragePercent": 12,
       "stressAreaHectares": 0.85,
       "recommendation": "Datos simulados para la demostración. Revisar la humedad del suelo y verificar en campo las zonas con posible estrés hídrico."
+    },
+    {
+      "id": 4,
+      "plotId": 6,
+      "date": "2026-09-10T15:00:00Z",
+      "ndviMean": 0.48,
+      "ndwiMean": 0.28,
+      "surfaceTempKelvin": 294.15,
+      "cloudCoveragePercent": 8,
+      "stressAreaHectares": 0.25,
+      "recommendation": "Datos simulados para la demostración del historial del cultivo."
+    },
+    {
+      "id": 5,
+      "plotId": 6,
+      "date": "2026-09-17T15:00:00Z",
+      "ndviMean": 0.57,
+      "ndwiMean": 0.32,
+      "surfaceTempKelvin": 294.15,
+      "cloudCoveragePercent": 8,
+      "stressAreaHectares": 0.25,
+      "recommendation": "Datos simulados para la demostración del historial del cultivo."
+    },
+    {
+      "id": 6,
+      "plotId": 6,
+      "date": "2026-09-24T15:00:00Z",
+      "ndviMean": 0.65,
+      "ndwiMean": 0.36,
+      "surfaceTempKelvin": 294.15,
+      "cloudCoveragePercent": 8,
+      "stressAreaHectares": 0.25,
+      "recommendation": "Datos simulados para la demostración del historial del cultivo."
+    },
+    {
+      "id": 7,
+      "plotId": 6,
+      "date": "2026-10-01T15:00:00Z",
+      "ndviMean": 0.71,
+      "ndwiMean": 0.39,
+      "surfaceTempKelvin": 294.15,
+      "cloudCoveragePercent": 8,
+      "stressAreaHectares": 0.25,
+      "recommendation": "Datos simulados para la demostración del historial del cultivo."
+    },
+    {
+      "id": 8,
+      "plotId": 7,
+      "date": "2026-09-10T15:00:00Z",
+      "ndviMean": 0.68,
+      "ndwiMean": 0.35,
+      "surfaceTempKelvin": 294.15,
+      "cloudCoveragePercent": 8,
+      "stressAreaHectares": 0.85,
+      "recommendation": "Datos simulados para la demostración del historial del cultivo."
+    },
+    {
+      "id": 9,
+      "plotId": 7,
+      "date": "2026-09-17T15:00:00Z",
+      "ndviMean": 0.65,
+      "ndwiMean": 0.3,
+      "surfaceTempKelvin": 294.15,
+      "cloudCoveragePercent": 8,
+      "stressAreaHectares": 0.85,
+      "recommendation": "Datos simulados para la demostración del historial del cultivo."
+    },
+    {
+      "id": 10,
+      "plotId": 7,
+      "date": "2026-09-24T15:00:00Z",
+      "ndviMean": 0.62,
+      "ndwiMean": 0.25,
+      "surfaceTempKelvin": 294.15,
+      "cloudCoveragePercent": 8,
+      "stressAreaHectares": 0.85,
+      "recommendation": "Datos simulados para la demostración del historial del cultivo."
+    },
+    {
+      "id": 11,
+      "plotId": 7,
+      "date": "2026-10-01T15:00:00Z",
+      "ndviMean": 0.6,
+      "ndwiMean": 0.21,
+      "surfaceTempKelvin": 294.15,
+      "cloudCoveragePercent": 8,
+      "stressAreaHectares": 0.85,
+      "recommendation": "Datos simulados para la demostración del historial del cultivo."
     }
   ],
   "agroclimatic-alerts": [],
