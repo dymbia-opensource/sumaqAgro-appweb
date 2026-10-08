@@ -1,0 +1,48 @@
+<header class="registration-header">
+  <a mat-button routerLink="/profiles/cooperative/dashboard"><mat-icon>arrow_back</mat-icon>{{ 'profiles.cooperative.registration.back' | translate }}</a>
+  <h1>{{ 'profiles.cooperative.registration.title' | translate }}</h1>
+  <p>{{ 'profiles.cooperative.registration.subtitle' | translate }}</p>
+</header>
+
+<mat-card class="registration-card">
+  <form [formGroup]="form" (ngSubmit)="register()">
+    <mat-form-field appearance="outline">
+      <mat-label>{{ 'profiles.cooperative.registration.legal-name' | translate }}</mat-label>
+      <input matInput formControlName="legalName" />
+      @if (form.controls.legalName.invalid && form.controls.legalName.touched) { <mat-error>{{ 'profiles.cooperative.registration.required' | translate }}</mat-error> }
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>{{ 'profiles.cooperative.registration.region' | translate }}</mat-label>
+      <input matInput formControlName="region" />
+      @if (form.controls.region.invalid && form.controls.region.touched) { <mat-error>{{ 'profiles.cooperative.registration.required' | translate }}</mat-error> }
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>{{ 'profiles.cooperative.registration.email' | translate }}</mat-label>
+      <input matInput type="email" formControlName="institutionalEmail" />
+      @if (form.controls.institutionalEmail.invalid && form.controls.institutionalEmail.touched) { <mat-error>{{ 'profiles.cooperative.registration.email-error' | translate }}</mat-error> }
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>{{ 'profiles.cooperative.registration.representative' | translate }}</mat-label>
+      <input matInput formControlName="legalRepresentative" />
+      @if (form.controls.legalRepresentative.invalid && form.controls.legalRepresentative.touched) { <mat-error>{{ 'profiles.cooperative.registration.required' | translate }}</mat-error> }
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>{{ 'profiles.cooperative.registration.ruc' | translate }}</mat-label>
+      <input matInput inputmode="numeric" maxlength="11" formControlName="ruc" />
+      @if (form.controls.ruc.invalid && form.controls.ruc.touched) { <mat-error>{{ 'profiles.cooperative.registration.ruc-error' | translate }}</mat-error> }
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>{{ 'profiles.cooperative.registration.address' | translate }}</mat-label>
+      <input matInput formControlName="headquartersAddress" />
+      @if (form.controls.headquartersAddress.invalid && form.controls.headquartersAddress.touched) { <mat-error>{{ 'profiles.cooperative.registration.required' | translate }}</mat-error> }
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>{{ 'profiles.cooperative.registration.phone' | translate }}</mat-label>
+      <input matInput type="tel" formControlName="switchboardPhone" />
+      @if (form.controls.switchboardPhone.invalid && form.controls.switchboardPhone.touched) { <mat-error>{{ 'profiles.cooperative.registration.phone-error' | translate }}</mat-error> }
+    </mat-form-field>
+    @if (form.errors?.['domain']; as error) { <p class="error" role="alert">{{ error }}</p> }
+    @if (error(); as error) { <p class="error" role="alert">{{ error }}</p> }
+    <div class="actions"><a mat-button routerLink="/profiles/cooperative/dashboard">{{ 'common.cancel' | translate }}</a><button mat-flat-button type="submit" [disabled]="saving()">{{ saving() ? ('profiles.cooperative.registration.saving' | translate) : ('profiles.cooperative.registration.submit' | translate) }}</button></div>
+  </form>
+</mat-card>
