@@ -147,20 +147,5 @@
         { "id": 16, "category": "INPUTS", "description": "Semilla de papa Yungay", "quantity": 18, "unitPrice": 40, "expenseDate": "2026-09-01", "clientSyncId": "" }
       ]
     }
-  ],
-  "satellite-observations": [
-    {
-      "id": 1,
-      "plotId": 1,
-      "date": "2026-09-12T10:00:00Z",
-      "ndviMean": 0.74,
-      "ndwiMean": 0.65,
-      "surfaceTempKelvin": 295.15,
-      "cloudCoveragePercent": 5,
-      "stressAreaHectares": 0.4,
-      "recommendation": "Check the area for signs of the onset of wilting."
-    }
   ]
-
-
 }

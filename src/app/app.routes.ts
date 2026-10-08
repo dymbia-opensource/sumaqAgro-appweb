@@ -6,9 +6,6 @@ const pageNotFound = () =>
 const fieldManagementRoutes = () =>
   import('./field-management/field-management.routes').then((m) => m.fieldManagementRoutes);
 
-const cropHealthRoutes = () =>
-  import('./crop-health/crop-health.routes').then((m) => m.cropHealthRoutes);
-
 const baseTitle = 'SumaqAgro';
 
 /**
@@ -20,6 +17,5 @@ const baseTitle = 'SumaqAgro';
 export const routes: Routes = [
   { path: '', redirectTo: '/field-management/dashboard', pathMatch: 'full' },
   { path: 'field-management', loadChildren: fieldManagementRoutes },
-  { path: 'crop-health', loadChildren: cropHealthRoutes },
   { path: '**', loadComponent: pageNotFound, title: `${baseTitle} - Page Not Found` },
 ];

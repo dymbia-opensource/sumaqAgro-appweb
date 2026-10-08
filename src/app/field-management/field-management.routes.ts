@@ -5,13 +5,27 @@ const myPlotDashboardView = () =>
   import('./presentation/views/my-plot-dashboard-view/my-plot-dashboard-view').then(
     (m) => m.MyPlotDashboardView,
   );
+const registeredPlotsView = () =>
+  import('./presentation/views/registered-plots-view/registered-plots-view').then(
+    (m) => m.RegisteredPlotsView,
+  );
+const plotRegistrationForm = () =>
+  import('./presentation/views/plot-registration-form/plot-registration-form').then(
+    (m) => m.PlotRegistrationForm,
+  );
+const plotBoundaryMapView = () =>
+  import('./presentation/views/plot-boundary-map-view/plot-boundary-map-view').then(
+    (m) => m.PlotBoundaryMapView,
+  );
+
+const baseTitle = 'SumaqAgro';
 
 /**
- * Routes of the Field Management bounded context (lazy loaded under `/field-management`).
+ * Route tree for the Field Management views (lazy loaded under `/field-management`).
  *
  * @remarks
  * Chart.js is provided here, so it is only downloaded when the user opens
- * this context. The IAM guard is added in the IAM phase.
+ * this context.
  */
 export const fieldManagementRoutes: Routes = [
   {
@@ -21,7 +35,18 @@ export const fieldManagementRoutes: Routes = [
       {
         path: 'dashboard',
         loadComponent: myPlotDashboardView,
-        title: 'My Plot – SumaqAgro | Crop Monitoring and Management Dashboard',
+        title: `My Plot – ${baseTitle} | Crop Monitoring and Management Dashboard`,
+      },
+      { path: 'plots', loadComponent: registeredPlotsView, title: `My Plots – ${baseTitle}` },
+      {
+        path: 'plots/new',
+        loadComponent: plotRegistrationForm,
+        title: `Register a Plot – ${baseTitle}`,
+      },
+      {
+        path: 'plots/:id/boundary',
+        loadComponent: plotBoundaryMapView,
+        title: `Delineate the Plot – ${baseTitle}`,
       },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
     ],
