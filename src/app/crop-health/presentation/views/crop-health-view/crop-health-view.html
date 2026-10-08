@@ -14,6 +14,15 @@
   </button>
 </header>
 
+@if (store.error(); as error) {
+  <mat-card appearance="outlined" role="alert">
+    <mat-card-content><p>{{ error | translate }}</p></mat-card-content>
+  </mat-card>
+} @else if (!store.loading() && store.observations().length === 0) {
+  <mat-card appearance="outlined" role="status">
+    <mat-card-content><p>{{ 'crop-health.no-observations' | translate }}</p></mat-card-content>
+  </mat-card>
+}
 <div class="layers-bar">
   <span class="layers-label">{{ 'crop-health.layers' | translate }}</span>
   <mat-radio-group color="primary" [(ngModel)]="selectedLayer" (change)="onLayerChange()">
@@ -36,7 +45,7 @@
     </div>
 
     <!-- Right: diagnosis card -->
-    @if (store.observations().length > 0) {
+    @if (!store.loading() && !store.error() && store.observations().length > 0) {
     <aside class="diagnosis-aside">
       <div class="date-row">
         <mat-icon>calendar_today</mat-icon>

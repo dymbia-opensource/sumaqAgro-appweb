@@ -69,7 +69,12 @@
     "inbox-subtitle": "Pending diagnoses inbox",
     "inbox-title": "Diagnosis Inbox",
     "inspections-title": "Field Inspections",
-    "no-alerts": "No alerts",
+    "no-alerts": "No alerts are recorded for this region.",
+    "no-observations": "No satellite observations are available for this plot.",
+    "errors": {
+      "load-observations": "Satellite observations could not be retrieved. Please try again later.",
+      "load-alerts": "Agricultural alerts could not be retrieved. Please try again later."
+    },
     "no-inspections": "No inspections",
     "no-prescriptions": "No prescriptions",
     "no-reports": "No reports",

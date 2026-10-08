@@ -69,7 +69,12 @@
     "inbox-subtitle": "Bandeja de diagnósticos pendientes",
     "inbox-title": "Bandeja de Plagas",
     "inspections-title": "Inspecciones de Campo",
-    "no-alerts": "Sin alertas",
+    "no-alerts": "No hay alertas registradas para esta región.",
+    "no-observations": "No hay observaciones satelitales disponibles para esta parcela.",
+    "errors": {
+      "load-observations": "No se pudieron consultar las observaciones satelitales. Intenta nuevamente más tarde.",
+      "load-alerts": "No se pudieron consultar las alertas agrícolas. Intenta nuevamente más tarde."
+    },
     "no-inspections": "Sin inspecciones",
     "no-prescriptions": "Sin recetas",
     "no-reports": "Sin reportes",

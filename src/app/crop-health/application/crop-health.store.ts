@@ -52,46 +52,12 @@ export class CropHealthStore {
 
   loadObservations(plotId: number): void {
     this.startLoading();
+    this.observationsSignal.set([]);
     this.cropHealthApi.getObservationsByPlot(plotId).pipe(retry(2)).subscribe({
-      next: (data) => {
-        if (data && data.length > 0) {
-          this.observationsSignal.set(data);
-        } else {
-          this.observationsSignal.set([
-            new SatelliteObservation({
-              id: 1,
-              plotId,
-              date: new Date().toISOString(),
-              ndviMean: 0.74,
-              ndwiMean: 0.65,
-              surfaceTempKelvin: 295.15,
-              cloudCoveragePercent: 5,
-              stressAreaHectares: 0.4,
-              recommendation: 'Revisar la zona norte ante signos de estrés hídrico.',
-            }),
-          ]);
-        }
-        this.stopLoading();
-      },
-      error: (err: Error) => {
-        this.observationsSignal.set([
-          new SatelliteObservation({
-            id: 1,
-            plotId,
-            date: new Date().toISOString(),
-            ndviMean: 0.74,
-            ndwiMean: 0.65,
-            surfaceTempKelvin: 295.15,
-            cloudCoveragePercent: 5,
-            stressAreaHectares: 0.4,
-            recommendation: 'Revisar la zona norte ante signos de estrés hídrico.',
-          }),
-        ]);
-        this.fail(err);
-      },
+      next: (data) => { this.observationsSignal.set(data); this.stopLoading(); },
+      error: (err: Error) => this.fail(err, 'crop-health.errors.load-observations'),
     });
   }
-
   loadPestReports(plotId: number): void {
     this.startLoading();
     this.cropHealthApi.getPestReportsByPlot(plotId).pipe(retry(2)).subscribe({
@@ -102,25 +68,12 @@ export class CropHealthStore {
 
   loadAlerts(region: string): void {
     this.startLoading();
+    this.alertsSignal.set([]);
     this.cropHealthApi.getAlertsByRegion(region).pipe(retry(2)).subscribe({
       next: (data) => { this.alertsSignal.set(data); this.stopLoading(); },
-      error: (err: Error) => {
-        this.alertsSignal.set([
-          new AgroclimaticAlert({
-            id: 1,
-            title: 'Alerta de Helada Agrícola',
-            description: 'Descenso brusco de temperaturas nocturnas previsto para las próximas 48 horas en zonas altas.',
-            severity: 'HIGH',
-            region: region || 'Valle Sur',
-            issuedAt: new Date().toISOString(),
-            source: 'SENAMHI',
-          }),
-        ]);
-        this.fail(err);
-      },
+      error: (err: Error) => this.fail(err, 'crop-health.errors.load-alerts'),
     });
   }
-
   loadForecasts(region: string): void {
     this.startLoading();
     this.cropHealthApi.getForecastsByRegion(region).pipe(retry(2)).subscribe({
@@ -156,8 +109,8 @@ export class CropHealthStore {
     this.loadingSignal.set(false);
   }
 
-  private fail(error: Error): void {
-    this.errorSignal.set(error.message);
+  private fail(error: Error, messageKey?: string): void {
+    this.errorSignal.set(messageKey ?? error.message);
     this.loadingSignal.set(false);
   }
 }
