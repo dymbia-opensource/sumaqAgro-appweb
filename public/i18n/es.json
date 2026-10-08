@@ -97,8 +97,9 @@
       "QUINTAL": "quintales",
       "per-SACK": "por saco",
       "per-QUINTAL": "por quintal"
-    },
-    "harvest-certification": {
+    }
+  },
+  "harvest-certification": {
       "page-title": "Certificados oficiales",
       "loading": "Cargando certificados",
       "home": "Inicio",
@@ -248,5 +249,4 @@
         "already-certified": "Este lote ya tiene un certificado."
       }
     }
-  }
 }

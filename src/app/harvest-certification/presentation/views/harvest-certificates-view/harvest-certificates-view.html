@@ -52,7 +52,7 @@
       <option value="ANDEAN_POTATO">{{ 'harvest-certification.filters.potato' | translate }}</option>
       <option value="SPECIALTY_COFFEE">{{ 'harvest-certification.filters.coffee' | translate }}</option>
     </select></label>
-    <label>{{ 'harvest-certificationfilters.quality' | translate }} <select [ngModel]="qualityFilter()"
+    <label>{{ 'harvest-certification.filters.quality' | translate }} <select [ngModel]="qualityFilter()"
                                                                             (ngModelChange)="qualityFilter.set($event); page.set(1)">
       <option value="ALL">{{ 'harvest-certification.filters.all-feminine' | translate }}</option>
       <option value="PREMIUM_GOLD">{{ 'harvest-certification.quality-category.PREMIUM_GOLD' | translate }}</option>
