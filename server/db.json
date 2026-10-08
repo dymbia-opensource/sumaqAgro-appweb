@@ -46,14 +46,16 @@
       "plots": [
         {
           "id": 1,
-          "name": "Chacra Pampa Chica",
-          "region": "Concepción, Junín",
-          "coordinates": "-11.9810, -75.2450",
+          "name": "Fundo Los Pinos",
+          "region": "Junín - Valle del Mantaro",
+          "coordinates": "-12.0712, -75.2135",
           "campaignId": 2,
-          "variety": "Papa Yungay",
+          "variety": "Papa Canchan",
           "cropType": "ANDEAN_POTATO"
         }
-      ]
+      ],
+      "fullName": "Alex Nina Condori",
+      "active": true
     },
     {
       "id": 2,
@@ -62,14 +64,16 @@
       "plots": [
         {
           "id": 2,
-          "name": "Fundo Los Pinos",
-          "region": "Junín",
-          "coordinates": "-12.0712, -75.2135",
+          "name": "Finca San Ramón",
+          "region": "Junín - Chanchamayo",
+          "coordinates": "-11.1245, -75.3561",
           "campaignId": 3,
-          "variety": "Café geisha",
+          "variety": "Geisha",
           "cropType": "SPECIALTY_COFFEE"
         }
-      ]
+      ],
+      "fullName": "Mateo Florez",
+      "active": true
     },
     {
       "id": 3,
@@ -77,60 +81,42 @@
       "name": "Rosa Melgar",
       "plots": [
         {
-          "id": 3,
-          "name": "El Mirador",
-          "region": "Junín",
-          "coordinates": "-12.0741, -75.2104",
+          "id": 4,
+          "name": "Parcela Chacra Grande",
+          "region": "Huancavelica",
+          "coordinates": "-12.7865, -74.9762",
           "campaignId": 4,
-          "variety": "Papa Canchán",
+          "variety": "Papa Yungay",
           "cropType": "ANDEAN_POTATO"
         }
-      ]
+      ],
+      "fullName": "Rosa Melgar",
+      "active": true
     }
   ],
   "cooperative-dashboards": [
     {
       "id": 1,
       "directorUserId": 3,
-      "cooperativeName": "Cooperativa Valle Central",
+      "cooperativeName": "Cooperativa Agraria Valle del Mantaro",
       "campaignName": "Campaña 2026-I",
-      "activeMembers": 52,
-      "monitoredHectares": 165.4,
-      "collectionTons": 142.8,
+      "activeMembers": 3,
+      "monitoredHectares": 7.8,
+      "collectionTons": 19.4,
       "collectionGoalTons": 210,
-      "optimalPlotsPercentage": 88,
-      "stressedPlotsPercentage": 12,
-      "averageCostPerHectare": 4240,
+      "optimalPlotsPercentage": 0,
+      "stressedPlotsPercentage": 100,
+      "averageCostPerHectare": 2432.05,
       "ndviTrend": [
         {
-          "month": "May",
-          "value": 0.3
-        },
-        {
-          "month": "Jun",
-          "value": 0.42
-        },
-        {
-          "month": "Jul",
-          "value": 0.63
-        },
-        {
-          "month": "Ago",
-          "value": 0.7
-        },
-        {
           "month": "Sep",
-          "value": 0.59
-        },
-        {
-          "month": "Oct",
-          "value": 0.53
+          "value": 0.74
         }
       ],
-      "evaluatedLots": 64,
-      "specialtyCoffeePercentage": 45,
-      "firstGradePotatoPercentage": 38,
-      "lossLotsPercentage": 17
+      "evaluatedLots": 4,
+      "specialtyCoffeePercentage": 25,
+      "firstGradePotatoPercentage": 50,
+      "lossLotsPercentage": 0
     }
   ],
   "field-plots": [
@@ -454,12 +440,12 @@
       "memberId": 1,
       "memberName": "Alex Nina Condori",
       "plotId": 1,
-      "plotName": "Chacra Pampa Chica",
-      "plotRegion": "Concepción, Junín",
-      "coordinates": "-11.9810, -75.2450",
+      "plotName": "Fundo Los Pinos",
+      "plotRegion": "Junín - Valle del Mantaro",
+      "coordinates": "-12.0712, -75.2135",
       "campaignId": 2,
       "cropType": "ANDEAN_POTATO",
-      "variety": "Papa Yungay",
+      "variety": "Papa Canchan",
       "collectedAt": "2026-10-02",
       "grossKg": 8568,
       "tareKg": 168,
@@ -481,12 +467,12 @@
       "memberId": 2,
       "memberName": "Mateo Florez",
       "plotId": 2,
-      "plotName": "Fundo Los Pinos",
-      "plotRegion": "Junín",
-      "coordinates": "-12.0712, -75.2135",
+      "plotName": "Finca San Ramón",
+      "plotRegion": "Junín - Chanchamayo",
+      "coordinates": "-11.1245, -75.3561",
       "campaignId": 3,
       "cropType": "SPECIALTY_COFFEE",
-      "variety": "Café geisha",
+      "variety": "Geisha",
       "collectedAt": "2026-09-28",
       "grossKg": 2600,
       "tareKg": 100,
@@ -508,13 +494,13 @@
       "cooperativeId": 1,
       "memberId": 3,
       "memberName": "Rosa Melgar",
-      "plotId": 3,
-      "plotName": "El Mirador",
-      "plotRegion": "Junín",
-      "coordinates": "-12.0741, -75.2104",
+      "plotId": 4,
+      "plotName": "Parcela Chacra Grande",
+      "plotRegion": "Huancavelica",
+      "coordinates": "-12.7865, -74.9762",
       "campaignId": 4,
       "cropType": "ANDEAN_POTATO",
-      "variety": "Papa Canchán",
+      "variety": "Papa Yungay",
       "collectedAt": "2026-09-22",
       "grossKg": 6150,
       "tareKg": 150,
@@ -534,13 +520,13 @@
       "cooperativeId": 1,
       "memberId": 3,
       "memberName": "Rosa Melgar",
-      "plotId": 3,
-      "plotName": "El Mirador",
-      "plotRegion": "Junín",
-      "coordinates": "-12.0741, -75.2104",
+      "plotId": 4,
+      "plotName": "Parcela Chacra Grande",
+      "plotRegion": "Huancavelica",
+      "coordinates": "-12.7865, -74.9762",
       "campaignId": 4,
       "cropType": "ANDEAN_POTATO",
-      "variety": "Papa Canchán",
+      "variety": "Papa Yungay",
       "collectedAt": "2026-10-08",
       "grossKg": 2600,
       "tareKg": 100,
@@ -562,9 +548,9 @@
       "id": 1,
       "harvestBatchId": 1,
       "certificateNumber": "CERT-BATCH-2026-08",
-      "sha256Hash": "8f4c2e6b3a10d74f5c2ab9087e6f1d4c3b2a1908e7d6c5b4a392817061504f3e",
+      "sha256Hash": "39c29215f58c58e5f09b5bb666f98d82d0e9fcd560cfe196526194ea47640f49",
       "verificationToken": "demo-batch-2026-08",
-      "issuedByUserId": 2,
+      "issuedByUserId": 3,
       "issuedByName": "Cristian Santana",
       "issuedAt": "2026-10-02T18:30:00.000Z",
       "status": "ACTIVE",
@@ -574,9 +560,9 @@
       "id": 2,
       "harvestBatchId": 2,
       "certificateNumber": "CERT-BATCH-2026-07",
-      "sha256Hash": "19a2b3c4d5e6f708192a3b4c5d6e7f8091a2b3c4d5e6f708192a3b4c5d6e7f80",
+      "sha256Hash": "77340a8abaf29545f492ed3ed17ff610d39d29fb96f2db613df571dd0a82552e",
       "verificationToken": "demo-batch-2026-07",
-      "issuedByUserId": 2,
+      "issuedByUserId": 3,
       "issuedByName": "Cristian Santana",
       "issuedAt": "2026-09-28T16:15:00.000Z",
       "status": "ACTIVE",
@@ -586,9 +572,9 @@
       "id": 3,
       "harvestBatchId": 3,
       "certificateNumber": "CERT-BATCH-2026-06",
-      "sha256Hash": "28b3c4d5e6f708192a3b4c5d6e7f8091a2b3c4d5e6f708192a3b4c5d6e7f8091",
+      "sha256Hash": "747defa85878511ce26b4cdc2381bd0a0bed0e7322fbb2a20eca0932d56ff355",
       "verificationToken": "demo-batch-2026-06",
-      "issuedByUserId": 2,
+      "issuedByUserId": 3,
       "issuedByName": "Cristian Santana",
       "issuedAt": "2026-09-22T14:00:00.000Z",
       "status": "ACTIVE",
@@ -597,9 +583,9 @@
     {
       "harvestBatchId": 4,
       "certificateNumber": "CERT-BATCH-2026-886325",
-      "sha256Hash": "802f3609592a5e25e2415fe0cf2494ebb035e5748867072416e4460421805863",
+      "sha256Hash": "ba041317fac17a489f5f44543a3a70e404deb8f1652ae844c87cf1e6faf2ed46",
       "verificationToken": "5cddefec-096d-4e7b-81ae-e09a7ac22dfb",
-      "issuedByUserId": 2,
+      "issuedByUserId": 3,
       "issuedByName": "Cristian Santana",
       "issuedAt": "2026-10-08T01:44:46.325Z",
       "status": "ACTIVE",
@@ -619,5 +605,10 @@
       "stressAreaHectares": 0.4,
       "recommendation": "Check the area for signs of the onset of wilting."
     }
-  ]
+  ],
+  "agroclimatic-alerts": [],
+  "climate-forecasts": [],
+  "pest-reports": [],
+  "field-inspections": [],
+  "technical-prescriptions": []
 }
