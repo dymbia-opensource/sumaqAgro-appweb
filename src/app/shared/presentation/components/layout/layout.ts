@@ -18,7 +18,9 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { fromEvent, map, merge } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
 import { LanguageSwitcher } from '../language-switcher/language-switcher';
-import { navigationFor, UserExperience } from './navigation-config';
+import { DemoSessionService } from '../../../application/demo-session.service';
+import { navigationFor } from './navigation-config';
+
 
 /**
  * Main shell of the app: side menu, top bar and the routed content.
@@ -54,6 +56,7 @@ import { navigationFor, UserExperience } from './navigation-config';
 export class Layout {
   private readonly router = inject(Router);
   private readonly sidenav = viewChild.required<MatSidenav>('sidenav');
+  private readonly demoSession = inject(DemoSessionService);
 
   /** `true` on phones and small tablets. */
   readonly isHandset = toSignal(
@@ -72,14 +75,18 @@ export class Layout {
     { initialValue: navigator.onLine },
   );
 
-  /** Temporary role switch until IAM provides the authenticated user's role. */
-  readonly userExperience = signal<UserExperience>(environment.demoUserExperience);
+  /** User selected in the temporary demo access. */
+  readonly activeUser = this.demoSession.activeUser;
 
-  /** Side menu options corresponding to the active user experience. */
-  readonly sections = computed(() => navigationFor(this.userExperience()));
+  /** Side menu generated from the selected user's experience. */
+  readonly sections = computed(() => {
+    const user = this.activeUser();
 
-  /** Name shown in the user menu. Replaced by the signed-in user in the IAM phase. */
-  readonly userName = signal(environment.demoUserName);
+    return user ? navigationFor(user.experience) : [];
+  });
+
+  /** Name shown in the user menu. */
+  readonly userName = computed(() => this.activeUser()?.displayName ?? '');
 
   /** Pending notifications. Connected to the agroclimatic alerts later. */
   readonly notificationCount = signal(0);
@@ -99,6 +106,7 @@ export class Layout {
   /** Signs the user out. It will call the IAM store once IAM is implemented. */
   signOut(): void {
     this.closeOnHandset();
-    this.router.navigate(['/']);
+    this.demoSession.clearSession();
+    this.router.navigate(['/demo-access']);
   }
 }

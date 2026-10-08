@@ -8,6 +8,11 @@ const fieldManagementRoutes = () =>
 
 const profilesRoutes = () => import('./profiles/profiles.routes').then((m) => m.profilesRoutes);
 
+const demoAccessView = () =>
+  import('./shared/presentation/views/demo-access-view/demo-access-view').then(
+    (module) => module.DemoAccessView,
+  );
+
 const baseTitle = 'SumaqAgro';
 
 /**
@@ -17,7 +22,12 @@ const baseTitle = 'SumaqAgro';
  * The app starts on the plot dashboard of Field Management, not on a login page.
  */
 export const routes: Routes = [
-  { path: '', redirectTo: '/field-management/dashboard', pathMatch: 'full' },
+  {
+    path: 'demo-access',
+    loadComponent: demoAccessView,
+    title: `${baseTitle} - Acceso demo`,
+  },
+  { path: '', redirectTo: '/demo-access', pathMatch: 'full' },
   { path: 'field-management', loadChildren: fieldManagementRoutes },
   { path: 'profiles', loadChildren: profilesRoutes },
   { path: '**', loadComponent: pageNotFound, title: `${baseTitle} - Page Not Found` },

@@ -12,7 +12,7 @@ export interface NavigationSection {
 }
 
 /** Experiences currently supported by the web application. */
-export type UserExperience = 'FARMER' | 'COOPERATIVE_DIRECTOR';
+import { UserExperience } from '../../../domain/model/demo-user';
 
 /** Navigation for an independent farmer. */
 export const farmerNavigationSections: NavigationSection[] = [
