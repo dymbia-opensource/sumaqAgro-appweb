@@ -6,6 +6,7 @@
   "section": {
     "major": "Principal",
     "agricultural-operation": "Operación agrícola",
+    "institutional-management": "Gestión institucional",
     "system": "Sistema"
   },
   "option": {
@@ -15,7 +16,14 @@
     "advisor": "Consultar al asesor",
     "harvest-certificates": "Certificados de cosecha",
     "alerts": "Alertas agrícolas",
-    "settings": "Configuración y ayuda"
+    "settings": "Configuración y ayuda",
+    "cooperative-dashboard": "Dashboard",
+    "member-directory": "Padrón",
+    "cooperative-plot-health": "Salud de Parcelas",
+    "cooperative-costs": "Costos",
+    "cooperative-certificates": "Certificados",
+    "cooperative-alerts": "Alertas",
+    "cooperative-settings": "Configuración"
   },
   "layout": {
     "search": "Buscar en mi parcela...",
@@ -54,6 +62,95 @@
     "title": "Página no encontrada",
     "message": "La ruta {{ path }} no existe.",
     "go-home": "Ir al inicio"
+  },
+  "profiles": {
+    "cooperative": {
+      "settings": {
+        "breadcrumb": "Configuración",
+        "title": "Datos institucionales",
+        "subtitle": "Consulta los datos registrados de la cooperativa.",
+        "legal-name": "Razón social",
+        "ruc": "RUC",
+        "region": "Región",
+        "representative": "Representante legal o gerente",
+        "email": "Correo institucional de contacto",
+        "phone": "Teléfono de mesa de partes",
+        "address": "Dirección de sede central"
+      },
+      "registration": {
+        "back": "Volver al dashboard",
+        "title": "Registrar cooperativa",
+        "subtitle": "Completa los datos institucionales de la organización.",
+        "legal-name": "Razón social",
+        "region": "Región",
+        "email": "Correo institucional de contacto",
+        "representative": "Representante legal o gerente",
+        "ruc": "RUC",
+        "address": "Dirección de sede central",
+        "phone": "Teléfono de mesa de partes",
+        "required": "Este campo es obligatorio.",
+        "email-error": "Ingresa un correo institucional válido.",
+        "ruc-error": "El RUC debe tener 11 dígitos.",
+        "phone-error": "Ingresa un teléfono válido.",
+        "submit": "Registrar cooperativa",
+        "saving": "Registrando..."
+      },
+      "dashboard": {
+        "breadcrumb": "Dashboard",
+        "title": "Panel de Control - {{ cooperative }}",
+        "subtitle": "Supervisión de {{ members }} socios activos | {{ hectares }} Hectáreas bajo monitoreo satelital",
+        "eyebrow": "Gestión institucional",
+        "collection-title": "Acopio Total",
+        "goal": "Meta",
+        "campaign-progress": "de avance de campaña",
+        "view-members": "Ver Padrón de Socios",
+        "vegetation-title": "Estado Vegetativo",
+        "optimal-plots": "Parcelas Óptimas",
+        "stress-risk": "Estrés hídrico / plaga",
+        "view-irrigation-map": "Ver Mapa de Riego",
+        "cost-title": "Costo Promedio /Ha",
+        "cost-description": "(Insumos + Jornales)",
+        "view-cost-matrix": "Ver Matriz de Costos",
+        "ndvi-title": "Tendencia Temporal NDVI de la Cooperativa",
+        "range": "Rango",
+        "all-campaign": "Toda la Campaña",
+        "filter": "Filtrar",
+        "potato-coffee": "Papa / Café",
+        "quality-title": "Resumen de Calidad en Acopio",
+        "evaluated-lots": "Total lotes evaluados: {{ lots }} lotes",
+        "specialty-coffee": "Café Especial ( >84 SCA)",
+        "first-grade-potato": "Calibre Primera (Papa)",
+        "loss-lots": "Lotes con Castigo/Merma",
+        "register-income": "Registrar ingreso",
+        "view-directory": "Ver padrón",
+        "active-members": "Socios activos",
+        "plots": "Parcelas monitoreadas",
+        "alerts": "Alertas activas",
+        "pending": "Próximamente",
+        "no-cooperative-title": "Aún no registras una cooperativa",
+        "no-cooperative-message": "Registra los datos institucionales para comenzar a administrar a tus socios.",
+        "register-cooperative": "Registrar cooperativa"
+      }
+    },
+    "settings": {
+      "title": "Ajustes de Cuenta y Asistencia al Agricultor",
+      "subtitle": "Revisa y actualiza los datos de tu parcela y cuenta.",
+      "plot-tab": "Datos de mi Parcela",
+      "account-tab": "Cuenta",
+      "help-tab": "Manuales de Ayuda",
+      "contact-title": "Datos de Contacto",
+      "phone": "Número de teléfono",
+      "email": "Correo electrónico",
+      "phone-error": "Ingresa un teléfono válido.",
+      "email-error": "Ingresa un correo válido.",
+      "saving": "Guardando...",
+      "security-title": "Seguridad y Acceso",
+      "current-password": "Contraseña actual",
+      "new-password": "Nueva contraseña",
+      "confirm-password": "Confirmar nueva contraseña",
+      "security-description": "El cambio de contraseña estará disponible cuando se incorpore la autenticación de la plataforma.",
+      "change-password": "Cambiar contraseña"
+    }
   },
   "field-management": {
     "dashboard": {

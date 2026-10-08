@@ -1,0 +1,38 @@
+<main class="demo-access">
+  <section class="demo-access__content">
+    <div class="demo-access__brand">
+      <span class="demo-access__brand-name">Sumaq<span>Agro</span></span>
+      <p>Cultivando un mejor mañana</p>
+    </div>
+
+    <h1>Bienvenido a SumaqAgro</h1>
+    <p class="demo-access__description">
+      Selecciona una experiencia para explorar la plataforma.
+    </p>
+
+    <div class="demo-access__users">
+      @for (user of users; track user.id) {
+        <mat-card class="demo-access__card">
+          <mat-card-content>
+            <mat-icon class="demo-access__icon">{{ roleIcon(user) }}</mat-icon>
+
+            <div>
+              <h2>{{ user.displayName }}</h2>
+              <p>{{ roleLabel(user) }}</p>
+            </div>
+
+            <button
+              mat-flat-button
+              type="button"
+              (click)="selectUser(user)"
+              [attr.aria-label]="'Ingresar como ' + user.displayName"
+            >
+              Ingresar
+              <mat-icon>arrow_forward</mat-icon>
+            </button>
+          </mat-card-content>
+        </mat-card>
+      }
+    </div>
+  </section>
+</main>
