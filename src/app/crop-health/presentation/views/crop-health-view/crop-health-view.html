@@ -16,7 +16,7 @@
 
 <div class="layers-bar">
   <span class="layers-label">{{ 'crop-health.layers' | translate }}</span>
-  <mat-radio-group color="primary" value="ndvi">
+  <mat-radio-group color="primary" [(ngModel)]="selectedLayer" (change)="onLayerChange()">
     <mat-radio-button value="ndvi">{{ 'crop-health.foliage-vigor' | translate }}</mat-radio-button>
     <mat-radio-button value="ndwi">{{ 'crop-health.soil-moisture' | translate }}</mat-radio-button>
   </mat-radio-group>
@@ -25,12 +25,10 @@
 @if (store.observations().length > 0) {
   <div class="content-grid">
 
-    <!-- Left: mock satellite map canvas -->
+    <!-- Left: interactive Leaflet map -->
     <div class="map-card">
-      <div class="mock-map">
-        <div class="zone zone-healthy"><span class="zone-badge">Healthy Foliage</span></div>
-        <div class="zone zone-deficit"><span class="zone-badge">Moisture Deficit</span></div>
-      </div>
+      <div id="crop-map" class="mock-map"></div>
+      
       <div class="map-legend">
         <span><span class="dot dot-critical"></span>{{ 'crop-health.legend-critical' | translate }}</span>
         <span><span class="dot dot-stress"></span>{{ 'crop-health.legend-stress' | translate }}</span>
@@ -73,10 +71,10 @@
         </mat-card-content>
 
         <mat-card-actions>
-          <button mat-flat-button class="btn-consult">
+          <button mat-flat-button class="btn-consult" (click)="consultAgronomist()">
             {{ 'crop-health.btn-consult' | translate }}
           </button>
-          <button mat-stroked-button class="btn-download">
+          <button mat-stroked-button class="btn-download" (click)="downloadReport()">
             {{ 'crop-health.btn-download' | translate }}
           </button>
         </mat-card-actions>
