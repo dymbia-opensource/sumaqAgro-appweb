@@ -1,0 +1,170 @@
+@if (loading()) {
+  <mat-progress-bar mode="indeterminate" [attr.aria-label]="'common.loading' | translate" />
+}
+
+<header class="page-header">
+  <nav class="breadcrumb" [attr.aria-label]="'field-management.breadcrumb' | translate">
+    <a routerLink="/field-management/dashboard">{{ 'option.my-plot' | translate }}</a>
+    <mat-icon>chevron_right</mat-icon>
+    <a routerLink="/field-management/plots">{{ 'field-management.plots.manage' | translate }}</a>
+    <mat-icon>chevron_right</mat-icon>
+    <span class="current">{{ 'field-management.steps.crop-data' | translate }}</span>
+  </nav>
+  <h1>
+    {{
+      'field-management.plot-form.title' | translate: { slot: slotNumber(), quota: plotQuota() }
+    }}
+  </h1>
+  <p class="subtitle">{{ 'field-management.plot-form.subtitle' | translate }}</p>
+</header>
+
+<!-- Steps of the registration -->
+<ol class="steps" [attr.aria-label]="'field-management.steps.label' | translate">
+  <li class="step active" aria-current="step">
+    <span class="step-number">1</span>
+    {{ 'field-management.steps.crop-data' | translate }}
+  </li>
+  <li class="step-line" aria-hidden="true"></li>
+  <li class="step">
+    <span class="step-number">2</span>
+    {{ 'field-management.steps.map' | translate }}
+  </li>
+</ol>
+
+@if (!canRegisterPlot()) {
+  <!-- The plan has no free slots (US-22) -->
+  <mat-card appearance="outlined" class="message-card" role="alert">
+    <mat-card-content>
+      <mat-icon>workspace_premium</mat-icon>
+      <span>{{ 'field-management.plots.plan-full' | translate: { quota: plotQuota() } }}</span>
+    </mat-card-content>
+    <mat-card-actions align="end">
+      <button mat-stroked-button (click)="onCancel()">{{ 'common.back' | translate }}</button>
+    </mat-card-actions>
+  </mat-card>
+} @else {
+  @if (error(); as error) {
+    <mat-card appearance="outlined" class="message-card" role="alert">
+      <mat-card-content>
+        <mat-icon>error</mat-icon>
+        <span>{{ error | translate }}</span>
+      </mat-card-content>
+    </mat-card>
+  }
+
+  <form [formGroup]="form" (ngSubmit)="onNext()" class="form-grid">
+    <mat-form-field class="full">
+      <mat-label>{{ 'field-management.plot-form.name' | translate }}</mat-label>
+      <input
+        matInput
+        formControlName="name"
+        [placeholder]="'field-management.plot-form.name-placeholder' | translate"
+        required
+      />
+      @if (form.controls.name.touched && form.controls.name.hasError('required')) {
+        <mat-error>{{ 'field-management.plot-form.name-required' | translate }}</mat-error>
+      }
+    </mat-form-field>
+
+    <div class="radio-field">
+      <span class="field-label">{{ 'field-management.plot-form.crop-type' | translate }}</span>
+      <mat-radio-group
+        formControlName="cropType"
+        [attr.aria-label]="'field-management.plot-form.crop-type' | translate"
+      >
+        @for (crop of cropTypes; track crop) {
+          <mat-radio-button [value]="crop">
+            {{ 'field-management.crop-type.' + crop | translate }}
+          </mat-radio-button>
+        }
+      </mat-radio-group>
+    </div>
+
+    <mat-form-field>
+      <mat-label>{{ 'field-management.plot-form.seed-variety' | translate }}</mat-label>
+      <input
+        matInput
+        formControlName="seedVariety"
+        [matAutocomplete]="varietyOptions"
+        [placeholder]="'field-management.plot-form.variety-placeholder' | translate"
+        required
+      />
+      <mat-autocomplete #varietyOptions="matAutocomplete">
+        @for (variety of varieties(); track variety) {
+          <mat-option [value]="variety">{{ variety }}</mat-option>
+        }
+      </mat-autocomplete>
+      <mat-hint>{{ 'field-management.plot-form.variety-hint' | translate }}</mat-hint>
+      @if (form.controls.seedVariety.touched && form.controls.seedVariety.hasError('required')) {
+        <mat-error>{{ 'common.required' | translate }}</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>{{ 'field-management.plot-form.region' | translate }}</mat-label>
+      <input
+        matInput
+        formControlName="region"
+        [placeholder]="'field-management.plot-form.region-placeholder' | translate"
+        required
+      />
+      @if (form.controls.region.touched && form.controls.region.hasError('required')) {
+        <mat-error>{{ 'field-management.plot-form.region-required' | translate }}</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>{{ 'field-management.plot-form.sowing-date' | translate }}</mat-label>
+      <input matInput type="date" formControlName="sowingDate" required />
+      @if (form.controls.sowingDate.touched && form.controls.sowingDate.hasError('required')) {
+        <mat-error>{{ 'common.required' | translate }}</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>{{ 'field-management.plot-form.expected-yield' | translate }}</mat-label>
+      <input
+        matInput
+        type="number"
+        min="1"
+        formControlName="expectedYield"
+        placeholder="280"
+      />
+      <span matTextSuffix>{{ 'field-management.yield-unit.' + yieldUnit() | translate }}</span>
+      @if (form.controls.expectedYield.invalid) {
+        <mat-error>{{ 'field-management.plot-form.positive' | translate }}</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>{{ 'field-management.plot-form.declared-area' | translate }}</mat-label>
+      <input
+        matInput
+        type="number"
+        min="0"
+        step="0.01"
+        formControlName="declaredArea"
+        placeholder="2.5"
+      />
+      <span matTextSuffix>{{ 'field-management.plots.hectares' | translate }}</span>
+      @if (form.controls.declaredArea.invalid) {
+        <mat-error>{{ 'field-management.plot-form.positive' | translate }}</mat-error>
+      }
+    </mat-form-field>
+
+    <div class="form-actions full">
+      <button mat-stroked-button type="button" (click)="onCancel()">
+        {{ 'field-management.plot-form.cancel' | translate }}
+      </button>
+      <button mat-flat-button type="submit" [disabled]="loading()">
+        {{ 'common.next' | translate }}
+        <mat-icon iconPositionEnd>arrow_forward</mat-icon>
+      </button>
+    </div>
+
+    <p class="next-step full">
+      <mat-icon>map</mat-icon>
+      {{ 'field-management.plot-form.next-step-hint' | translate }}
+    </p>
+  </form>
+}

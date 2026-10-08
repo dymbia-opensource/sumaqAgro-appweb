@@ -4,7 +4,8 @@ import { environment } from '../../../../environments/environment';
 import { BaseApiEndpoint } from '../../../shared/infrastructure/base-api-endpoint';
 import { FieldPlot } from '../../domain/model/entities/field-plot.entity';
 import { FieldPlotAssembler } from '../assemblers/field-plot.assembler';
-import { FieldPlotResource, FieldPlotsResponse } from '../responses/field-plot.response';
+import { FieldPlotResource } from '../responses/field-plot.response';
+import { FieldPlotsResponse } from '../responses/field-plots.response';
 
 /** HTTP endpoint for the field plots resource (`/field-plots`). */
 export class FieldPlotsApiEndpoint extends BaseApiEndpoint<

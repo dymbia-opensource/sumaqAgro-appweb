@@ -1,0 +1,152 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  max-width: 1040px;
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+  font: var(--mat-sys-title-small);
+}
+
+.breadcrumb a {
+  color: var(--mat-sys-on-surface-variant);
+  text-decoration: none;
+}
+
+.breadcrumb a:hover {
+  text-decoration: underline;
+}
+
+.breadcrumb mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.breadcrumb .current {
+  color: var(--mat-sys-primary);
+}
+
+.page-header h1 {
+  font: var(--mat-sys-display-small);
+  font-weight: 700;
+  margin: 4px 0;
+}
+
+.subtitle {
+  margin: 0;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+/* Steps of the registration, as pills joined by a line. */
+.steps {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.step {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 16px 6px 6px;
+  border-radius: 999px;
+  background: var(--mat-sys-surface-container-high);
+  color: var(--mat-sys-on-surface);
+  font: var(--mat-sys-label-large);
+  white-space: nowrap;
+}
+
+.step.active {
+  background: var(--mat-sys-primary);
+  color: var(--mat-sys-on-primary);
+}
+
+.step-number {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--mat-sys-surface);
+  color: var(--mat-sys-on-surface);
+  font-weight: 700;
+}
+
+.step-line {
+  flex: 1;
+  height: 1px;
+  background: var(--mat-sys-outline-variant);
+}
+
+.message-card mat-card-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 48px;
+  row-gap: 8px;
+}
+
+.full {
+  grid-column: 1 / -1;
+}
+
+.radio-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-bottom: 20px;
+}
+
+.field-label {
+  font: var(--mat-sys-label-large);
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.form-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8px;
+}
+
+.next-step {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 16px 0 0;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+@media (max-width: 719.98px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .step {
+    padding-right: 6px;
+    font-size: 0;
+  }
+
+  .step .step-number {
+    font-size: 14px;
+  }
+
+  .step.active {
+    padding-right: 16px;
+    font: var(--mat-sys-label-large);
+  }
+}
