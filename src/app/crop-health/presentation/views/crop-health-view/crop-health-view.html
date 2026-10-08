@@ -23,26 +23,38 @@
 <p>{{ 'crop-health.map-boundary-note' | translate }}</p>
 <div class="content-grid">
   <div class="map-card"><div #mapContainer class="mock-map"></div></div>
-  @if (!store.observationsLoading() && !store.observationsError()) {
-    @if (store.latestObservation(); as observation) {
-      <aside class="diagnosis-aside">
-        <mat-card appearance="outlined" class="diagnosis-card">
-          <mat-card-header><mat-card-title>{{ 'crop-health.observation-values' | translate }}</mat-card-title>
+  <aside class="diagnosis-aside">
+    <mat-card appearance="outlined" class="diagnosis-card">
+      <mat-card-header>
+        <mat-card-title>{{ 'crop-health.observation-values' | translate }}</mat-card-title>
+        @if (!store.observationsLoading() && !store.observationsError()) {
+          @if (store.latestObservation(); as observation) {
             <mat-card-subtitle>{{ 'crop-health.capture-date' | translate }}: {{ observation.date | date: 'medium' }}</mat-card-subtitle>
-          </mat-card-header>
-          <mat-card-content>
-            <dl class="metrics"><dt>NDVI</dt><dd>{{ observation.ndviMean | number: '1.2-2' }}</dd>
-              <dt>NDWI</dt><dd>{{ observation.ndwiMean | number: '1.2-2' }}</dd>
-              <dt>{{ 'crop-health.stress-detected' | translate }}</dt><dd>{{ observation.stressAreaHectares | number: '1.1-1' }} ha</dd>
-            </dl>
-            @if (observation.recommendation) { <div class="recommendation-box"><strong>{{ 'crop-health.recommendation' | translate }}</strong><p>{{ observation.recommendation }}</p></div> }
-          </mat-card-content>
-          <mat-card-actions>
-            <button mat-flat-button (click)="consultAgronomist()">{{ 'crop-health.btn-consult' | translate }}</button>
-            <button mat-stroked-button (click)="downloadReport()">{{ 'crop-health.btn-download' | translate }}</button>
-          </mat-card-actions>
-        </mat-card>
-      </aside>
-    }
-  }
+          }
+        }
+      </mat-card-header>
+      <mat-card-content>
+        @if (!store.observationsLoading() && !store.observationsError() && store.latestObservation(); as observation) {
+          <dl class="metrics">
+            <dt>NDVI</dt><dd>{{ observation.ndviMean | number: '1.2-2' }}</dd>
+            <dt>NDWI</dt><dd>{{ observation.ndwiMean | number: '1.2-2' }}</dd>
+            <dt>{{ 'crop-health.stress-detected' | translate }}</dt><dd>{{ observation.stressAreaHectares | number: '1.1-1' }} ha</dd>
+          </dl>
+          @if (observation.recommendation) {
+            <div class="recommendation-box"><strong>{{ 'crop-health.recommendation' | translate }}</strong><p>{{ observation.recommendation }}</p></div>
+          }
+        } @else {
+          <dl class="metrics">
+            <dt>NDVI</dt><dd>{{ 'crop-health.no-data' | translate }}</dd>
+            <dt>NDWI</dt><dd>{{ 'crop-health.no-data' | translate }}</dd>
+          </dl>
+          <p>{{ 'crop-health.observation-pending' | translate }}</p>
+        }
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-flat-button (click)="consultAgronomist()">{{ 'crop-health.btn-consult' | translate }}</button>
+        <button mat-stroked-button (click)="downloadReport()" [disabled]="!store.latestObservation() || store.observationsLoading() || !!store.observationsError()">{{ 'crop-health.btn-download' | translate }}</button>
+      </mat-card-actions>
+    </mat-card>
+  </aside>
 </div>

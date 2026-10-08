@@ -135,6 +135,8 @@
     },
     "no-polygon": "Esta parcela aún no tiene un polígono registrado.",
     "map-boundary-note": "El mapa muestra el límite registrado de la parcela. Los colores distinguen el índice seleccionado; no representan una imagen satelital ni zonas de estrés calculadas.",
+    "no-data": "Sin datos",
+    "observation-pending": "Los valores y la descarga estarán disponibles cuando se registre una observación satelital para esta parcela.",
     "observation-values": "Valores registrados",
     "capture-date": "Fecha de captura",
     "inspection-required": "No hay reportes inspeccionados disponibles. Completa una visita antes de emitir una receta.",

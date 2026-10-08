@@ -162,3 +162,18 @@ mat-card-actions {
   width: 100%;
   margin: 0 !important;
 }
+
+.diagnosis-card mat-card-header {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.diagnosis-card mat-card-title {
+  line-height: 1.35;
+}
+
+.diagnosis-card mat-card-subtitle {
+  line-height: 1.5;
+  color: var(--mat-sys-on-surface-variant);
+}

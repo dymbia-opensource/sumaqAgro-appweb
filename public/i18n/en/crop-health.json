@@ -135,6 +135,8 @@
     },
     "no-polygon": "This plot does not have a recorded boundary yet.",
     "map-boundary-note": "The map shows the recorded plot boundary. Colors distinguish the selected index; they do not represent satellite imagery or calculated stress zones.",
+    "no-data": "No data",
+    "observation-pending": "Values and download will be available once a satellite observation is recorded for this plot.",
     "observation-values": "Recorded values",
     "capture-date": "Capture date",
     "inspection-required": "No inspected reports are available. Complete a visit before issuing a prescription.",

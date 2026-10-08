@@ -159,31 +159,58 @@
       "agroMonitoringPolygonId": "5f9a1c2b7e1d3a0012ab34cf"
     },
     {
-      "id": 5,
+      "id": 6,
       "ownerUserId": 1,
-      "name": "Apurimac",
-      "region": "Chincheros",
+      "name": "Parcela demo Ayacucho",
+      "region": "Ayacucho",
       "status": "ACTIVE_MONITORING",
       "boundary": [
         [
-          -13.814053400148119,
-          -73.35493947827563
+          -13.18,
+          -74.23
         ],
         [
-          -13.819971040070364,
-          -73.35470337902713
+          -13.18,
+          -74.228
         ],
         [
-          -13.819387617461931,
-          -73.34843601715804
+          -13.182,
+          -74.228
         ],
         [
-          -13.813845029805849,
-          -73.3496594405366
+          -13.182,
+          -74.23
         ]
       ],
-      "areaHectares": 39.87807021484375,
-      "agroMonitoringPolygonId": "682ef2a96cf44cbc9727b868"
+      "areaHectares": 4.83,
+      "agroMonitoringPolygonId": ""
+    },
+    {
+      "id": 7,
+      "ownerUserId": 1,
+      "name": "Parcela demo Apurímac",
+      "region": "Apurímac",
+      "status": "ACTIVE_MONITORING",
+      "boundary": [
+        [
+          -13.64,
+          -73.37
+        ],
+        [
+          -13.64,
+          -73.368
+        ],
+        [
+          -13.642,
+          -73.368
+        ],
+        [
+          -13.642,
+          -73.37
+        ]
+      ],
+      "areaHectares": 4.82,
+      "agroMonitoringPolygonId": ""
     }
   ],
   "crop-campaigns": [
@@ -632,11 +659,67 @@
       "cloudCoveragePercent": 5,
       "stressAreaHectares": 0.4,
       "recommendation": "Check the area for signs of the onset of wilting."
+    },
+    {
+      "id": 2,
+      "plotId": 6,
+      "date": "2026-10-08T15:00:00Z",
+      "ndviMean": 0.76,
+      "ndwiMean": 0.42,
+      "surfaceTempKelvin": 291.15,
+      "cloudCoveragePercent": 8,
+      "stressAreaHectares": 0.25,
+      "recommendation": "Datos simulados para la demostración. Revisar el vigor del follaje y mantener el seguimiento del cultivo."
+    },
+    {
+      "id": 3,
+      "plotId": 7,
+      "date": "2026-10-08T15:00:00Z",
+      "ndviMean": 0.58,
+      "ndwiMean": 0.18,
+      "surfaceTempKelvin": 297.15,
+      "cloudCoveragePercent": 12,
+      "stressAreaHectares": 0.85,
+      "recommendation": "Datos simulados para la demostración. Revisar la humedad del suelo y verificar en campo las zonas con posible estrés hídrico."
     }
   ],
   "agroclimatic-alerts": [],
   "climate-forecasts": [],
-  "pest-reports": [],
+  "pest-reports": [
+    {
+      "plotId": 5,
+      "plotName": "Apurimac",
+      "reporterId": 1,
+      "description": "Muchas polillas",
+      "severity": "LOW",
+      "status": "PENDING",
+      "photo": "https://www.facebook.com/AgenciaAgrariaViru/posts/agencia-agraria-vir%C3%BA-te-recomienda-a-conocer-a-los-insectos-qu%C3%A9-se-encuentran-en/1101984545288457/",
+      "clientSyncId": "85ef3600-04f6-4dbe-83fc-724864fb3a48",
+      "id": 1
+    },
+    {
+      "plotId": 5,
+      "plotName": "Apurimac",
+      "reporterId": 1,
+      "description": "Muchas polillas hay en mi parcela",
+      "severity": "LOW",
+      "status": "PENDING",
+      "photo": "https://www.facebook.com/AgenciaAgrariaViru/posts/agencia-agraria-vir%C3%BA-te-recomienda-a-conocer-a-los-insectos-qu%C3%A9-se-encuentran-en/1101984545288457/",
+      "clientSyncId": "aa1f381e-2cd0-4dc7-a625-8f35f3964d2a",
+      "id": 2
+    },
+    {
+      "plotId": 5,
+      "plotName": "Apurimac",
+      "reporterId": 1,
+      "description": "Muchas polillas hay en mi parcela. Hay demasiadas",
+      "severity": "LOW",
+      "status": "PENDING",
+      "photo": "https://www.facebook.com/AgenciaAgrariaViru/posts/agencia-agraria-vir%C3%BA-te-recomienda-a-conocer-a-los-insectos-qu%C3%A9-se-encuentran-en/1101984545288457/",
+      "clientSyncId": "96aced2b-2c22-4bb6-9139-82757749a7ec",
+      "id": 3
+    }
+  ],
   "field-inspections": [],
   "technical-prescriptions": []
 }
