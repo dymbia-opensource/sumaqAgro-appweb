@@ -1,29 +1,51 @@
-<header class="view-header">
-  <span class="breadcrumb">{{ 'crop-health.eyebrow' | translate }}</span>
-  <h1>{{ 'crop-health.inspections-title' | translate }}</h1>
-</header>
+<header class="view-header"><span class="breadcrumb">{{ 'crop-health.eyebrow' | translate }}</span><h1>{{ 'crop-health.inspections-title' | translate }}</h1></header>
+<p>{{ 'crop-health.workflow-demo' | translate }}</p>
+@if (store.loading() || store.saving()) {
+  <mat-progress-bar mode="indeterminate" [attr.aria-label]="'common.loading' | translate" />
+}
+@if (store.error(); as error) {
+  <mat-card appearance="outlined" role="alert"><mat-card-content><p>{{ error | translate }}</p></mat-card-content></mat-card>
+}
 
+@if (saved()) { <p role="status">{{ 'crop-health.inspection-saved' | translate }}</p> }
+@if (!store.loading()) {
+<mat-card appearance="outlined"><mat-card-content>
+<form [formGroup]="inspectionForm" (ngSubmit)="onSubmit()">
+  <mat-form-field appearance="outline" class="full-width">
+  <mat-label>{{ 'crop-health.related-report' | translate }}</mat-label>
+  <mat-select formControlName="reportId">
+    @for (report of store.pestReports(); track report.id) {
+      <mat-option [value]="report.id">{{ store.reportLabel(+report.id) }} · {{ report.description }}</mat-option>
+    }
+  </mat-select>
+  <mat-error>{{ 'crop-health.required-field' | translate }}</mat-error>
+</mat-form-field>
+  <mat-form-field appearance="outline" class="full-width">
+  <mat-label>{{ 'crop-health.scheduled-at' | translate }}</mat-label>
+  <input matInput type="datetime-local" formControlName="scheduledAt">
+  <mat-error>{{ 'crop-health.required-field' | translate }}</mat-error>
+</mat-form-field>
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>{{ 'crop-health.inspection-notes' | translate }}</mat-label>
+    <textarea matInput formControlName="notes" rows="3"></textarea>
+  </mat-form-field>
+  <button mat-flat-button type="submit" [disabled]="inspectionForm.invalid || inspectionForm.disabled || store.loading() || store.saving() || store.pestReports().length === 0">{{ 'crop-health.schedule-inspection' | translate }}</button>
+  <a mat-stroked-button routerLink="/crop-health/inbox">{{ 'crop-health.inbox-title' | translate }}</a>
+</form>
+</mat-card-content></mat-card>
+}
+@if (!store.loading() && !store.error()) {
 <div class="list-container">
-  @for (inspection of [1]; track inspection) {
+  @for (inspection of store.inspections(); track inspection.id) {
     <mat-card appearance="outlined" class="inspection-card">
       <mat-card-header>
-        <mat-icon mat-card-avatar color="primary">travel_explore</mat-icon>
-        <mat-card-title>Routine Check — Plot #{{ inspection }}</mat-card-title>
-        <mat-card-subtitle>Scheduled for: Sep 15, 2026</mat-card-subtitle>
+        <mat-card-title>{{ store.reportLabel(inspection.reportId) }}</mat-card-title>
+        <mat-card-subtitle>{{ 'crop-health.scheduled-at' | translate }}: {{ inspection.scheduledAt | date: 'medium' }}</mat-card-subtitle>
       </mat-card-header>
-      <mat-card-content>
-        <p><strong>Status:</strong> <span class="status-badge">{{ 'crop-health.status-pending' | translate }}</span></p>
-      </mat-card-content>
-      <mat-card-actions>
-        <button mat-flat-button color="primary">Start Inspection</button>
-      </mat-card-actions>
+      <mat-card-content><p>{{ inspection.notes }}</p></mat-card-content>
     </mat-card>
   } @empty {
-    <mat-card appearance="outlined" class="empty-card">
-      <mat-card-content>
-        <mat-icon>travel_explore</mat-icon>
-        <p>{{ 'crop-health.no-inspections' | translate }}</p>
-      </mat-card-content>
-    </mat-card>
+    <mat-card appearance="outlined"><mat-card-content><p>{{ 'crop-health.no-inspections' | translate }}</p></mat-card-content></mat-card>
   }
 </div>
+}

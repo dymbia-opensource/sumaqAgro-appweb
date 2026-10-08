@@ -57,3 +57,5 @@
   height: 48px;
   color: var(--mat-sys-primary);
 }
+
+nav, mat-card-actions { display: flex; flex-wrap: wrap; gap: 12px; }

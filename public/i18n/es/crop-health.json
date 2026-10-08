@@ -73,7 +73,13 @@
     "no-observations": "No hay observaciones satelitales disponibles para esta parcela.",
     "errors": {
       "load-observations": "No se pudieron consultar las observaciones satelitales. Intenta nuevamente más tarde.",
-      "load-alerts": "No se pudieron consultar las alertas agrícolas. Intenta nuevamente más tarde."
+      "load-alerts": "No se pudieron consultar las alertas agrícolas. Intenta nuevamente más tarde.",
+      "load-workflow": "No se pudieron cargar los reportes, inspecciones, recetas o agrónomos.",
+      "save-report": "No se pudo guardar el reporte. Tus datos se conservaron; intenta nuevamente.",
+      "save-inspection": "No se pudo programar la inspección. Tus datos se conservaron; intenta nuevamente.",
+      "save-prescription": "No se pudo guardar la receta. Tus datos se conservaron; intenta nuevamente.",
+      "session-required": "Selecciona un usuario en el acceso demo para enviar un reporte.",
+      "load-plots": "No se pudieron cargar tus parcelas."
     },
     "no-inspections": "Sin inspecciones",
     "no-prescriptions": "Sin recetas",
@@ -83,6 +89,35 @@
     "severity-high": "Alta",
     "severity-low": "Baja",
     "severity-medium": "Media",
-    "status-pending": "Pendiente"
+    "status-pending": "Pendiente",
+    "plot": "Parcela",
+    "related-report": "Reporte relacionado",
+    "agronomist": "Agrónomo",
+    "application-date": "Fecha de aplicación",
+    "scheduled-at": "Fecha y hora de visita",
+    "inspection-notes": "Notas para la visita",
+    "schedule-inspection": "Programar inspección",
+    "required-field": "Completa este campo con un valor válido.",
+    "description-length": "Describe los síntomas con al menos 10 caracteres.",
+    "invalid-photo": "Ingresa una URL que comience con http:// o https://.",
+    "no-plots": "No tienes parcelas disponibles para reportar.",
+    "no-advisors": "No hay agrónomos disponibles para emitir una receta.",
+    "report-saved": "El reporte se guardó correctamente.",
+    "prescription-saved": "La receta se guardó correctamente.",
+    "inspection-saved": "La inspección se programó correctamente.",
+    "report-status": "Estado",
+    "view-photo": "Ver foto",
+    "workflow-demo": "Flujo de demostración: los registros se guardan en la API de prueba. La asignación del agrónomo se selecciona manualmente.",
+    "report-statuses": {
+      "PENDING": "Pendiente",
+      "INSPECTED": "Inspeccionado",
+      "RESOLVED": "Resuelto"
+    },
+    "severities": {
+      "LOW": "Baja",
+      "MEDIUM": "Media",
+      "HIGH": "Alta",
+      "SEVERE": "Severa"
+    }
   }
 }

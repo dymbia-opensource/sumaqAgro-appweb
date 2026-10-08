@@ -1,3 +1,4 @@
+import { Router } from '@angular/router';
 import { DatePipe, DecimalPipe } from '@angular/common';
 import { Component, ElementRef, inject, OnInit, AfterViewInit, OnDestroy, viewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
@@ -31,6 +32,7 @@ import * as L from 'leaflet';
 })
 export class CropHealthView implements OnInit, AfterViewInit, OnDestroy {
   readonly store = inject(CropHealthStore);
+  private readonly router = inject(Router);
 
   private readonly mapContainer = viewChild.required<ElementRef<HTMLDivElement>>('mapContainer');
 
@@ -101,7 +103,7 @@ export class CropHealthView implements OnInit, AfterViewInit, OnDestroy {
   }
 
   consultAgronomist(): void {
-    console.log('Consult agronomist clicked');
+    void this.router.navigate(['/crop-health/inbox']);
   }
 
   downloadReport(): void {

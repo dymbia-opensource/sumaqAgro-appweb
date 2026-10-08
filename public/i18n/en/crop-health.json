@@ -73,7 +73,13 @@
     "no-observations": "No satellite observations are available for this plot.",
     "errors": {
       "load-observations": "Satellite observations could not be retrieved. Please try again later.",
-      "load-alerts": "Agricultural alerts could not be retrieved. Please try again later."
+      "load-alerts": "Agricultural alerts could not be retrieved. Please try again later.",
+      "load-workflow": "Reports, inspections, prescriptions or agronomists could not be loaded.",
+      "save-report": "The report could not be saved. Your data was kept; please try again.",
+      "save-inspection": "The inspection could not be scheduled. Your data was kept; please try again.",
+      "save-prescription": "The prescription could not be saved. Your data was kept; please try again.",
+      "session-required": "Select a user on the demo access page to submit a report.",
+      "load-plots": "Your plots could not be loaded."
     },
     "no-inspections": "No inspections",
     "no-prescriptions": "No prescriptions",
@@ -83,6 +89,35 @@
     "severity-high": "High",
     "severity-low": "Low",
     "severity-medium": "Medium",
-    "status-pending": "Pending"
+    "status-pending": "Pending",
+    "plot": "Plot",
+    "related-report": "Related report",
+    "agronomist": "Agronomist",
+    "application-date": "Application date",
+    "scheduled-at": "Visit date and time",
+    "inspection-notes": "Visit notes",
+    "schedule-inspection": "Schedule inspection",
+    "required-field": "Enter a valid value for this field.",
+    "description-length": "Describe the symptoms using at least 10 characters.",
+    "invalid-photo": "Enter a URL beginning with http:// or https://.",
+    "no-plots": "You have no plots available to report.",
+    "no-advisors": "No agronomists are available to issue a prescription.",
+    "report-saved": "The report was saved successfully.",
+    "prescription-saved": "The prescription was saved successfully.",
+    "inspection-saved": "The inspection was scheduled successfully.",
+    "report-status": "Status",
+    "view-photo": "View photo",
+    "workflow-demo": "Demo workflow: records are saved to the test API. The agronomist assignment is selected manually.",
+    "report-statuses": {
+      "PENDING": "Pending",
+      "INSPECTED": "Inspected",
+      "RESOLVED": "Resolved"
+    },
+    "severities": {
+      "LOW": "Low",
+      "MEDIUM": "Medium",
+      "HIGH": "High",
+      "SEVERE": "Severe"
+    }
   }
 }

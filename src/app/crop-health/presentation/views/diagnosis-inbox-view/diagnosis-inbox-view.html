@@ -1,33 +1,38 @@
-<header class="view-header">
-  <span class="breadcrumb">{{ 'crop-health.eyebrow' | translate }}</span>
-  <h1>{{ 'crop-health.inbox-title' | translate }}</h1>
-  <p class="subtitle">{{ 'crop-health.inbox-subtitle' | translate }}</p>
-</header>
+<header class="view-header"><span class="breadcrumb">{{ 'crop-health.eyebrow' | translate }}</span><h1>{{ 'crop-health.inbox-title' | translate }}</h1></header>
+<p>{{ 'crop-health.workflow-demo' | translate }}</p>
+<nav>
+  <a mat-flat-button routerLink="/crop-health/report-pest">{{ 'crop-health.form-title' | translate }}</a>
+  <a mat-stroked-button routerLink="/crop-health/inspections">{{ 'crop-health.inspections-title' | translate }}</a>
+  <a mat-stroked-button routerLink="/crop-health/prescriptions">{{ 'crop-health.history-title' | translate }}</a>
+</nav>
+@if (store.loading() || store.saving()) {
+  <mat-progress-bar mode="indeterminate" [attr.aria-label]="'common.loading' | translate" />
+}
+@if (store.error(); as error) {
+  <mat-card appearance="outlined" role="alert"><mat-card-content><p>{{ error | translate }}</p></mat-card-content></mat-card>
+}
 
+@if (!store.loading() && !store.error()) {
 <div class="inbox-list">
-  <!-- Mockup data iterating with @for; will use store.pestReports() when wired -->
-  @for (report of [1, 2]; track report) {
+  @for (report of store.pestReports(); track report.id) {
     <mat-card appearance="outlined" class="report-card">
       <mat-card-header>
-        <mat-icon mat-card-avatar class="icon-warning">pest_control</mat-icon>
-        <mat-card-title>Suspected Late Blight (Phytophthora infestans)</mat-card-title>
-        <mat-card-subtitle>Reported on: Sep 12, 2026 · Plot #{{ report }}</mat-card-subtitle>
+        <mat-icon mat-card-avatar>pest_control</mat-icon>
+        <mat-card-title>{{ store.reportLabel(+report.id) }}</mat-card-title>
+        <mat-card-subtitle>{{ 'crop-health.report-status' | translate }}: {{ 'crop-health.report-statuses.' + report.status | translate }}</mat-card-subtitle>
       </mat-card-header>
       <mat-card-content>
-        <p><strong>{{ 'crop-health.form-severity' | translate }}:</strong> HIGH</p>
-        <p>"I am seeing black spots on the leaves spreading rapidly across the northern sector."</p>
+        <p>{{ report.description }}</p>
+        <p>{{ 'crop-health.form-severity' | translate }}: {{ 'crop-health.severities.' + report.severity | translate }}</p>
+        @if (report.photo) { <a [href]="report.photo" target="_blank" rel="noopener noreferrer">{{ 'crop-health.view-photo' | translate }}</a> }
       </mat-card-content>
       <mat-card-actions>
-        <button mat-flat-button color="primary">{{ 'crop-health.btn-inspect' | translate }}</button>
-        <button mat-stroked-button>{{ 'crop-health.btn-prescribe' | translate }}</button>
+        <a mat-flat-button routerLink="/crop-health/inspections" [queryParams]="{ reportId: report.id }">{{ 'crop-health.schedule-inspection' | translate }}</a>
+        <a mat-stroked-button routerLink="/crop-health/prescribe" [queryParams]="{ reportId: report.id }">{{ 'crop-health.btn-prescribe' | translate }}</a>
       </mat-card-actions>
     </mat-card>
   } @empty {
-    <mat-card appearance="outlined" class="empty-card">
-      <mat-card-content>
-        <mat-icon>inbox</mat-icon>
-        <p>{{ 'crop-health.no-reports' | translate }}</p>
-      </mat-card-content>
-    </mat-card>
+    <mat-card appearance="outlined"><mat-card-content><p>{{ 'crop-health.no-reports' | translate }}</p></mat-card-content></mat-card>
   }
 </div>
+}

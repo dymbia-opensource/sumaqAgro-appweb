@@ -1,3 +1,6 @@
+import { RecordPestReportCommand } from '../domain/model/commands/record-pest-report.command';
+import { ScheduleFieldInspectionCommand } from '../domain/model/commands/schedule-field-inspection.command';
+import { IssueTechnicalPrescriptionCommand } from '../domain/model/commands/issue-technical-prescription.command';
 ﻿import { HttpClient } from '@angular/common/http';
 import { inject, Service } from '@angular/core';
 import { Observable } from 'rxjs';
@@ -74,5 +77,21 @@ export class CropHealthApi extends BaseApi {
   /** Loads technical prescriptions associated with a specific pest report. */
   getPrescriptionsByReportId(reportId: number): Observable<TechnicalPrescription[]> {
     return this.prescriptionsEndpoint.getByReportId(reportId);
+  }
+
+  getReports(): Observable<PestReport[]> { return this.reportsEndpoint.getAll(); }
+  getInspections(): Observable<FieldInspection[]> { return this.inspectionsEndpoint.getAll(); }
+  getPrescriptions(): Observable<TechnicalPrescription[]> { return this.prescriptionsEndpoint.getAll(); }
+
+  recordReport(command: RecordPestReportCommand): Observable<PestReport> {
+    return this.reportsEndpoint.create(new PestReport({ ...command }));
+  }
+
+  scheduleInspection(command: ScheduleFieldInspectionCommand): Observable<FieldInspection> {
+    return this.inspectionsEndpoint.create(new FieldInspection({ ...command }));
+  }
+
+  issuePrescription(command: IssueTechnicalPrescriptionCommand): Observable<TechnicalPrescription> {
+    return this.prescriptionsEndpoint.create(new TechnicalPrescription({ ...command }));
   }
 }
