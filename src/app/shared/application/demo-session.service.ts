@@ -3,7 +3,7 @@ import { DemoUser } from '../domain/model/demo-user';
 
 const DEMO_SESSION_STORAGE_KEY = 'sumaq-agro-demo-user-id';
 
-const DEMO_USERS: readonly DemoUser[] = [
+export const DEMO_USERS: readonly DemoUser[] = [
   {
     id: 1,
     displayName: 'Guillermo',
@@ -15,6 +15,12 @@ const DEMO_USERS: readonly DemoUser[] = [
     displayName: 'Cristian Santana',
     experience: 'COOPERATIVE_DIRECTOR',
     initialRoute: '/profiles/cooperative/dashboard',
+  },
+  {
+    id: 4,
+    displayName: 'Ing. Juan A. Morales',
+    experience: 'AGRONOMIST',
+    initialRoute: '/crop-health/inbox',
   },
 ];
 

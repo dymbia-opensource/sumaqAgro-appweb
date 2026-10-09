@@ -205,7 +205,7 @@ export class HarvestCertificatesView {
         certificateNumber: `CERT-${saved.data.code}`,
         sha256Hash: hash,
         verificationToken: token,
-        issuedByUserId: 2,
+        issuedByUserId: 3,
         issuedByName: 'Cristian Santana',
         issuedAt,
         status: 'ACTIVE',

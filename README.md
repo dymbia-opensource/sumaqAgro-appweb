@@ -4,7 +4,7 @@
 [![Angular Material](https://img.shields.io/badge/Angular%20Material-22-3F51B5?logo=angular)](https://material.angular.dev/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-Aplicación web de **SumaqAgro** (startup **Dymbia**) para productores de papa andina y café de especialidad, cooperativas y agrónomos. Es una *Single Page Application* en **Angular 22** con **Angular Material**, organizada por *bounded context* siguiendo **Domain-Driven Design**.
+Aplicación web de **SumaqAgro** (startup **Dymbia**) para productores de papa andina y café de especialidad, cooperativas y ingenieros agrónomos. Es una *Single Page Application* en **Angular 22** con **Angular Material**, organizada por *bounded context* siguiendo **Domain-Driven Design**.
 
 | | URL |
 |---|---|
@@ -41,7 +41,7 @@ npm run api
 npm start
 ```
 
-Abre `http://localhost:4200` y elige un usuario de prueba en **Acceso demo** (agricultor o director de cooperativa). Esta pantalla se reemplaza por el inicio de sesión cuando se implemente IAM.
+Abre `http://localhost:4200` y elige un usuario de prueba en **Acceso demo** (agricultor, director de cooperativa o ingeniero agrónomo). Esta pantalla se reemplaza por el inicio de sesión cuando se implemente IAM.
 
 | Comando | Qué hace |
 |---|---|
@@ -152,3 +152,15 @@ Un *bounded context* nuevo crea su carpeta con las mismas capas, agrega su `*.ro
 * **GitFlow:** `main` (producción), `develop` (integración) y una rama `feature/<nombre>` por funcionalidad. Se une a `develop` con `git merge --no-ff`.
 * **Conventional Commits:** `feat(<contexto>): ...`, `fix(...)`, `refactor(...)`, `chore: ...`, `docs: ...`.
 * **Conflictos:** en `server/db.json` y `src/app/app.routes.ts` conserva las líneas de ambas ramas. Cada contexto edita solo su propio archivo de traducciones.
+
+## Crop Health: flujo demo
+
+- Agricultor: consulta sus parcelas y observaciones, registra reportes y consulta sus visitas y recetas.
+- Director: consulta las parcelas de socios activos de su cooperativa y programa visitas.
+- Ingeniero Agrónomo (Juan A. Morales, usuario 4): consulta las parcelas de su cooperativa, completa visitas, emite recetas y marca reportes como resueltos. Su identidad proviene de la sesión, no de un selector manual.
+
+La selección de parcela se comparte con Field Management. El visor dibuja el polígono registrado sobre un mapa o un fondo satelital híbrido y muestra los índices almacenados; no descarga imágenes multiespectrales. La descarga disponible es una ficha PNG con el logo y los valores registrados.
+
+Una visita se programa para una fecha futura y se completa a partir de esa fecha, con al menos 10 caracteres de resultados. Al completarla, el reporte pasa de PENDING a INSPECTED; entonces permite emitir una receta. Después de registrar una receta, el ingeniero agrónomo puede marcarlo RESOLVED. Si falla la actualización del reporte después de guardar una visita, la pantalla permite sincronizar ese estado sin crear otra visita.
+
+Los controles de rol y parcela pertenecen al frontend demo. json-server no autentica usuarios ni protege sus endpoints; la autorización real debe implementarse en el backend. El estado se limpia y las consultas anteriores se cancelan al cambiar de usuario.

@@ -1,4 +1,5 @@
-﻿import { BaseEntity } from '../../../../shared/domain/model/base-entity';
+import { requireId, requireText, requireDate } from '../validation';
+import { BaseEntity } from '../../../../shared/domain/model/base-entity';
 
 /**
  * Properties required to instantiate a {@link TechnicalPrescription}.
@@ -30,6 +31,8 @@ export class TechnicalPrescription extends BaseEntity {
    */
   constructor(props: TechnicalPrescriptionProps) {
     super({ id: props.id ?? 0 });
+    requireId(props.reportId); requireId(props.agronomistId);
+    requireText(props.recommendedProducts); requireText(props.dosageInstructions); requireDate(props.applicationDate);
     this._reportId = props.reportId;
     this._agronomistId = props.agronomistId;
     this._recommendedProducts = props.recommendedProducts;

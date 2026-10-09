@@ -61,6 +61,7 @@ export const cooperativeDirectorNavigationSections: NavigationSection[] = [
         icon: 'calendar_month',
       },
       { link: '/crop-health/alerts', label: 'option.cooperative-alerts', icon: 'calendar_month' },
+      { link: '/crop-health/inbox', label: 'option.diagnosis-inbox', icon: 'pest_control' },
     ],
   },
   {
@@ -69,9 +70,19 @@ export const cooperativeDirectorNavigationSections: NavigationSection[] = [
   },
 ];
 
-/** Returns the menu corresponding to the active user experience. */
+export const agronomistNavigationSections: NavigationSection[] = [{
+  title: 'section.agricultural-operation',
+  options: [
+    { link: '/crop-health/inbox', label: 'option.diagnosis-inbox', icon: 'pest_control' },
+    { link: '/crop-health/inspections', label: 'option.field-inspections', icon: 'travel_explore' },
+    { link: '/crop-health/prescriptions', label: 'option.prescriptions', icon: 'medication' },
+    { link: '/crop-health/monitoring', label: 'option.crop-health', icon: 'eco' },
+    { link: '/crop-health/alerts', label: 'option.alerts', icon: 'warning' },
+  ],
+}];
+
+/** Returns only navigation options supported by the selected demo role. */
 export function navigationFor(experience: UserExperience): NavigationSection[] {
-  return experience === 'COOPERATIVE_DIRECTOR'
-    ? cooperativeDirectorNavigationSections
-    : farmerNavigationSections;
+  if (experience === 'AGRONOMIST') return agronomistNavigationSections;
+  return experience === 'COOPERATIVE_DIRECTOR' ? cooperativeDirectorNavigationSections : farmerNavigationSections;
 }

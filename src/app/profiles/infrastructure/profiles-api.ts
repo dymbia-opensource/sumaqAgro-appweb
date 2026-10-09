@@ -56,6 +56,10 @@ export class ProfilesApi extends BaseApi {
     return this.cooperativeDashboardEndpoint.getByDirector(directorUserId);
   }
 
+  getAdvisorByUser(userId: number): Observable<TechnicalAdvisor | null> {
+    return this.technicalAdvisorsEndpoint.getByUser(userId);
+  }
+
   getTechnicalAdvisors(cooperativeId: number): Observable<TechnicalAdvisor[]> {
     return this.technicalAdvisorsEndpoint.getByCooperative(cooperativeId);
   }

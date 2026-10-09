@@ -24,12 +24,10 @@ export class DemoAccessView {
   }
 
   roleLabel(user: DemoUser): string {
-    return user.experience === 'FARMER'
-      ? 'Agricultor independiente'
-      : 'Director de cooperativa';
+    return { FARMER: 'Agricultor independiente', COOPERATIVE_DIRECTOR: 'Director de cooperativa', AGRONOMIST: 'Ingeniero Agrónomo' }[user.experience];
   }
 
   roleIcon(user: DemoUser): string {
-    return user.experience === 'FARMER' ? 'agriculture' : 'groups';
+    return { FARMER: 'agriculture', COOPERATIVE_DIRECTOR: 'groups', AGRONOMIST: 'health_and_safety' }[user.experience];
   }
 }

@@ -1,5 +1,6 @@
+import { CropPlotSelector } from '../../components/plot-selector/plot-selector';
 import { DatePipe, NgClass } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, effect, inject, untracked } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
@@ -15,16 +16,19 @@ import { CropHealthStore } from '../../../application/crop-health.store';
  */
 @Component({
   selector: 'app-agricultural-alerts-view',
-  imports: [DatePipe, NgClass, TranslatePipe, MatCardModule, MatIconModule, MatProgressBarModule],
+  imports: [CropPlotSelector, DatePipe, NgClass, TranslatePipe, MatCardModule, MatIconModule, MatProgressBarModule],
   templateUrl: './agricultural-alerts-view.html',
   styleUrl: './agricultural-alerts-view.css',
 })
-export class AgriculturalAlertsView implements OnInit {
+export class AgriculturalAlertsView {
   /** Application store that holds all crop-health signals. */
   readonly store = inject(CropHealthStore);
 
   /** Loads agroclimatic alerts for the user's region on component init. */
-  ngOnInit(): void {
-    this.store.loadAlerts('Valle Sur');
+  constructor() {
+    effect(() => {
+      const plot = this.store.selectedPlot();
+      untracked(() => { if (plot) this.store.loadAlerts(plot.region); });
+    });
   }
 }

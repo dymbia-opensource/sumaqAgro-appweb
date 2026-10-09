@@ -1,3 +1,5 @@
+import { Subscription } from 'rxjs';
+import { PlotSelectionService } from '../../shared/application/plot-selection.service';
 import { computed, effect, inject, Injectable, Signal, signal, untracked } from '@angular/core';
 import { forkJoin, map, Observable, of, retry, switchMap, throwError } from 'rxjs';
 import { DemoSessionService } from '../../shared/application/demo-session.service';
@@ -52,7 +54,11 @@ export class FieldManagementStore {
 
   private readonly plotsSignal = signal<FieldPlot[]>([]);
   private readonly campaignsByPlotSignal = signal<Map<number, CropCampaign[]>>(new Map());
-  private readonly selectedPlotIdSignal = signal<number | null>(null);
+  private readonly plotSelection = inject(PlotSelectionService);
+  private plotsLoad?: Subscription;
+  private readonly plotsLoadingSignal = signal(false);
+  readonly plotsLoading = this.plotsLoadingSignal.asReadonly();
+  private ledgerLoad?: Subscription;
   private readonly ledgerSignal = signal<CampaignLedger | null>(null);
   private readonly loadingSignal = signal<boolean>(false);
   private readonly errorSignal = signal<string | null>(null);
@@ -74,7 +80,7 @@ export class FieldManagementStore {
    * It is the user chosen in the demo access until IAM is implemented; then it
    * comes from IamStore.
    */
-  readonly currentUserId = computed(() => this.demoSession.activeUser()?.id ?? null);
+  readonly currentUserId = computed(() => this.demoSession.activeUser()?.experience === 'FARMER' ? this.demoSession.activeUser()!.id : null);
 
   /** Number of plots of the producer. */
   readonly plotCount = computed(() => this.plots().length);
@@ -87,12 +93,12 @@ export class FieldManagementStore {
 
   /** Plot shown on the dashboard. */
   readonly selectedPlot = computed(() =>
-    this.plots().find((plot) => plot.id === this.selectedPlotIdSignal()),
+    this.plots().find((plot) => plot.id === this.plotSelection.selectedPlotId()),
   );
 
   /** Campaigns of the selected plot. */
   readonly campaigns = computed(
-    () => this.campaignsByPlotSignal().get(this.selectedPlotIdSignal() ?? -1) ?? [],
+    () => this.campaignsByPlotSignal().get(this.plotSelection.selectedPlotId() ?? -1) ?? [],
   );
 
   /** Campaign in progress of the selected plot, or the most recent one. */
@@ -130,8 +136,11 @@ export class FieldManagementStore {
    * @param ownerUserId - Producer who owns the plots.
    */
   loadMyPlots = (ownerUserId: number): void => {
+    this.plotsLoad?.unsubscribe();
+    this.ledgerLoad?.unsubscribe();
+    this.plotsLoadingSignal.set(true);
     this.startLoading();
-    this.fieldManagementApi
+    this.plotsLoad = this.fieldManagementApi
       .getPlotsByOwner(ownerUserId)
       .pipe(
         retry(2),
@@ -145,21 +154,23 @@ export class FieldManagementStore {
       )
       .subscribe({
         next: ({ plots, campaigns }) => {
+          if (this.currentUserId() !== ownerUserId) return;
+          this.plotsLoadingSignal.set(false);
           this.plotsSignal.set(plots);
           this.campaignsByPlotSignal.set(
             new Map(plots.map((plot, index) => [plot.id as number, campaigns[index]])),
           );
           this.loadingSignal.set(false);
-          const keep = plots.some((plot) => plot.id === this.selectedPlotIdSignal());
+          const keep = plots.some((plot) => plot.id === this.plotSelection.selectedPlotId());
           const first = plots[0];
-          if (!keep && first) {
-            this.selectPlot(first.id as number);
+          if (first) {
+            this.selectPlot(keep ? this.plotSelection.selectedPlotId()! : first.id as number);
           } else if (!first) {
-            this.selectedPlotIdSignal.set(null);
+            this.plotSelection.select(null);
             this.ledgerSignal.set(null);
           }
         },
-        error: (error) => this.fail(error, 'field-management.errors.load-plots'),
+        error: (error) => { this.plotsLoadingSignal.set(false); this.fail(error, 'field-management.errors.load-plots'); },
       });
   };
 
@@ -168,12 +179,14 @@ export class FieldManagementStore {
    * @param plotId - Plot to show.
    */
   selectPlot = (plotId: number): void => {
-    this.selectedPlotIdSignal.set(plotId);
+    if (!this.plots().some(plot => plot.id === plotId)) return;
+    this.ledgerLoad?.unsubscribe();
+    this.plotSelection.select(plotId);
     this.ledgerSignal.set(null);
     const campaign = this.activeCampaign();
     if (!campaign) return;
     this.startLoading();
-    this.fieldManagementApi
+    this.ledgerLoad = this.fieldManagementApi
       .getLedgerByCampaign(campaign.id as number)
       .pipe(retry(2))
       .subscribe({
@@ -282,9 +295,9 @@ export class FieldManagementStore {
         next: () => {
           this.plotsSignal.update((plots) => plots.filter((plot) => plot.id !== id));
           this.loadingSignal.set(false);
-          if (this.selectedPlotIdSignal() === id) {
+          if (this.plotSelection.selectedPlotId() === id) {
             const first = this.plots()[0];
-            this.selectedPlotIdSignal.set(null);
+            this.plotSelection.select(null);
             this.ledgerSignal.set(null);
             if (first) this.selectPlot(first.id as number);
           }
@@ -356,9 +369,13 @@ export class FieldManagementStore {
 
   /** Forgets the plots of the previous user (after signing out). */
   private clearState(): void {
+    this.plotsLoadingSignal.set(false);
+    this.plotsLoad?.unsubscribe();
+    this.ledgerLoad?.unsubscribe();
+    this.loadingSignal.set(false);
     this.plotsSignal.set([]);
     this.campaignsByPlotSignal.set(new Map());
-    this.selectedPlotIdSignal.set(null);
+    this.plotSelection.select(null);
     this.ledgerSignal.set(null);
     this.errorSignal.set(null);
   }

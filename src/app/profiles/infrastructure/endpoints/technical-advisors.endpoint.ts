@@ -28,4 +28,7 @@ export class TechnicalAdvisorsApiEndpoint extends BaseApiEndpoint<
       catchError(this.handleError('Failed to fetch technical advisors'))
     );
   }
+  getByUser(userId: number): Observable<TechnicalAdvisor | null> {
+    return this.getAllBy({ userId }).pipe(map(advisors => advisors[0] ?? null));
+  }
 }

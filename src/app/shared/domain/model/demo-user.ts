@@ -1,7 +1,7 @@
 /**
  * Experiences available while IAM is not implemented.
  */
-export type UserExperience = 'FARMER' | 'COOPERATIVE_DIRECTOR';
+export type UserExperience = 'FARMER' | 'COOPERATIVE_DIRECTOR' | 'AGRONOMIST';
 
 /**
  * Temporary user used to navigate and verify each application segment.
