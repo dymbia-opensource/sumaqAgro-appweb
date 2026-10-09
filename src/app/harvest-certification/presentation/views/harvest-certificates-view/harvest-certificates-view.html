@@ -2,6 +2,56 @@
   <mat-progress-bar mode="indeterminate" [attr.aria-label]="'harvest-certification.loading' | translate" />
 }
 
+@if (isFarmer()) {
+  <div class="farmer-certificates">
+    <header class="farmer-header">
+      <h1>{{ 'harvest-certification.farmer.title' | translate }}</h1>
+      <p>{{ 'harvest-certification.farmer.subtitle' | translate }}</p>
+    </header>
+
+    @if (store.error(); as error) {
+      <div class="error-banner" role="alert">{{ 'harvest-certification.load-save-error' | translate }} {{ error | translate }}
+        <button type="button" (click)="store.load()">{{ 'common.retry' | translate }}</button>
+      </div>
+    }
+
+    @for (row of farmerCertificates(); track row.certificate.id) {
+      <article class="farmer-certificate">
+        <h2>{{ 'harvest-certification.farmer.certificate-title' | translate: { code: row.batch.data.code } }}</h2>
+        <p class="farmer-details">{{ 'harvest-certification.farmer.crop' | translate }}: {{ row.batch.data.variety }} | {{ 'harvest-certification.farmer.farm' | translate }}: {{ row.batch.data.plotName }} ({{ row.batch.data.plotRegion }}) | {{ 'harvest-certification.farmer.issued' | translate }}: {{ row.certificate.data.issuedAt | date: 'dd/MM/yyyy' }}</p>
+        <p class="farmer-grading"><strong>{{ 'harvest-certification.farmer.grading' | translate }}:</strong>
+          @if (row.batch.data.potatoGrading; as grading) {
+            {{ 'harvest-certification.farmer.potato-grading' | translate: { first: grading.firstPercentage, second: grading.secondPercentage, third: grading.thirdPercentage } }}
+          } @else {
+            {{ 'harvest-certification.farmer.coffee-grading' | translate: { score: row.batch.data.coffeeCupping?.totalScore } }}
+          }
+        </p>
+        <div class="farmer-seal"><span>{{ 'harvest-certification.farmer.digital-seal' | translate }}:</span><span class="seal-badge">{{ 'harvest-certification.farmer.accredited' | translate }}</span></div>
+        <div class="farmer-actions">
+          <button type="button" class="farmer-qr-button" (click)="toggleFarmerQr(row.certificate.id)">
+            <mat-icon>qr_code</mat-icon> {{ 'harvest-certification.farmer.show-qr' | translate }}
+          </button>
+          <button type="button" class="farmer-outline-button" (click)="print()">
+            <mat-icon>download</mat-icon> {{ 'harvest-certification.farmer.download-pdf' | translate }}
+          </button>
+          <a class="farmer-outline-button" [href]="verificationUrl(row.certificate)" target="_blank" rel="noopener">{{ 'harvest-certification.farmer.web-record' | translate }}</a>
+        </div>
+        @if (visibleQr() === row.certificate.id) {
+          <div class="farmer-qr-panel">
+            <img [src]="farmerQrUrl(row.certificate)" width="180" height="180" [alt]="'harvest-certification.farmer.qr-alt' | translate" />
+            <p>{{ 'harvest-certification.farmer.qr-instruction' | translate }}</p>
+          </div>
+        }
+      </article>
+    } @empty {
+      @if (!store.loading() && !store.error()) {
+        <div class="farmer-empty">{{ 'harvest-certification.farmer.empty' | translate }}</div>
+      }
+    }
+
+    <aside class="farmer-tip"><mat-icon>lightbulb</mat-icon><span>{{ 'harvest-certification.farmer.tip' | translate }}</span></aside>
+  </div>
+} @else {
 <header class="page-header">
 <div>
   <p class="eyebrow">{{ 'harvest-certification.home' | translate }} <span>›</span> {{ 'harvest-certification.quality-improvement' | translate }} <span>›</span> {{ 'harvest-certification.official-certificates' | translate }}</p>
@@ -239,4 +289,5 @@
       </footer>
     </section>
   </div>
+}
 }
