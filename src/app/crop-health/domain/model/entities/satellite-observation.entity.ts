@@ -1,3 +1,4 @@
+import { requireId, requireRange, requireDate } from '../validation';
 import { BaseEntity } from '../../../../shared/domain/model/base-entity';
 
 /**
@@ -38,6 +39,11 @@ export class SatelliteObservation extends BaseEntity {
    */
   constructor(props: SatelliteObservationProps) {
     super({ id: props.id ?? 0 });
+    requireId(props.plotId); requireDate(props.date);
+    requireRange(props.ndviMean, -1, 1); requireRange(props.ndwiMean, -1, 1);
+    if (props.cloudCoveragePercent !== undefined) requireRange(props.cloudCoveragePercent, 0, 100);
+    if (props.surfaceTempKelvin !== undefined) requireRange(props.surfaceTempKelvin, 0);
+    if (props.stressAreaHectares !== undefined) requireRange(props.stressAreaHectares, 0);
     this._plotId = props.plotId;
     this._date = props.date;
     this._ndviMean = props.ndviMean;

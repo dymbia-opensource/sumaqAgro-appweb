@@ -9,6 +9,7 @@ export class TechnicalAdvisorAssembler
     return new TechnicalAdvisor({
       id: resource.id,
       cooperativeId: resource.cooperativeId,
+      userId: resource.userId,
       name: resource.name,
       cipCode: resource.cipCode,
       phone: resource.phone,
@@ -20,6 +21,7 @@ export class TechnicalAdvisorAssembler
     return {
       id: entity.id as number,
       cooperativeId: entity.cooperativeId,
+      userId: entity.userId,
       name: entity.name,
       cipCode: entity.cipCode,
       phone: entity.phone,

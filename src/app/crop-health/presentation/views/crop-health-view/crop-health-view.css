@@ -47,7 +47,7 @@
 /* Two-column layout */
 .content-grid {
   display: grid;
-  grid-template-columns: 1fr 340px;
+  grid-template-columns: minmax(0, 1fr) 340px;
   gap: 24px;
 }
 
@@ -65,10 +65,11 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  min-height: 380px;
+  min-height: 520px;
 }
 
 .mock-map {
+  min-height: 460px;
   position: relative;
   flex: 1;
   border-radius: 16px;
@@ -160,4 +161,41 @@ mat-card-actions {
 .btn-download {
   width: 100%;
   margin: 0 !important;
+}
+
+.diagnosis-card mat-card-header {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.diagnosis-card mat-card-title {
+  line-height: 1.35;
+}
+
+.diagnosis-card mat-card-subtitle {
+  line-height: 1.5;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.map-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding-top: 16px;
+}
+
+.boundary-legend {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font: var(--mat-sys-label-medium);
+  color: var(--mat-sys-on-surface-variant);
+}
+
+@media (max-width: 600px) {
+  .map-card { padding: 12px; min-height: 420px; }
+  .mock-map { min-height: 360px; }
 }

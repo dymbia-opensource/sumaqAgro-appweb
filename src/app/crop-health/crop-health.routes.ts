@@ -1,3 +1,4 @@
+import { cropHealthGuard } from './application/crop-health.guard';
 import { Routes } from '@angular/router';
 
 const cropHealthView = () =>
@@ -37,6 +38,8 @@ const prescriptionForm = () =>
 export const cropHealthRoutes: Routes = [
   {
     path: '',
+    canActivate: [cropHealthGuard],
+    canActivateChild: [cropHealthGuard],
     children: [
       {
         path: 'monitoring',
@@ -70,11 +73,13 @@ export const cropHealthRoutes: Routes = [
       },
       {
         path: 'report-pest',
+        data: { roles: ['FARMER'] },
         loadComponent: pestReportForm,
         title: 'Report Pest or Disease – SumaqAgro',
       },
       {
         path: 'prescribe',
+        data: { roles: ['AGRONOMIST'] },
         loadComponent: prescriptionForm,
         title: 'Issue Technical Prescription – SumaqAgro',
       },

@@ -47,3 +47,7 @@
   height: 48px;
   color: var(--mat-sys-primary);
 }
+
+.instructions { white-space: pre-line; }
+
+.back-nav { display: flex; align-items: center; }

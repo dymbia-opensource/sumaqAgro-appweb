@@ -23,7 +23,10 @@
     "cooperative-costs": "Costos",
     "cooperative-certificates": "Certificados",
     "cooperative-alerts": "Alertas",
-    "cooperative-settings": "Configuración"
+    "cooperative-settings": "Configuración",
+    "diagnosis-inbox": "Reportes de plagas",
+    "field-inspections": "Inspecciones",
+    "prescriptions": "Recetas técnicas"
   },
   "layout": {
     "search": "Buscar en mi parcela...",

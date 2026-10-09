@@ -53,14 +53,23 @@
   </mat-card>
 } @else {
   <section class="kpi-grid" [attr.aria-label]="'field-management.dashboard.summary' | translate">
-    <!-- Leaf health: data of Crop Health, added in that phase -->
+    <!-- Leaf health from the selected plot observations -->
     <mat-card class="kpi-card">
       <mat-card-header>
         <mat-icon mat-card-avatar>eco</mat-icon>
         <mat-card-title>{{ 'field-management.dashboard.leaf-health' | translate }}</mat-card-title>
       </mat-card-header>
       <mat-card-content>
-        <p class="kpi-note">{{ 'field-management.dashboard.leaf-health-pending' | translate }}</p>
+        @if (satellite().loading) {
+          <p class="kpi-note">{{ 'common.loading' | translate }}</p>
+        } @else if (satellite().error) {
+          <p class="kpi-note" role="alert">{{ 'crop-health.errors.load-observations' | translate }}</p>
+        } @else if (latestObservation(); as observation) {
+          <p class="kpi-value">{{ observation.ndviMean | number: '1.2-2' }} <span class="kpi-unit">NDVI</span></p>
+          <p class="kpi-note">{{ 'crop-health.capture-date' | translate }}: {{ observation.date | date: 'mediumDate' }}</p>
+        } @else {
+          <p class="kpi-note">{{ 'field-management.dashboard.leaf-health-pending' | translate }}</p>
+        }
       </mat-card-content>
       <mat-card-actions>
         <a mat-flat-button class="kpi-action" routerLink="/crop-health/monitoring">
@@ -163,7 +172,7 @@
   </section>
 
   <section class="charts-grid">
-    <!-- NDVI evolution: data of Crop Health, added in that phase -->
+    <!-- NDVI evolution from the selected campaign observations -->
     <mat-card appearance="outlined" class="chart-card">
       <mat-card-header>
         <mat-icon mat-card-avatar>show_chart</mat-icon>
@@ -175,13 +184,26 @@
         }}</mat-card-subtitle>
       </mat-card-header>
       <mat-divider />
-      <mat-card-content class="chart-placeholder">
-        <mat-icon>satellite_alt</mat-icon>
-        <p>{{ 'field-management.dashboard.ndvi-pending' | translate }}</p>
-        <a mat-stroked-button routerLink="/crop-health/monitoring">
-          <mat-icon>eco</mat-icon>
-          {{ 'option.crop-health' | translate }}
-        </a>
+      <mat-card-content>
+        @if (ndviChartData().datasets[0].data.length > 0) {
+          <div class="ndvi-chart">
+            <canvas baseChart [type]="'line'" [data]="ndviChartData()" [options]="ndviChartOptions" [attr.aria-label]="'field-management.dashboard.ndvi-evolution' | translate" role="img"></canvas>
+          </div>
+        } @else {
+          <div class="chart-placeholder">
+            <mat-icon>satellite_alt</mat-icon>
+            @if (satellite().loading) {
+              <p>{{ 'common.loading' | translate }}</p>
+            } @else if (satellite().error) {
+              <p role="alert">{{ 'crop-health.errors.load-observations' | translate }}</p>
+            } @else {
+              <p>{{ 'field-management.dashboard.ndvi-pending' | translate }}</p>
+            }
+            <a mat-stroked-button routerLink="/crop-health/monitoring">
+              <mat-icon>eco</mat-icon>{{ 'option.crop-health' | translate }}
+            </a>
+          </div>
+        }
       </mat-card-content>
     </mat-card>
 

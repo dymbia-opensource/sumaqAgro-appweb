@@ -30,4 +30,13 @@ export class TechnicalPrescriptionsApiEndpoint extends BaseApiEndpoint<Technical
       map((response) => this.toEntities(response)), catchError(this.handleError('Failed to fetch prescriptions'))
     );
   }
+
+  /** Lets the API assign the ID of a new record. */
+  override create(entity: TechnicalPrescription): Observable<TechnicalPrescription> {
+    const { id: _id, ...resource } = this.assembler.toResourceFromEntity(entity);
+    return this.http.post<TechnicalPrescriptionResource>(this.endpointUrl, resource).pipe(
+      map((created) => this.assembler.toEntityFromResource(created)),
+      catchError(this.handleError('Failed to create technical-prescription')),
+    );
+  }
 }

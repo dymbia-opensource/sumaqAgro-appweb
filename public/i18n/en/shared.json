@@ -23,7 +23,10 @@
     "cooperative-costs": "Costs",
     "cooperative-certificates": "Certificates",
     "cooperative-alerts": "Alerts",
-    "cooperative-settings": "Settings"
+    "cooperative-settings": "Settings",
+    "diagnosis-inbox": "Pest reports",
+    "field-inspections": "Inspections",
+    "prescriptions": "Technical prescriptions"
   },
   "layout": {
     "search": "Search within my plot...",

@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { BaseApi } from '../../shared/infrastructure/base-api';
 import { CampaignLedger } from '../domain/model/entities/campaign-ledger.entity';
 import { CropCampaign } from '../domain/model/entities/crop-campaign.entity';
@@ -53,6 +53,13 @@ export class FieldManagementApi extends BaseApi {
    * @returns An Observable of void.
    */
   deletePlot = (id: number): Observable<void> => this.plotsEndpoint.delete(id);
+
+  /** Loads a canonical plot referenced by a cooperative membership. */
+  getPlotById = (id: number): Observable<FieldPlot> => this.plotsEndpoint.getById(id);
+
+  /** Ignores stale membership references to plots that have been deleted. */
+  getPlotsByIds = (ids: number[]): Observable<FieldPlot[]> =>
+    this.plotsEndpoint.getAll().pipe(map(plots => plots.filter(plot => ids.includes(plot.id as number))));
 
   // ---------- Crop campaigns ----------
 
