@@ -42,7 +42,7 @@ const baseTitle = 'SumaqAgro';
  */
 export const routes: Routes = [
   // Pages without the shell
-  { path: 'demo-access', loadComponent: demoAccessView, title: `${baseTitle} - Acceso demo` },
+  { path: 'demo-access', loadComponent: demoAccessView, title: `${baseTitle} - Demo access` },
   {
     path: 'verify/:token',
     loadComponent: publicTraceabilityView,

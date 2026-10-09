@@ -24,7 +24,7 @@ export class DemoAccessView {
   }
 
   roleLabel(user: DemoUser): string {
-    return { FARMER: 'Agricultor independiente', COOPERATIVE_DIRECTOR: 'Director de cooperativa', AGRONOMIST: 'Ingeniero Agrónomo' }[user.experience];
+    return { FARMER: 'Independent farmer', COOPERATIVE_DIRECTOR: 'Cooperative director', AGRONOMIST: 'Agricultural engineer' }[user.experience];
   }
 
   roleIcon(user: DemoUser): string {
