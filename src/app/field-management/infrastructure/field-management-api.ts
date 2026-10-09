@@ -106,10 +106,10 @@ export class FieldManagementApi extends BaseApi {
     this.ledgersEndpoint.create(ledger);
 
   /**
-   * Saves the expected yield of a ledger.
-   * @param ledger - The ledger with its new expected yield.
+   * Saves a ledger with its expenses and expected yield.
+   * @param ledger - The ledger to save.
    * @returns An Observable of the updated CampaignLedger object.
    */
-  updateExpectedYield = (ledger: CampaignLedger): Observable<CampaignLedger> =>
+  updateLedger = (ledger: CampaignLedger): Observable<CampaignLedger> =>
     this.ledgersEndpoint.update(ledger, ledger.id);
 }

@@ -2,230 +2,37 @@
   <mat-progress-bar mode="indeterminate" [attr.aria-label]="'common.loading' | translate" />
 }
 
-<header class="page-header">
-  <nav class="breadcrumb" [attr.aria-label]="'field-management.breadcrumb' | translate">
-    <a routerLink="/field-management/dashboard">{{ 'option.my-plot' | translate }}</a>
-    <mat-icon>chevron_right</mat-icon>
-    <a routerLink="/field-management/plots">{{ 'field-management.plots.manage' | translate }}</a>
-    <mat-icon>chevron_right</mat-icon>
-    <span>{{ 'field-management.steps.crop-data' | translate }}</span>
-    <mat-icon>chevron_right</mat-icon>
-    <span class="current">{{ 'field-management.steps.map-title' | translate }}</span>
-  </nav>
-  <h1>
-    {{ 'field-management.boundary.title' | translate }}: {{ plot()?.name }}
-    @if (campaign(); as campaign) {
-      ({{ campaign.seedVariety }})
-    }
-  </h1>
-  <p class="subtitle">{{ 'field-management.boundary.subtitle' | translate }}</p>
-</header>
+<app-page-header
+  [breadcrumbs]="breadcrumbs"
+  [title]="('field-management.boundary.title' | translate) + ': ' + plotTitle()"
+  [subtitle]="'field-management.boundary.subtitle' | translate"
+  [compact]="true"
+/>
 
-<!-- Steps of the registration -->
-<ol class="steps" [attr.aria-label]="'field-management.steps.label' | translate">
-  <li class="step done">
-    <span class="step-number">1</span>
-    {{ 'field-management.steps.crop-data' | translate }}
-  </li>
-  <li class="step-line" aria-hidden="true"></li>
-  <li class="step active" aria-current="step">
-    <span class="step-number">2</span>
-    {{ 'field-management.steps.map-title' | translate }}
-  </li>
-</ol>
+<app-registration-steps [current]="2" />
 
 @if (error(); as error) {
-  <mat-card appearance="outlined" class="message-card" role="alert">
-    <mat-card-content>
-      <mat-icon>error</mat-icon>
-      <span>{{ error | translate }}</span>
-    </mat-card-content>
-  </mat-card>
+  <app-message-card icon="error" [message]="error | translate" [alert]="true" />
 }
 
 <div class="map-layout">
   <!-- Satellite map (US-30) -->
-  <mat-card appearance="outlined" class="map-card">
-    <div class="map-toolbar">
-      <mat-form-field class="search" subscriptSizing="dynamic" appearance="outline">
-        <mat-icon matPrefix>search</mat-icon>
-        <input
-          #search
-          matInput
-          [placeholder]="'field-management.boundary.search' | translate"
-          (keydown.enter)="onSearch(search.value)"
-        />
-      </mat-form-field>
-      <button mat-stroked-button (click)="onUseMyLocation()">
-        <mat-icon>my_location</mat-icon>
-        {{ 'field-management.boundary.my-location' | translate }}
-      </button>
-    </div>
-    @if (searchMessage(); as message) {
-      <p class="map-message" role="alert">{{ message | translate }}</p>
-    }
-
-    <div
-      #mapElement
-      class="map"
-      role="application"
-      [attr.aria-label]="'field-management.boundary.map' | translate"
-    ></div>
-
-    <div class="map-footer">
-      <p>
-        <mat-icon>touch_app</mat-icon>
-        {{ 'field-management.boundary.instructions' | translate: { minimum: minimumVertices } }}
-      </p>
-      <mat-button-toggle-group
-        [value]="layer()"
-        (change)="layer.set($event.value)"
-        [attr.aria-label]="'field-management.boundary.layer' | translate"
-      >
-        <mat-button-toggle value="satellite">
-          {{ 'field-management.boundary.layer-satellite' | translate }}
-        </mat-button-toggle>
-        <mat-button-toggle value="streets">
-          {{ 'field-management.boundary.layer-streets' | translate }}
-        </mat-button-toggle>
-      </mat-button-toggle-group>
-    </div>
-  </mat-card>
+  <app-plot-boundary-map
+    [coordinates]="markedCoordinates()"
+    [status]="polygonStatus()"
+    (vertexAdded)="onAddVertex($event)"
+  />
 
   <!-- Delineation summary (US-29) -->
-  <mat-card appearance="outlined" class="summary-card">
-    <mat-card-header>
-      <mat-card-title>{{ 'field-management.boundary.summary' | translate }}</mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-      <dl class="summary-data">
-        <dt>{{ 'field-management.boundary.plot' | translate }}:</dt>
-        <dd>{{ plot()?.name }}</dd>
-        <dt>{{ 'field-management.plots.crop' | translate }}:</dt>
-        <dd>{{ campaign()?.seedVariety }}</dd>
-      </dl>
-
-      <mat-divider />
-
-      <h3>{{ 'field-management.boundary.coordinates' | translate }}</h3>
-      @if (markedCoordinates().length === 0) {
-        <p class="empty">{{ 'field-management.boundary.no-vertices' | translate }}</p>
-      } @else {
-        <ol class="coordinates">
-          @for (vertex of markedCoordinates(); track $index) {
-            <li>
-              <strong>V{{ $index + 1 }}:</strong>
-              {{ vertex.latitude | number: '1.4-4' }}, {{ vertex.longitude | number: '1.4-4' }}
-            </li>
-          }
-        </ol>
-      }
-
-      <mat-divider />
-
-      <h3>{{ 'field-management.boundary.area' | translate }}</h3>
-      <p class="area" [class.area-invalid]="polygonStatus() === 'CROSSED'">
-        {{ areaHectares() | number: '1.0-2' }} {{ 'field-management.plots.hectares' | translate }}
-      </p>
-      @if (plot(); as plot) {
-        @if (!plot.hasPolygon() && plot.areaHectares > 0) {
-          <p class="declared">
-            {{
-              'field-management.boundary.declared'
-                | translate: { area: (plot.areaHectares | number: '1.0-2') }
-            }}
-          </p>
-        }
-      }
-
-      <h3>{{ 'field-management.boundary.status' | translate }}</h3>
-      <mat-chip-set>
-        <mat-chip
-          [disableRipple]="true"
-          [class]="'polygon-' + polygonStatus()"
-        >
-          <mat-icon matChipAvatar>{{
-            polygonStatus() === 'CLOSED' ? 'check_circle' : polygonStatus() === 'CROSSED' ? 'warning' : 'radio_button_unchecked'
-          }}</mat-icon>
-          {{ 'field-management.boundary.polygon-' + polygonStatus() | translate }}
-        </mat-chip>
-      </mat-chip-set>
-
-      <div class="summary-actions">
-        <button
-          mat-stroked-button
-          (click)="onUndo()"
-          [disabled]="markedCoordinates().length === 0"
-        >
-          <mat-icon>undo</mat-icon>
-          {{ 'field-management.boundary.undo' | translate }}
-        </button>
-        <button
-          mat-stroked-button
-          (click)="onClear()"
-          [disabled]="markedCoordinates().length === 0"
-        >
-          <mat-icon>layers_clear</mat-icon>
-          {{ 'field-management.boundary.clear' | translate }}
-        </button>
-        <button
-          mat-flat-button
-          class="save"
-          (click)="onSavePlot()"
-          [disabled]="polygonStatus() !== 'CLOSED' || loading()"
-        >
-          <mat-icon>satellite_alt</mat-icon>
-          {{ 'field-management.boundary.save' | translate }}
-        </button>
-      </div>
-    </mat-card-content>
-  </mat-card>
+  <app-boundary-summary-panel
+    [plot]="plot()"
+    [campaign]="campaign()"
+    [coordinates]="markedCoordinates()"
+    [areaHectares]="areaHectares()"
+    [status]="polygonStatus()"
+    [saving]="loading()"
+    (undo)="onUndo()"
+    (clear)="onClear()"
+    (save)="onSavePlot()"
+  />
 </div>
-
-<!-- Success dialog -->
-<ng-template #savedDialog>
-  @if (savedPlot(); as saved) {
-    <mat-dialog-content class="saved-dialog">
-      <mat-icon class="saved-icon">check_circle</mat-icon>
-      <h2>{{ 'field-management.saved.title' | translate }}</h2>
-      <p class="saved-subtitle">{{ 'field-management.saved.subtitle' | translate }}</p>
-
-      <section class="saved-summary">
-        <h3>{{ 'field-management.saved.summary' | translate }}</h3>
-        <dl>
-          <dt>{{ 'field-management.saved.name' | translate }}</dt>
-          <dd>{{ saved.name }}</dd>
-          <dt>{{ 'field-management.saved.crop' | translate }}</dt>
-          <dd>{{ campaign()?.seedVariety }}</dd>
-          <dt>{{ 'field-management.saved.area' | translate }}</dt>
-          <dd>
-            {{ saved.areaHectares | number: '1.0-2' }}
-            {{ 'field-management.plots.hectares' | translate }}
-          </dd>
-          <dt>{{ 'field-management.saved.quota' | translate }}</dt>
-          <dd>
-            {{
-              'field-management.saved.quota-value'
-                | translate: { used: plotCount(), quota: plotQuota() }
-            }}
-          </dd>
-          <dt>{{ 'field-management.saved.sync' | translate }}</dt>
-          <dd>
-            <span class="sync-pill">{{ 'field-management.saved.sync-value' | translate }}</span>
-          </dd>
-        </dl>
-      </section>
-
-      <mat-divider />
-      <p class="saved-next">{{ 'field-management.saved.next' | translate }}</p>
-    </mat-dialog-content>
-    <mat-dialog-actions class="saved-actions">
-      <button mat-stroked-button (click)="onViewCropHealth()">
-        {{ 'field-management.saved.view-crop-health' | translate }}
-      </button>
-      <button mat-flat-button (click)="onManagePlots()">
-        {{ 'field-management.saved.manage-plots' | translate }}
-      </button>
-    </mat-dialog-actions>
-  }
-</ng-template>

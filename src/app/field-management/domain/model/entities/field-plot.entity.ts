@@ -1,10 +1,9 @@
 import { BaseEntity } from '../../../../shared/domain/model/base-entity';
-import { GeoCoordinate } from './geo-coordinate.entity';
+import { GeoCoordinate } from './geo-coordinate';
 import { PlotStatus } from './plot-status';
-import { SoilBaseline } from './soil-baseline.entity';
 
 /**
- * Field plot of a producer, with its GPS polygon and soil analysis.
+ * Field plot of a producer, with its GPS polygon.
  */
 export class FieldPlot extends BaseEntity {
   private _ownerUserId: number;
@@ -14,7 +13,6 @@ export class FieldPlot extends BaseEntity {
   private _boundary: GeoCoordinate[];
   private _areaHectares: number;
   private _agroMonitoringPolygonId: string | null;
-  private _soilBaseline: SoilBaseline | null;
 
   constructor(props: {
     id: number;
@@ -25,7 +23,6 @@ export class FieldPlot extends BaseEntity {
     boundary?: GeoCoordinate[];
     areaHectares?: number;
     agroMonitoringPolygonId?: string | null;
-    soilBaseline?: SoilBaseline | null;
   }) {
     super({ id: props.id });
     this._ownerUserId = props.ownerUserId;
@@ -35,7 +32,6 @@ export class FieldPlot extends BaseEntity {
     this._boundary = props.boundary ?? [];
     this._areaHectares = props.areaHectares ?? 0;
     this._agroMonitoringPolygonId = props.agroMonitoringPolygonId ?? null;
-    this._soilBaseline = props.soilBaseline ?? null;
   }
 
   get ownerUserId(): number {
@@ -69,10 +65,6 @@ export class FieldPlot extends BaseEntity {
 
   get agroMonitoringPolygonId(): string | null {
     return this._agroMonitoringPolygonId;
-  }
-
-  get soilBaseline(): SoilBaseline | null {
-    return this._soilBaseline;
   }
 
   /** `true` when the polygon has at least three vertices. */

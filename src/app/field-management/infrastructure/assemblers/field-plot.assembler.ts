@@ -1,6 +1,6 @@
 import { BaseAssembler } from '../../../shared/infrastructure/base-assembler';
 import { FieldPlot } from '../../domain/model/entities/field-plot.entity';
-import { GeoCoordinate } from '../../domain/model/entities/geo-coordinate.entity';
+import { GeoCoordinate } from '../../domain/model/entities/geo-coordinate';
 import { PlotStatus } from '../../domain/model/entities/plot-status';
 import { FieldPlotResource } from '../responses/field-plot.response';
 import { FieldPlotsResponse } from '../responses/field-plots.response';

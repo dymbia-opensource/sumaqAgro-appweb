@@ -59,7 +59,8 @@
     "no-data": "No data to show.",
     "retry": "Try again",
     "actions": "Actions",
-    "required": "This field is required."
+    "required": "This field is required.",
+    "breadcrumb": "Breadcrumb"
   },
   "page-not-found": {
     "title": "Page not found",

@@ -44,7 +44,6 @@
       "per-SACK": "per sack",
       "per-QUINTAL": "per quintal"
     },
-    "breadcrumb": "Breadcrumb",
     "plot-status": {
       "WITHOUT_POLYGON": "Without polygon",
       "ACTIVE_MONITORING": "Active monitoring"
@@ -149,7 +148,63 @@
       "quota-reached": "You already used all the slots of your plan.",
       "invalid-polygon": "The polygon is not valid: it needs at least 3 corners and its sides cannot cross.",
       "save-polygon": "We could not save the polygon. Try again.",
-      "delete-plot": "We could not delete the plot."
+      "delete-plot": "We could not delete the plot.",
+      "record-expense": "We could not save the expense. Try again.",
+      "save-yield": "We could not save the expected yield. Try again."
+    },
+    "finances": {
+      "subtitle": "{{ plot }} | Season {{ season }}",
+      "register-expense": "Register expense",
+      "no-ledger": "Select a plot with an active campaign to see its expenses.",
+      "select-plot": "View my plots",
+      "ledger-closed": "This campaign is closed, so it does not accept new expenses.",
+      "summary": "Cost summary",
+      "total-invested": "Total invested",
+      "of-total": "{{ percentage }}% of the total",
+      "expenses": "Recorded expenses",
+      "no-expenses": "You have not recorded any expense yet.",
+      "col-date": "Date",
+      "col-category": "Type",
+      "col-description": "Description",
+      "col-quantity": "Qty.",
+      "col-unit-price": "Unit price",
+      "col-total": "Total",
+      "breakeven-title": "Breakeven price",
+      "breakeven-hint": "Minimum price {{ unit }} to recover what you invested.",
+      "expected-yield": "Expected yield",
+      "update-yield": "Update",
+      "yield-required": "Enter the yield you expect to harvest to calculate the breakeven price.",
+      "actual-yield": "Calculated with the actual harvest: {{ quantity }} {{ unit }}.",
+      "suggested-price": "Do not sell for less than {{ price }}"
+    },
+    "expense-form": {
+      "title": "Register an expense",
+      "subtitle": "It is added to the cost ledger of {{ plot }}.",
+      "types": "Expense type",
+      "input-name": "Input",
+      "input-name-placeholder": "Urea, guano, seed...",
+      "quantity": "Quantity",
+      "unit-price": "Unit price",
+      "activity": "Field task",
+      "workers": "Workers",
+      "days": "Days",
+      "daily-wage": "Daily wage per worker",
+      "route": "Route or destination",
+      "route-placeholder": "Plot – Collection center",
+      "cost": "Freight cost",
+      "date": "Date",
+      "total": "Total of this expense",
+      "save": "Save expense",
+      "cancel": "Cancel",
+      "required": "This field is required.",
+      "positive": "Enter a number greater than zero."
+    },
+    "labor-activity": {
+      "SOWING": "Sowing",
+      "WEEDING": "Weeding",
+      "HILLING": "Hilling",
+      "SPRAYING": "Spraying",
+      "HARVEST": "Harvest"
     }
   }
 }

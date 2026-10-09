@@ -1,9 +1,15 @@
 import { Subscription } from 'rxjs';
 import { PlotSelectionService } from '../../shared/application/plot-selection.service';
 import { computed, effect, inject, Injectable, Signal, signal, untracked } from '@angular/core';
-import { forkJoin, map, Observable, of, retry, switchMap, throwError } from 'rxjs';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { catchError, forkJoin, map, Observable, of, retry, startWith, switchMap, throwError } from 'rxjs';
+import { SatelliteObservation } from '../../crop-health/domain/model/entities/satellite-observation.entity';
+import { CropHealthApi } from '../../crop-health/infrastructure/crop-health-api';
 import { DemoSessionService } from '../../shared/application/demo-session.service';
 import { DelineatePlotBoundaryCommand } from '../domain/model/commands/delineate-plot-boundary.command';
+import { RecordDailyLaborExpenseCommand } from '../domain/model/commands/record-daily-labor-expense.command';
+import { RecordFieldFreightExpenseCommand } from '../domain/model/commands/record-field-freight-expense.command';
+import { RecordInputExpenseCommand } from '../domain/model/commands/record-input-expense.command';
 import { RecordSowingDateCommand } from '../domain/model/commands/record-sowing-date.command';
 import { RegisterFieldPlotCommand } from '../domain/model/commands/register-field-plot.command';
 import { SelectCropTypeCommand } from '../domain/model/commands/select-crop-type.command';
@@ -32,6 +38,21 @@ export const FREE_PLAN_PLOT_QUOTA = 3;
  * the variety and record the sowing date. The campaign does not exist yet, so
  * the `campaignId` and `ledgerId` of these commands are ignored.
  */
+/** Satellite observations of the selected plot and the state of their request. */
+interface VegetationState {
+  observations: SatelliteObservation[];
+  loading: boolean;
+  error: boolean;
+}
+
+const EMPTY_VEGETATION: VegetationState = { observations: [], loading: false, error: false };
+
+/** Any of the three expenses of the cost ledger (US-37 to US-39). */
+export type RecordExpenseCommand =
+  | RecordInputExpenseCommand
+  | RecordDailyLaborExpenseCommand
+  | RecordFieldFreightExpenseCommand;
+
 export interface CropCampaignSetup {
   start: StartCropCampaignCommand;
   cropType: SelectCropTypeCommand;
@@ -51,6 +72,7 @@ export interface CropCampaignSetup {
 export class FieldManagementStore {
   private readonly fieldManagementApi = inject(FieldManagementApi);
   private readonly demoSession = inject(DemoSessionService);
+  private readonly cropHealthApi = inject(CropHealthApi);
 
   private readonly plotsSignal = signal<FieldPlot[]>([]);
   private readonly campaignsByPlotSignal = signal<Map<number, CropCampaign[]>>(new Map());
@@ -103,6 +125,19 @@ export class FieldManagementStore {
 
   /** Campaign in progress of the selected plot, or the most recent one. */
   readonly activeCampaign = computed(() => FieldManagementStore.currentOf(this.campaigns()));
+
+  // NDVI of the selected plot: the observations belong to Crop Health and
+  // are read through its API facade, reloading when the selected plot changes.
+  private readonly vegetation = toSignal(
+    toObservable(this.selectedPlot).pipe(switchMap((plot) => this.loadObservationsOf(plot))),
+    { initialValue: EMPTY_VEGETATION },
+  );
+
+  /** Satellite observations of the selected plot, oldest first. */
+  readonly observations = computed(() => this.vegetation().observations);
+  readonly latestObservation = computed(() => this.observations().at(-1));
+  readonly observationsLoading = computed(() => this.vegetation().loading);
+  readonly observationsError = computed(() => this.vegetation().error);
 
   /**
    * Creates an instance of FieldManagementStore and loads the plots of the
@@ -306,6 +341,27 @@ export class FieldManagementStore {
       });
   };
 
+  /** Adds an expense to the ledger of the active campaign (US-37 to US-39). */
+  recordExpense = (command: RecordExpenseCommand, onRecorded?: () => void): void => {
+    this.saveLedger(
+      (ledger) => {
+        if (command instanceof RecordInputExpenseCommand) ledger.recordInputExpense(command);
+        else if (command instanceof RecordDailyLaborExpenseCommand) ledger.recordDailyLaborExpense(command);
+        else ledger.recordFieldFreightExpense(command);
+      },
+      'field-management.errors.record-expense',
+      onRecorded,
+    );
+  };
+
+  /** Changes the expected yield, which updates the breakeven price (US-40). */
+  setExpectedYield = (command: SetExpectedYieldCommand): void => {
+    this.saveLedger(
+      (ledger) => ledger.setExpectedYield(command.expectedYield, command.unit),
+      'field-management.errors.save-yield',
+    );
+  };
+
   /**
    * Starts the first campaign of a plot and opens its cost ledger.
    *
@@ -353,6 +409,22 @@ export class FieldManagementStore {
   }
 
   /** Copy of a plot, so the list only changes when the API confirms the change. */
+  /** A plot without polygon has no satellite observations yet. */
+  private loadObservationsOf(plot: FieldPlot | undefined): Observable<VegetationState> {
+    if (!plot?.hasPolygon()) return of(EMPTY_VEGETATION);
+    return this.cropHealthApi.getObservationsByPlot(plot.id as number).pipe(
+      map((observations) => ({
+        observations: observations
+          .filter((item) => item.plotId === plot.id && item.stressAreaHectares <= plot.areaHectares)
+          .sort((a, b) => Date.parse(a.date) - Date.parse(b.date)),
+        loading: false,
+        error: false,
+      })),
+      startWith({ ...EMPTY_VEGETATION, loading: true }),
+      catchError(() => of({ ...EMPTY_VEGETATION, error: true })),
+    );
+  }
+
   private copyPlot(plot: FieldPlot): FieldPlot {
     return new FieldPlot({
       id: plot.id as number,
@@ -363,7 +435,46 @@ export class FieldManagementStore {
       boundary: plot.boundary,
       areaHectares: plot.areaHectares,
       agroMonitoringPolygonId: plot.agroMonitoringPolygonId,
-      soilBaseline: plot.soilBaseline,
+    });
+  }
+
+  /**
+   * Applies a change to a copy of the ledger and saves it; the shown ledger
+   * only changes when the API confirms.
+   */
+  private saveLedger(change: (ledger: CampaignLedger) => void, errorKey: string, onSaved?: () => void): void {
+    const current = this.ledger();
+    if (!current) return;
+    const ledger = this.copyLedger(current);
+    try {
+      change(ledger);
+    } catch (error) {
+      this.fail(error, errorKey);
+      return;
+    }
+    this.startLoading();
+    this.fieldManagementApi
+      .updateLedger(ledger)
+      .pipe(retry(2))
+      .subscribe({
+        next: (saved) => {
+          this.ledgerSignal.set(saved);
+          this.loadingSignal.set(false);
+          onSaved?.();
+        },
+        error: (error) => this.fail(error, errorKey),
+      });
+  }
+
+  private copyLedger(ledger: CampaignLedger): CampaignLedger {
+    return new CampaignLedger({
+      id: ledger.id as number,
+      campaignId: ledger.campaignId,
+      entries: ledger.entries,
+      expectedYield: ledger.expectedYield,
+      actualYield: ledger.actualYield,
+      yieldUnit: ledger.yieldUnit,
+      frozen: ledger.isFrozen(),
     });
   }
 
