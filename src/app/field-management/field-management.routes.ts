@@ -9,9 +9,9 @@ const registeredPlotsView = () =>
   import('./presentation/views/registered-plots-view/registered-plots-view').then(
     (m) => m.RegisteredPlotsView,
   );
-const plotRegistrationForm = () =>
-  import('./presentation/views/plot-registration-form/plot-registration-form').then(
-    (m) => m.PlotRegistrationForm,
+const plotRegistrationView = () =>
+  import('./presentation/views/plot-registration-view/plot-registration-view').then(
+    (m) => m.PlotRegistrationView,
   );
 const plotBoundaryMapView = () =>
   import('./presentation/views/plot-boundary-map-view/plot-boundary-map-view').then(
@@ -40,7 +40,7 @@ export const fieldManagementRoutes: Routes = [
       { path: 'plots', loadComponent: registeredPlotsView, title: `My Plots – ${baseTitle}` },
       {
         path: 'plots/new',
-        loadComponent: plotRegistrationForm,
+        loadComponent: plotRegistrationView,
         title: `Register a Plot – ${baseTitle}`,
       },
       {

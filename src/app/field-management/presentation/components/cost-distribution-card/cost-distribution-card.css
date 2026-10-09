@@ -1,0 +1,90 @@
+:host {
+  display: block;
+  min-width: 0;
+}
+
+.chart-card {
+  border-radius: 20px;
+  height: 100%;
+  container-type: inline-size;
+}
+
+.chart-card mat-divider {
+  margin-top: 16px;
+}
+
+.empty {
+  margin: 16px 0 0;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.cost-body {
+  display: grid;
+  gap: 16px;
+  padding-top: 16px;
+}
+
+/* Doughnut and legend side by side when the card is wide enough. */
+@container (min-width: 480px) {
+  .cost-body {
+    grid-template-columns: 200px 1fr;
+    align-items: center;
+  }
+}
+
+.doughnut {
+  position: relative;
+  height: 200px;
+  min-width: 0;
+}
+
+.legend {
+  --mat-list-list-item-two-line-container-height: 64px;
+  padding: 0;
+}
+
+.legend-percentage {
+  font: var(--mat-sys-title-medium);
+  color: var(--mat-sys-on-surface);
+}
+
+.share {
+  margin: 0 16px 12px;
+  width: auto;
+  border-radius: 4px;
+  background-color: transparent;
+  --mat-progress-bar-track-color: var(--mat-sys-surface-container-high);
+}
+
+.dot {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+}
+
+.share-0,
+.dot-0 {
+  --mat-progress-bar-active-indicator-color: var(--mat-sys-primary);
+}
+
+.dot-0 {
+  background-color: var(--mat-sys-primary);
+}
+
+.share-1,
+.dot-1 {
+  --mat-progress-bar-active-indicator-color: var(--mat-sys-tertiary);
+}
+
+.dot-1 {
+  background-color: var(--mat-sys-tertiary);
+}
+
+.share-2,
+.dot-2 {
+  --mat-progress-bar-active-indicator-color: var(--mat-sys-tertiary-fixed-dim);
+}
+
+.dot-2 {
+  background-color: var(--mat-sys-tertiary-fixed-dim);
+}

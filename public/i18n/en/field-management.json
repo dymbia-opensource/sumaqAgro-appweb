@@ -44,7 +44,6 @@
       "per-SACK": "per sack",
       "per-QUINTAL": "per quintal"
     },
-    "breadcrumb": "Breadcrumb",
     "plot-status": {
       "WITHOUT_POLYGON": "Without polygon",
       "ACTIVE_MONITORING": "Active monitoring"

@@ -1,4 +1,4 @@
-import { GeoCoordinate } from '../entities/geo-coordinate.entity';
+import { GeoCoordinate } from '../entities/geo-coordinate';
 
 /**
  * Saves the GPS polygon of a plot.

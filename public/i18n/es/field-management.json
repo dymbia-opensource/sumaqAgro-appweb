@@ -44,7 +44,6 @@
       "per-SACK": "por saco",
       "per-QUINTAL": "por quintal"
     },
-    "breadcrumb": "Ruta de navegación",
     "plot-status": {
       "WITHOUT_POLYGON": "Sin polígono",
       "ACTIVE_MONITORING": "Monitoreo activo"

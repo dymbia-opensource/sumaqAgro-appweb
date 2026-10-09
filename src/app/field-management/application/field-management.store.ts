@@ -1,7 +1,10 @@
 import { Subscription } from 'rxjs';
 import { PlotSelectionService } from '../../shared/application/plot-selection.service';
 import { computed, effect, inject, Injectable, Signal, signal, untracked } from '@angular/core';
-import { forkJoin, map, Observable, of, retry, switchMap, throwError } from 'rxjs';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { catchError, forkJoin, map, Observable, of, retry, startWith, switchMap, throwError } from 'rxjs';
+import { SatelliteObservation } from '../../crop-health/domain/model/entities/satellite-observation.entity';
+import { CropHealthApi } from '../../crop-health/infrastructure/crop-health-api';
 import { DemoSessionService } from '../../shared/application/demo-session.service';
 import { DelineatePlotBoundaryCommand } from '../domain/model/commands/delineate-plot-boundary.command';
 import { RecordSowingDateCommand } from '../domain/model/commands/record-sowing-date.command';
@@ -32,6 +35,15 @@ export const FREE_PLAN_PLOT_QUOTA = 3;
  * the variety and record the sowing date. The campaign does not exist yet, so
  * the `campaignId` and `ledgerId` of these commands are ignored.
  */
+/** Satellite observations of the selected plot and the state of their request. */
+interface VegetationState {
+  observations: SatelliteObservation[];
+  loading: boolean;
+  error: boolean;
+}
+
+const EMPTY_VEGETATION: VegetationState = { observations: [], loading: false, error: false };
+
 export interface CropCampaignSetup {
   start: StartCropCampaignCommand;
   cropType: SelectCropTypeCommand;
@@ -51,6 +63,7 @@ export interface CropCampaignSetup {
 export class FieldManagementStore {
   private readonly fieldManagementApi = inject(FieldManagementApi);
   private readonly demoSession = inject(DemoSessionService);
+  private readonly cropHealthApi = inject(CropHealthApi);
 
   private readonly plotsSignal = signal<FieldPlot[]>([]);
   private readonly campaignsByPlotSignal = signal<Map<number, CropCampaign[]>>(new Map());
@@ -103,6 +116,19 @@ export class FieldManagementStore {
 
   /** Campaign in progress of the selected plot, or the most recent one. */
   readonly activeCampaign = computed(() => FieldManagementStore.currentOf(this.campaigns()));
+
+  // NDVI of the selected plot: the observations belong to Crop Health and
+  // are read through its API facade, reloading when the selected plot changes.
+  private readonly vegetation = toSignal(
+    toObservable(this.selectedPlot).pipe(switchMap((plot) => this.loadObservationsOf(plot))),
+    { initialValue: EMPTY_VEGETATION },
+  );
+
+  /** Satellite observations of the selected plot, oldest first. */
+  readonly observations = computed(() => this.vegetation().observations);
+  readonly latestObservation = computed(() => this.observations().at(-1));
+  readonly observationsLoading = computed(() => this.vegetation().loading);
+  readonly observationsError = computed(() => this.vegetation().error);
 
   /**
    * Creates an instance of FieldManagementStore and loads the plots of the
@@ -353,6 +379,22 @@ export class FieldManagementStore {
   }
 
   /** Copy of a plot, so the list only changes when the API confirms the change. */
+  /** A plot without polygon has no satellite observations yet. */
+  private loadObservationsOf(plot: FieldPlot | undefined): Observable<VegetationState> {
+    if (!plot?.hasPolygon()) return of(EMPTY_VEGETATION);
+    return this.cropHealthApi.getObservationsByPlot(plot.id as number).pipe(
+      map((observations) => ({
+        observations: observations
+          .filter((item) => item.plotId === plot.id && item.stressAreaHectares <= plot.areaHectares)
+          .sort((a, b) => Date.parse(a.date) - Date.parse(b.date)),
+        loading: false,
+        error: false,
+      })),
+      startWith({ ...EMPTY_VEGETATION, loading: true }),
+      catchError(() => of({ ...EMPTY_VEGETATION, error: true })),
+    );
+  }
+
   private copyPlot(plot: FieldPlot): FieldPlot {
     return new FieldPlot({
       id: plot.id as number,
@@ -363,7 +405,6 @@ export class FieldManagementStore {
       boundary: plot.boundary,
       areaHectares: plot.areaHectares,
       agroMonitoringPolygonId: plot.agroMonitoringPolygonId,
-      soilBaseline: plot.soilBaseline,
     });
   }
 

@@ -1,0 +1,88 @@
+.summary-card {
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.summary-card mat-card-title {
+  font: var(--mat-sys-title-medium);
+  font-weight: 700;
+}
+
+.summary-card h3 {
+  margin: 16px 0 8px;
+  font: var(--mat-sys-title-small);
+  font-weight: 700;
+}
+
+.summary-data {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 4px 8px;
+  margin: 8px 0 16px;
+}
+
+.summary-data dt {
+  font-weight: 600;
+  color: var(--mat-sys-primary);
+}
+
+.summary-data dd {
+  margin: 0;
+}
+
+.coordinates {
+  margin: 0 0 16px;
+  padding: 0;
+  list-style: none;
+  font: var(--mat-sys-body-medium);
+  max-height: 160px;
+  overflow-y: auto;
+}
+
+.empty,
+.declared {
+  margin: 0;
+  color: var(--mat-sys-on-surface-variant);
+  font: var(--mat-sys-body-small);
+}
+
+.area {
+  margin: 0 0 4px;
+  padding: 8px 16px;
+  border: 1px solid var(--mat-sys-primary);
+  border-radius: 12px;
+  background: var(--mat-sys-secondary-container);
+  color: var(--mat-sys-on-secondary-container);
+  font: var(--mat-sys-title-large);
+  font-weight: 700;
+  text-align: center;
+}
+
+.area-invalid {
+  border-color: var(--mat-sys-error);
+  background: var(--mat-sys-error-container);
+  color: var(--mat-sys-on-error-container);
+}
+
+.polygon-CLOSED {
+  --mat-chip-elevated-container-color: var(--mat-sys-secondary-container);
+  --mat-chip-label-text-color: var(--mat-sys-on-secondary-container);
+  --mat-chip-with-icon-icon-color: var(--mat-sys-on-secondary-container);
+}
+
+.polygon-CROSSED {
+  --mat-chip-elevated-container-color: var(--mat-sys-error-container);
+  --mat-chip-label-text-color: var(--mat-sys-on-error-container);
+  --mat-chip-with-icon-icon-color: var(--mat-sys-on-error-container);
+}
+
+.summary-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.summary-actions .save {
+  height: 48px;
+}
