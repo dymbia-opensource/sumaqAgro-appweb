@@ -5,6 +5,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { TranslatePipe } from '@ngx-translate/core';
+import { DemoSessionService } from '../../../../shared/application/demo-session.service';
 import { HarvestCertificationStore } from '../../../application/harvest-certification.store';
 import { HarvestBatch, HarvestBatchProps, HarvestCropType, QualityCategory } from '../../../domain/model/entities/harvest-batch.entity';
 import { QualityCertificate } from '../../../domain/model/entities/quality-certificate.entity';
@@ -20,6 +21,17 @@ import { HarvestGradingSheetView } from '../harvest-grading-sheet-view/harvest-g
 /** Coordina la lista, el formulario, la vista previa y la emisión del certificado. */
 export class HarvestCertificatesView {
   readonly store = inject(HarvestCertificationStore);
+  private readonly demoSession = inject(DemoSessionService);
+  readonly isFarmer = computed(() => this.demoSession.activeUser()?.experience === 'FARMER');
+  readonly farmerCertificates = computed(() => {
+    const memberId = this.demoSession.activeUser()?.id;
+    return this.store.activeCertificates().flatMap((certificate) => {
+      const batch = this.store.batches().find((item) =>
+        item.id === certificate.data.harvestBatchId && item.data.memberId === memberId);
+      return batch ? [{ certificate, batch }] : [];
+    });
+  });
+  readonly visibleQr = signal<string | number | null>(null);
   readonly members = this.store.members;
   readonly search = signal('');
   readonly cropFilter = signal('ALL');
@@ -63,6 +75,18 @@ export class HarvestCertificatesView {
     return token ? `${window.location.origin}/verify/${encodeURIComponent(token)}` : '';
   });
   readonly qrImageUrl = computed(() => `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(this.previewUrl())}`);
+
+  verificationUrl(certificate: QualityCertificate): string {
+    return `${window.location.origin}/verify/${encodeURIComponent(certificate.data.verificationToken)}`;
+  }
+
+  farmerQrUrl(certificate: QualityCertificate): string {
+    return `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(this.verificationUrl(certificate))}`;
+  }
+
+  toggleFarmerQr(certificateId: string | number): void {
+    this.visibleQr.update((current) => current === certificateId ? null : certificateId);
+  }
 
   constructor() {
     effect(() => {
