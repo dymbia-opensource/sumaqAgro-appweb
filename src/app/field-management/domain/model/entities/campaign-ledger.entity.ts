@@ -1,5 +1,8 @@
 import { BaseEntity } from '../../../../shared/domain/model/base-entity';
 import { Money } from '../../../../shared/domain/model/money';
+import { RecordDailyLaborExpenseCommand } from '../commands/record-daily-labor-expense.command';
+import { RecordFieldFreightExpenseCommand } from '../commands/record-field-freight-expense.command';
+import { RecordInputExpenseCommand } from '../commands/record-input-expense.command';
 import { CropType } from './crop-type';
 import { ExpenseCategory } from './expense-category';
 import { ExpenseEntry } from './expense-entry.entity';
@@ -110,6 +113,27 @@ export class CampaignLedger extends BaseEntity {
     return new Money(Math.ceil(price), this._currency);
   }
 
+  /** Purchase of seeds, fertilizers or pesticides (US-37): quantity × unit price. */
+  recordInputExpense(command: RecordInputExpenseCommand): void {
+    this.addEntry(ExpenseCategory.INPUTS, command.inputName, command.quantity, command.unitPrice, command.expenseDate);
+  }
+
+  /** Wages of a field task (US-38): workers × days, paid at the daily wage. */
+  recordDailyLaborExpense(command: RecordDailyLaborExpenseCommand): void {
+    this.addEntry(
+      ExpenseCategory.LABOR,
+      command.activity,
+      command.workers * command.days,
+      command.dailyWage,
+      command.expenseDate,
+    );
+  }
+
+  /** Transport of inputs or harvest (US-39): one trip at the given cost. */
+  recordFieldFreightExpense(command: RecordFieldFreightExpenseCommand): void {
+    this.addEntry(ExpenseCategory.FREIGHT, command.route, 1, command.cost, command.expenseDate);
+  }
+
   /** `true` when the ledger is closed and does not accept new expenses. */
   isFrozen(): boolean {
     return this._frozen;
@@ -129,6 +153,32 @@ export class CampaignLedger extends BaseEntity {
     }
     this._expectedYield = expectedYield;
     this._yieldUnit = unit;
+  }
+
+  /** The ledger creates its own expenses, so their IDs only need to be unique inside it. */
+  private addEntry(
+    category: ExpenseCategory,
+    description: string,
+    quantity: number,
+    unitPrice: number,
+    expenseDate: Date,
+  ): void {
+    if (this._frozen) {
+      throw new Error('The cost ledger is closed.');
+    }
+    const nextId = Math.max(0, ...this._entries.map((entry) => entry.id as number)) + 1;
+    this._entries = [
+      ...this._entries,
+      new ExpenseEntry({
+        id: nextId,
+        ledgerId: this.id as number,
+        category,
+        description: description.trim(),
+        quantity,
+        unitPrice: new Money(unitPrice, this._currency),
+        expenseDate,
+      }),
+    ];
   }
 
   /**

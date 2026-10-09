@@ -7,6 +7,9 @@ import { SatelliteObservation } from '../../crop-health/domain/model/entities/sa
 import { CropHealthApi } from '../../crop-health/infrastructure/crop-health-api';
 import { DemoSessionService } from '../../shared/application/demo-session.service';
 import { DelineatePlotBoundaryCommand } from '../domain/model/commands/delineate-plot-boundary.command';
+import { RecordDailyLaborExpenseCommand } from '../domain/model/commands/record-daily-labor-expense.command';
+import { RecordFieldFreightExpenseCommand } from '../domain/model/commands/record-field-freight-expense.command';
+import { RecordInputExpenseCommand } from '../domain/model/commands/record-input-expense.command';
 import { RecordSowingDateCommand } from '../domain/model/commands/record-sowing-date.command';
 import { RegisterFieldPlotCommand } from '../domain/model/commands/register-field-plot.command';
 import { SelectCropTypeCommand } from '../domain/model/commands/select-crop-type.command';
@@ -43,6 +46,12 @@ interface VegetationState {
 }
 
 const EMPTY_VEGETATION: VegetationState = { observations: [], loading: false, error: false };
+
+/** Any of the three expenses of the cost ledger (US-37 to US-39). */
+export type RecordExpenseCommand =
+  | RecordInputExpenseCommand
+  | RecordDailyLaborExpenseCommand
+  | RecordFieldFreightExpenseCommand;
 
 export interface CropCampaignSetup {
   start: StartCropCampaignCommand;
@@ -332,6 +341,27 @@ export class FieldManagementStore {
       });
   };
 
+  /** Adds an expense to the ledger of the active campaign (US-37 to US-39). */
+  recordExpense = (command: RecordExpenseCommand, onRecorded?: () => void): void => {
+    this.saveLedger(
+      (ledger) => {
+        if (command instanceof RecordInputExpenseCommand) ledger.recordInputExpense(command);
+        else if (command instanceof RecordDailyLaborExpenseCommand) ledger.recordDailyLaborExpense(command);
+        else ledger.recordFieldFreightExpense(command);
+      },
+      'field-management.errors.record-expense',
+      onRecorded,
+    );
+  };
+
+  /** Changes the expected yield, which updates the breakeven price (US-40). */
+  setExpectedYield = (command: SetExpectedYieldCommand): void => {
+    this.saveLedger(
+      (ledger) => ledger.setExpectedYield(command.expectedYield, command.unit),
+      'field-management.errors.save-yield',
+    );
+  };
+
   /**
    * Starts the first campaign of a plot and opens its cost ledger.
    *
@@ -405,6 +435,46 @@ export class FieldManagementStore {
       boundary: plot.boundary,
       areaHectares: plot.areaHectares,
       agroMonitoringPolygonId: plot.agroMonitoringPolygonId,
+    });
+  }
+
+  /**
+   * Applies a change to a copy of the ledger and saves it; the shown ledger
+   * only changes when the API confirms.
+   */
+  private saveLedger(change: (ledger: CampaignLedger) => void, errorKey: string, onSaved?: () => void): void {
+    const current = this.ledger();
+    if (!current) return;
+    const ledger = this.copyLedger(current);
+    try {
+      change(ledger);
+    } catch (error) {
+      this.fail(error, errorKey);
+      return;
+    }
+    this.startLoading();
+    this.fieldManagementApi
+      .updateLedger(ledger)
+      .pipe(retry(2))
+      .subscribe({
+        next: (saved) => {
+          this.ledgerSignal.set(saved);
+          this.loadingSignal.set(false);
+          onSaved?.();
+        },
+        error: (error) => this.fail(error, errorKey),
+      });
+  }
+
+  private copyLedger(ledger: CampaignLedger): CampaignLedger {
+    return new CampaignLedger({
+      id: ledger.id as number,
+      campaignId: ledger.campaignId,
+      entries: ledger.entries,
+      expectedYield: ledger.expectedYield,
+      actualYield: ledger.actualYield,
+      yieldUnit: ledger.yieldUnit,
+      frozen: ledger.isFrozen(),
     });
   }
 

@@ -3,6 +3,8 @@
  */
 export class RecordDailyLaborExpenseCommand {
   readonly ledgerId: number;
+  /** Field task, for example "Harvest" (US-38). */
+  readonly activity: string;
   /** Number of workers. */
   readonly workers: number;
   /** Number of days worked. */
@@ -13,12 +15,14 @@ export class RecordDailyLaborExpenseCommand {
 
   constructor(props: {
     ledgerId: number;
+    activity: string;
     workers: number;
     days: number;
     dailyWage: number;
     expenseDate: Date;
   }) {
     this.ledgerId = props.ledgerId;
+    this.activity = props.activity;
     this.workers = props.workers;
     this.days = props.days;
     this.dailyWage = props.dailyWage;

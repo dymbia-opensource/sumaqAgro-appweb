@@ -1,0 +1,19 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  max-width: 880px;
+}
+
+.form-card {
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.form-content {
+  padding-top: 24px;
+}
+
+[mat-tab-link] mat-icon {
+  margin-right: 8px;
+}
