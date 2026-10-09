@@ -59,7 +59,8 @@
     "no-data": "No hay datos para mostrar.",
     "retry": "Reintentar",
     "actions": "Acciones",
-    "required": "Este campo es obligatorio."
+    "required": "Este campo es obligatorio.",
+    "breadcrumb": "Ruta de navegación"
   },
   "page-not-found": {
     "title": "Página no encontrada",

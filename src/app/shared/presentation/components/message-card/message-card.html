@@ -1,0 +1,7 @@
+<mat-card appearance="outlined" [attr.role]="alert() ? 'alert' : null">
+  <mat-card-content>
+    <mat-icon aria-hidden="true">{{ icon() }}</mat-icon>
+    <span>{{ message() }}</span>
+  </mat-card-content>
+  <ng-content select="mat-card-actions" />
+</mat-card>
