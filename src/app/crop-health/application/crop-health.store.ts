@@ -251,7 +251,11 @@ export class CropHealthStore {
     }, () => this.reportsSignal.update(items => items.filter(item => item.id !== id)), onSaved, onFailure, 'crop-health.errors.delete-report');
   }
   clearError(): void { this.setError('write', null); }
-  reportLabel(id: number): string { const report = this.pestReports().find(item => item.id === id); return report ? '#' + id + ' · ' + report.plotName : '#' + id; }
+  reportLabel(id: number): string {
+    const reports = [...this.pestReports()].sort((a, b) => Number(a.id) - Number(b.id));
+    const index = reports.findIndex(item => Number(item.id) === id);
+    return index >= 0 ? '#' + (index + 1) + ' · ' + reports[index].plotName : '#' + id;
+  }
   advisorName(id: number): string { return this.advisors().find(item => item.userId === id)?.name ?? this.session.users.find(user => user.id === id)?.displayName ?? '#' + id; }
   canResolve(id: number): boolean { return this.canPrescribe() && this.pestReports().some(item => item.id === id && item.status === 'INSPECTED') && this.prescriptions().some(item => item.reportId === id); }
   canComplete(inspection: FieldInspection): boolean { return this.canPrescribe() && this.pestReports().some(report => report.id === inspection.reportId && report.status === 'PENDING') && (inspection.status === 'SCHEDULED' || inspection.inspectorUserId === this.activeUser()?.id); }

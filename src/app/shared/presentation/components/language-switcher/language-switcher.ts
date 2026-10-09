@@ -5,13 +5,11 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
-const STORAGE_KEY = 'sumaqagro.language';
-
 /**
  * Segmented ES | EN control that changes the language of the whole app.
  *
  * @remarks
- * The chosen language is remembered in the browser for the next visit.
+ * Each visit starts in English; users can switch languages during their visit.
  */
 @Component({
   selector: 'app-language-switcher',
@@ -30,31 +28,14 @@ export class LanguageSwitcher {
 
   constructor() {
     this.translate.addLangs(this.languages);
-    const saved = this.readSavedLanguage();
-    if (saved && saved !== this.translate.getCurrentLang()) {
-      this.translate.use(saved);
-    }
+    this.translate.use('en');
   }
 
   /**
-   * Changes the language of the app and remembers it.
+   * Changes the language for the current visit.
    * @param language - Language code (`es` or `en`).
    */
   useLanguage(language: string): void {
     this.translate.use(language);
-    try {
-      localStorage.setItem(STORAGE_KEY, language);
-    } catch {
-      // Storage may be blocked (private mode); the language still changes.
-    }
-  }
-
-  private readSavedLanguage(): string | null {
-    try {
-      const saved = localStorage.getItem(STORAGE_KEY);
-      return saved && this.languages.includes(saved) ? saved : null;
-    } catch {
-      return null;
-    }
   }
 }
