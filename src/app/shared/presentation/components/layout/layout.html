@@ -3,6 +3,7 @@
     class="sidebar"
     [mode]="layout.isHandset() ? 'over' : 'side'"
     [opened]="layout.sidebarOpened()"
+    [disableClose]="!layout.isHandset()"
     (openedChange)="layout.setSidebarOpened($event)"
     [attr.role]="layout.isHandset() ? 'dialog' : 'navigation'"
   >
