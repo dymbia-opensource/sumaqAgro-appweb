@@ -1,0 +1,30 @@
+// Angular Material theme for SumaqAgro (Material 3).
+// `mat.theme()` defines the `--mat-sys-*` CSS variables used by every
+// Material component and by the custom styles of the app.
+// Learn more at https://material.angular.dev/guide/theming
+@use '@angular/material' as mat;
+
+html {
+  height: 100%;
+  @include mat.theme(
+    (
+      color: (
+        primary: mat.$green-palette,
+        tertiary: mat.$cyan-palette,
+      ),
+      typography: Poppins,
+      density: 0,
+    )
+  );
+}
+
+body {
+  // Light theme by default. Use `light dark` to follow the system setting.
+  color-scheme: light;
+
+  background-color: var(--mat-sys-surface-container-low);
+  color: var(--mat-sys-on-surface);
+  font: var(--mat-sys-body-medium);
+  margin: 0;
+  height: 100%;
+}

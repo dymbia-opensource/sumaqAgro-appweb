@@ -1,0 +1,19 @@
+<mat-sidenav-container class="layout">
+  <mat-sidenav
+    class="sidebar"
+    [mode]="layout.isHandset() ? 'over' : 'side'"
+    [opened]="layout.sidebarOpened()"
+    [disableClose]="!layout.isHandset()"
+    (openedChange)="layout.setSidebarOpened($event)"
+    [attr.role]="layout.isHandset() ? 'dialog' : 'navigation'"
+  >
+    <app-left-sidebar />
+  </mat-sidenav>
+
+  <mat-sidenav-content class="main-area">
+    <app-toolbar />
+    <main class="content">
+      <router-outlet />
+    </main>
+  </mat-sidenav-content>
+</mat-sidenav-container>

@@ -1,0 +1,79 @@
+{
+  "app": {
+    "title": "SumaqAgro",
+    "tagline": "Cultivando un mejor mañana"
+  },
+  "section": {
+    "major": "Principal",
+    "agricultural-operation": "Operación agrícola",
+    "institutional-management": "Gestión institucional",
+    "system": "Sistema"
+  },
+  "option": {
+    "my-plot": "Mi parcela",
+    "crop-health": "Salud del cultivo",
+    "expenses": "Mis gastos y ganancias",
+    "advisor": "Consultar al asesor",
+    "harvest-certificates": "Certificados de cosecha",
+    "alerts": "Alertas agrícolas",
+    "settings": "Configuración y ayuda",
+    "cooperative-dashboard": "Dashboard",
+    "member-directory": "Padrón",
+    "cooperative-plot-health": "Salud de Parcelas",
+    "cooperative-costs": "Costos",
+    "cooperative-certificates": "Certificados",
+    "cooperative-alerts": "Alertas",
+    "cooperative-settings": "Configuración",
+    "diagnosis-inbox": "Reportes de plagas",
+    "field-inspections": "Inspecciones",
+    "prescriptions": "Recetas técnicas"
+  },
+  "layout": {
+    "search": "Buscar en mi parcela...",
+    "menu": "Abrir menú",
+    "connection": "Estado de conexión",
+    "connected": "Conectado",
+    "disconnected": "Sin conexión",
+    "offline-mode": "Modo offline",
+    "offline-mode-on": "Activado",
+    "offline-mode-off": "Desactivado",
+    "notifications": "Notificaciones",
+    "profile": "Mi perfil",
+    "sign-out": "Cerrar sesión",
+    "offline-mode-on-hint": "Sin señal: lo que registres se sincronizará al volver la conexión",
+    "offline-mode-off-hint": "Hay conexión: tus datos se guardan en línea"
+  },
+  "language": {
+    "label": "Idioma",
+    "es": "Español",
+    "en": "Inglés"
+  },
+  "common": {
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "back": "Volver",
+    "next": "Siguiente",
+    "loading": "Cargando...",
+    "no-data": "No hay datos para mostrar.",
+    "retry": "Reintentar",
+    "actions": "Acciones",
+    "required": "Este campo es obligatorio.",
+    "breadcrumb": "Ruta de navegación"
+  },
+  "page-not-found": {
+    "title": "Página no encontrada",
+    "message": "La ruta {{ path }} no existe.",
+    "go-home": "Ir al inicio"
+  },
+  "paginator": {
+    "items-per-page": "Elementos por página",
+    "next-page": "Página siguiente",
+    "previous-page": "Página anterior",
+    "first-page": "Primera página",
+    "last-page": "Última página",
+    "range": "{{ start }} – {{ end }} de {{ length }}",
+    "range-empty": "0 de {{ length }}"
+  }
+}

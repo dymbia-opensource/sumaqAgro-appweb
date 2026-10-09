@@ -1,0 +1,17 @@
+.language-switcher {
+  width: 100%;
+  --mat-button-toggle-selected-state-background-color: var(--mat-sys-secondary-container);
+  --mat-button-toggle-selected-state-text-color: var(--mat-sys-on-secondary-container);
+}
+
+.language-switcher mat-button-toggle {
+  flex: 1;
+}
+
+.language-switcher mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  margin-right: 4px;
+  vertical-align: middle;
+}
