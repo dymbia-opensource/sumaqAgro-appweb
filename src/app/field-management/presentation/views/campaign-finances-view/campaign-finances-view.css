@@ -4,8 +4,21 @@
   gap: 24px;
 }
 
+.header-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
 .register {
   height: 48px;
+}
+
+.history {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
 }
 
 .finances-grid {

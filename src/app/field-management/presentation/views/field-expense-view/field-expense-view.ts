@@ -17,6 +17,7 @@ import {
   FieldExpenseForm,
 } from '../../components/field-expense-form/field-expense-form';
 import { EXPENSE_CATEGORY_ICONS } from '../../components/ledger-summary-cards/ledger-summary-cards';
+import { OfflineSyncBanner } from '../../components/offline-sync-banner/offline-sync-banner';
 
 const FINANCES_ROUTE = '/field-management/finances';
 
@@ -34,6 +35,7 @@ const FINANCES_ROUTE = '/field-management/finances';
     PageHeader,
     MessageCard,
     FieldExpenseForm,
+    OfflineSyncBanner,
   ],
   templateUrl: './field-expense-view.html',
   styleUrl: './field-expense-view.css',
@@ -50,6 +52,9 @@ export class FieldExpenseView {
   readonly error = this.store.error;
   readonly plot = this.store.selectedPlot;
   readonly ledger = this.store.ledger;
+  readonly online = this.store.online;
+  readonly pendingExpenseCount = this.store.pendingExpenseCount;
+  readonly syncing = this.store.syncing;
 
   // UI state
   protected readonly breadcrumbs: Breadcrumb[] = [
@@ -69,6 +74,10 @@ export class FieldExpenseView {
   readonly canRecord = computed(() => !!this.ledger() && !this.ledger()!.isFrozen());
 
   // Actions
+  onSync() {
+    this.store.syncPendingExpenses();
+  }
+
   /** Turns the form data into a domain command and sends it to the store. */
   onRecord(data: FieldExpenseData) {
     const ledgerId = this.ledger()?.id as number;

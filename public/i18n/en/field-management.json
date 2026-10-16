@@ -77,7 +77,8 @@
       "plan-title": "Free Plan Information",
       "plan-text": "Your independent account lets you register up to {{ quota }} family plots.",
       "plan-full": "You already used the {{ quota }} slots of your free plan. Upgrade your plan to register more plots.",
-      "delete-confirm": "Delete the plot \"{{ name }}\"? This action cannot be undone."
+      "delete-confirm": "Delete the plot \"{{ name }}\"? This action cannot be undone.",
+      "view-detail": "View map and details"
     },
     "plot-form": {
       "title": "Register New Plot (Slot {{ slot }} of {{ quota }})",
@@ -150,7 +151,12 @@
       "save-polygon": "We could not save the polygon. Try again.",
       "delete-plot": "We could not delete the plot.",
       "record-expense": "We could not save the expense. Try again.",
-      "save-yield": "We could not save the expected yield. Try again."
+      "save-yield": "We could not save the expected yield. Try again.",
+      "save-soil": "We could not save the soil analysis. Check the values and try again.",
+      "start-campaign": "We could not start the campaign. Try again.",
+      "close-campaign": "We could not close the campaign. Try again.",
+      "save-actual-yield": "We could not save the actual yield. Try again.",
+      "export-report": "We could not export the cost report."
     },
     "finances": {
       "subtitle": "{{ plot }} | Season {{ season }}",
@@ -175,7 +181,9 @@
       "update-yield": "Update",
       "yield-required": "Enter the yield you expect to harvest to calculate the breakeven price.",
       "actual-yield": "Calculated with the actual harvest: {{ quantity }} {{ unit }}.",
-      "suggested-price": "Do not sell for less than {{ price }}"
+      "suggested-price": "Do not sell for less than {{ price }}",
+      "filter": "Filter expenses by type",
+      "all-categories": "All"
     },
     "expense-form": {
       "title": "Register an expense",
@@ -205,6 +213,87 @@
       "HILLING": "Hilling",
       "SPRAYING": "Spraying",
       "HARVEST": "Harvest"
+    },
+    "campaigns": {
+      "title": "My Campaigns",
+      "subtitle": "{{ plot }} · {{ count }} campaign(s)",
+      "new": "Start New Campaign",
+      "new-subtitle": "New crop season of {{ plot }}. A cost ledger opens automatically.",
+      "start": "Start campaign",
+      "season-hint": "Season {{ season }}",
+      "sowing-date": "Sowing date",
+      "not-sown": "Not sown yet",
+      "expense-count": "{{ count }} expense(s) recorded",
+      "close": "Close campaign",
+      "close-title": "Close the season {{ season }}?",
+      "close-warning": "The campaign becomes read only and its cost ledger stops accepting expenses.",
+      "actual-yield-hint": "Optional: what you harvested. You can also record it later.",
+      "one-in-progress": "This plot already has a campaign in progress. Close it before starting a new one.",
+      "empty": "This plot has no campaigns yet."
+    },
+    "reports": {
+      "title": "Cost Reports",
+      "export": "Export report",
+      "cost-per-hectare": "Cost per hectare",
+      "actual-yield": "Actual yield",
+      "actual-yield-subtitle": "It is recorded when the batch is weighed at the collection center, or you can type it.",
+      "harvested": "Harvested",
+      "breakeven-title": "Breakeven report",
+      "breakeven-subtitle": "Minimum price per unit to recover what you invested.",
+      "with-expected-yield": "With the expected yield",
+      "with-actual-yield": "With the actual yield",
+      "simulator": "Sale price simulator",
+      "margin": "Profit margin: {{ margin }}%",
+      "suggested": "Suggested price: {{ price }} {{ unit }}",
+      "sale-price": "Price offered by the buyer",
+      "profit": "You would earn {{ amount }} selling the whole harvest.",
+      "loss": "You would lose {{ amount }} selling the whole harvest.",
+      "area": "Plot area: {{ area }} ha",
+      "per-hectare": "per hectare",
+      "yield-per-hectare": "Yield: {{ quantity }} {{ unit }} per hectare",
+      "no-area": "Delineate the plot or declare its area to calculate the cost per hectare."
+    },
+    "offline": {
+      "no-connection": "You are offline. Your expenses are kept on this device.",
+      "pending": "{{ count }} expense(s) waiting to be synchronized.",
+      "syncing": "Synchronizing...",
+      "sync-now": "Synchronize now"
+    },
+    "plot-detail": {
+      "title": "Plot Detail",
+      "subtitle": "Satellite map and cadastral data of the plot",
+      "map": "Satellite map with the polygon of the plot",
+      "no-polygon": "The polygon of this plot is not delineated yet.",
+      "cadastre": "Cadastral data",
+      "vertices": "Vertices",
+      "agromonitoring": "AgroMonitoring polygon",
+      "not-found": "We could not find this plot."
+    },
+    "soil": {
+      "title": "Soil Analysis",
+      "subtitle": "Initial soil analysis of {{ plot }}",
+      "recorded-at": "Analysis of {{ date }}",
+      "ph": "Soil pH",
+      "ph-hint": "From 0 (acid) to 14 (alkaline).",
+      "ph-range": "The pH must be between 0 and 14.",
+      "texture": "Texture",
+      "organic-matter": "Organic matter",
+      "percentage-range": "Enter a percentage between 0 and 100.",
+      "date": "Date of the analysis",
+      "needs-liming": "The soil is too acid for {{ crop }}: apply lime before sowing.",
+      "ph-ok": "The pH is suitable for {{ crop }}.",
+      "low-organic-matter": "Low organic matter: add compost or manure.",
+      "empty": "The soil analysis of this plot is not recorded yet.",
+      "record": "Record analysis",
+      "update": "Update analysis"
+    },
+    "soil-texture": {
+      "SANDY": "Sandy",
+      "LOAMY": "Loamy",
+      "CLAY": "Clay",
+      "SILTY": "Silty",
+      "SANDY_LOAM": "Sandy loam",
+      "CLAY_LOAM": "Clay loam"
     }
   }
 }

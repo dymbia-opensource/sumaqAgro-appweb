@@ -19,6 +19,25 @@ const plotBoundaryMapView = () =>
     (m) => m.PlotBoundaryMapView,
   );
 
+const plotDetailView = () =>
+  import('./presentation/views/plot-detail-view/plot-detail-view').then((m) => m.PlotDetailView);
+const soilBaselineView = () =>
+  import('./presentation/views/soil-baseline-view/soil-baseline-view').then(
+    (m) => m.SoilBaselineView,
+  );
+const campaignHistoryView = () =>
+  import('./presentation/views/campaign-history-view/campaign-history-view').then(
+    (m) => m.CampaignHistoryView,
+  );
+const campaignStartView = () =>
+  import('./presentation/views/campaign-start-view/campaign-start-view').then(
+    (m) => m.CampaignStartView,
+  );
+const costReportsView = () =>
+  import('./presentation/views/cost-reports-view/cost-reports-view').then(
+    (m) => m.CostReportsView,
+  );
+
 const campaignFinancesView = () =>
   import('./presentation/views/campaign-finances-view/campaign-finances-view').then(
     (m) => m.CampaignFinancesView,
@@ -58,7 +77,24 @@ export const fieldManagementRoutes: Routes = [
         loadComponent: plotBoundaryMapView,
         title: `Delineate the Plot – ${baseTitle}`,
       },
+      { path: 'plots/:id', loadComponent: plotDetailView, title: `Plot Detail – ${baseTitle}` },
+      {
+        path: 'plots/:id/soil',
+        loadComponent: soilBaselineView,
+        title: `Soil Analysis – ${baseTitle}`,
+      },
+      { path: 'campaigns', loadComponent: campaignHistoryView, title: `My Campaigns – ${baseTitle}` },
+      {
+        path: 'campaigns/new',
+        loadComponent: campaignStartView,
+        title: `Start a Campaign – ${baseTitle}`,
+      },
       { path: 'finances', loadComponent: campaignFinancesView, title: `My Expenses – ${baseTitle}` },
+      {
+        path: 'finances/reports',
+        loadComponent: costReportsView,
+        title: `Cost Reports – ${baseTitle}`,
+      },
       // One route per expense type; `data.category` reaches the view as an input.
       {
         path: 'finances/expenses/new/inputs',
