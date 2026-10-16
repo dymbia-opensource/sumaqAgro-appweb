@@ -1,9 +1,13 @@
+import { fromApiDate, toApiDate } from '../../../shared/infrastructure/api-date';
 import { BaseAssembler } from '../../../shared/infrastructure/base-assembler';
 import { FieldPlot } from '../../domain/model/entities/field-plot.entity';
 import { GeoCoordinate } from '../../domain/model/entities/geo-coordinate';
 import { PlotStatus } from '../../domain/model/entities/plot-status';
+import { SoilBaseline } from '../../domain/model/entities/soil-baseline';
+import { SoilTexture } from '../../domain/model/entities/soil-texture';
 import { FieldPlotResource } from '../responses/field-plot.response';
 import { FieldPlotsResponse } from '../responses/field-plots.response';
+import { SoilBaselineResource } from '../responses/soil-baseline.response';
 
 /**
  * Maps field plot entities to and from API resources.
@@ -38,6 +42,7 @@ export class FieldPlotAssembler implements BaseAssembler<
       ),
       areaHectares: resource.areaHectares,
       agroMonitoringPolygonId: resource.agroMonitoringPolygonId || null,
+      soilBaseline: resource.soilBaseline ? this.toSoilBaseline(resource.soilBaseline) : null,
     });
 
   /**
@@ -54,5 +59,29 @@ export class FieldPlotAssembler implements BaseAssembler<
     boundary: entity.boundary.map((vertex) => [vertex.latitude, vertex.longitude]),
     areaHectares: entity.areaHectares,
     agroMonitoringPolygonId: entity.agroMonitoringPolygonId ?? '',
+    soilBaseline: entity.soilBaseline ? this.toSoilBaselineResource(entity.soilBaseline) : null,
+  });
+
+  /**
+   * Converts a SoilBaselineResource to a SoilBaseline value object.
+   * @param resource - The soil analysis as the API sends it.
+   */
+  private toSoilBaseline = (resource: SoilBaselineResource): SoilBaseline =>
+    new SoilBaseline({
+      ph: resource.ph,
+      texture: resource.texture as SoilTexture,
+      organicMatterPercentage: resource.organicMatterPercentage,
+      recordedAt: fromApiDate(resource.recordedAt),
+    });
+
+  /**
+   * Converts a SoilBaseline value object to a SoilBaselineResource.
+   * @param soilBaseline - The soil analysis to convert.
+   */
+  private toSoilBaselineResource = (soilBaseline: SoilBaseline): SoilBaselineResource => ({
+    ph: soilBaseline.ph,
+    texture: soilBaseline.texture,
+    organicMatterPercentage: soilBaseline.organicMatterPercentage,
+    recordedAt: toApiDate(soilBaseline.recordedAt),
   });
 }

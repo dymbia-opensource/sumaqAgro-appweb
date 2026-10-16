@@ -1,11 +1,24 @@
-import { BaseEntity } from '../../../../shared/domain/model/base-entity';
+import { RecordSoilBaselineCommand } from '../commands/record-soil-baseline.command';
+import { RegisterFieldPlotCommand } from '../commands/register-field-plot.command';
+import { FieldPlotRegisteredEvent } from '../events/field-plot-registered.event';
+import { PlotAreaCalculatedEvent } from '../events/plot-area-calculated.event';
+import { PlotBoundaryDelineatedEvent } from '../events/plot-boundary-delineated.event';
+import { PlotPolygonLinkedEvent } from '../events/plot-polygon-linked.event';
+import { SoilBaselineRecordedEvent } from '../events/soil-baseline-recorded.event';
+import { AggregateRoot } from './aggregate-root';
 import { GeoCoordinate } from './geo-coordinate';
 import { PlotStatus } from './plot-status';
+import { SoilBaseline } from './soil-baseline';
 
 /**
- * Field plot of a producer, with its GPS polygon.
+ * Field plot of a producer, with its GPS polygon and its soil analysis.
+ *
+ * @remarks
+ * Aggregate root of the `FieldPlot` aggregate of the EventStorming. Its
+ * commands are `RegisterFieldPlot`, `DelineatePlotBoundary`, `LinkPlotPolygon`
+ * and `RecordSoilBaseline`.
  */
-export class FieldPlot extends BaseEntity {
+export class FieldPlot extends AggregateRoot {
   private _ownerUserId: number;
   private _name: string;
   private _region: string;
@@ -13,6 +26,7 @@ export class FieldPlot extends BaseEntity {
   private _boundary: GeoCoordinate[];
   private _areaHectares: number;
   private _agroMonitoringPolygonId: string | null;
+  private _soilBaseline: SoilBaseline | null;
 
   constructor(props: {
     id: number;
@@ -23,6 +37,7 @@ export class FieldPlot extends BaseEntity {
     boundary?: GeoCoordinate[];
     areaHectares?: number;
     agroMonitoringPolygonId?: string | null;
+    soilBaseline?: SoilBaseline | null;
   }) {
     super({ id: props.id });
     this._ownerUserId = props.ownerUserId;
@@ -32,6 +47,38 @@ export class FieldPlot extends BaseEntity {
     this._boundary = props.boundary ?? [];
     this._areaHectares = props.areaHectares ?? 0;
     this._agroMonitoringPolygonId = props.agroMonitoringPolygonId ?? null;
+    this._soilBaseline = props.soilBaseline ?? null;
+  }
+
+  /**
+   * Registers a new plot "without polygon" (US-28).
+   * @param command - Owner, name, region and declared area of the plot.
+   * @returns The new plot, with the `FieldPlotRegistered` event.
+   * @throws Error when the name or the region is empty, or the area is negative.
+   */
+  static register(command: RegisterFieldPlotCommand): FieldPlot {
+    const name = command.name.trim();
+    const region = command.region.trim();
+    if (!name) {
+      throw new Error('The plot name is required.');
+    }
+    if (!region) {
+      throw new Error('The plot region is required.');
+    }
+    if (command.declaredAreaHectares < 0) {
+      throw new Error('The declared area cannot be negative.');
+    }
+    const plot = new FieldPlot({
+      id: 0,
+      ownerUserId: command.ownerUserId,
+      name,
+      region,
+      areaHectares: command.declaredAreaHectares,
+    });
+    plot.raise(
+      new FieldPlotRegisteredEvent({ plotId: 0, ownerUserId: command.ownerUserId, name }),
+    );
+    return plot;
   }
 
   get ownerUserId(): number {
@@ -67,6 +114,11 @@ export class FieldPlot extends BaseEntity {
     return this._agroMonitoringPolygonId;
   }
 
+  /** Initial soil analysis, or `null` if it was not recorded. */
+  get soilBaseline(): SoilBaseline | null {
+    return this._soilBaseline;
+  }
+
   /** `true` when the polygon has at least three vertices. */
   hasPolygon(): boolean {
     return this._boundary.length >= 3;
@@ -91,10 +143,14 @@ export class FieldPlot extends BaseEntity {
     }
     this._boundary = [...coordinates];
     this._areaHectares = FieldPlot.calculateAreaHectares(coordinates);
+    this.raise(new PlotBoundaryDelineatedEvent({ plotId: this.id as number, boundary: this.boundary }));
+    this.raise(
+      new PlotAreaCalculatedEvent({ plotId: this.id as number, areaHectares: this._areaHectares }),
+    );
   }
 
   /**
-   * Links the polygon to the satellite monitoring of AgroMonitoring.
+   * Links the polygon to the satellite monitoring of AgroMonitoring (US-30).
    *
    * @remarks
    * With the RESTful API the backend registers the polygon in AgroMonitoring
@@ -103,12 +159,50 @@ export class FieldPlot extends BaseEntity {
    * @param agroMonitoringPolygonId - Polygon identifier in AgroMonitoring.
    * @throws Error when the plot has no polygon.
    */
-  activateMonitoring(agroMonitoringPolygonId: string): void {
+  linkPolygon(agroMonitoringPolygonId: string): void {
     if (!this.hasPolygon()) {
       throw new Error('The plot needs a polygon to be monitored.');
     }
+    if (!agroMonitoringPolygonId.trim()) {
+      throw new Error('The AgroMonitoring polygon identifier is required.');
+    }
     this._agroMonitoringPolygonId = agroMonitoringPolygonId;
     this._status = PlotStatus.ACTIVE_MONITORING;
+    this.raise(
+      new PlotPolygonLinkedEvent({ plotId: this.id as number, agroMonitoringPolygonId }),
+    );
+  }
+
+  /**
+   * Records the initial soil analysis; a new analysis replaces the previous one.
+   * @param command - pH, texture, organic matter and date of the analysis.
+   * @throws Error when a value of the analysis is out of range.
+   */
+  recordSoilBaseline(command: RecordSoilBaselineCommand): void {
+    this._soilBaseline = new SoilBaseline({
+      ph: command.ph,
+      texture: command.texture,
+      organicMatterPercentage: command.organicMatterPercentage,
+      recordedAt: command.recordedAt,
+    });
+    this.raise(
+      new SoilBaselineRecordedEvent({ plotId: this.id as number, soilBaseline: this._soilBaseline }),
+    );
+  }
+
+  /** Copy of the plot without its pending events, to change it before the API confirms. */
+  clone(): FieldPlot {
+    return new FieldPlot({
+      id: this.id as number,
+      ownerUserId: this._ownerUserId,
+      name: this._name,
+      region: this._region,
+      status: this._status,
+      boundary: this.boundary,
+      areaHectares: this._areaHectares,
+      agroMonitoringPolygonId: this._agroMonitoringPolygonId,
+      soilBaseline: this._soilBaseline,
+    });
   }
 
   /** Minimum number of vertices of a polygon. */

@@ -14,6 +14,8 @@ export interface CropCampaignResource extends BaseResource {
   cropType: string;
   /** Seed variety sown. */
   seedVariety: string;
+  /** `true` when the producer typed a variety that is not in the catalog. */
+  seedVarietyCustom?: boolean;
   /** Date in `YYYY-MM-DD` format, or `null` if the crop is not sown yet. */
   sowingDate: string | null;
   /** Status (`IN_PROGRESS` or `FINISHED`). */
