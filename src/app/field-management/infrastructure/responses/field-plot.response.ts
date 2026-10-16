@@ -1,4 +1,5 @@
 import { BaseResource } from '../../../shared/infrastructure/base-response';
+import { SoilBaselineResource } from './soil-baseline.response';
 
 /**
  * Resource representation of a field plot.
@@ -20,4 +21,6 @@ export interface FieldPlotResource extends BaseResource {
   areaHectares: number;
   /** Polygon identifier in AgroMonitoring, or an empty text. */
   agroMonitoringPolygonId: string;
+  /** Initial soil analysis, or `null` if it was not recorded. */
+  soilBaseline?: SoilBaselineResource | null;
 }

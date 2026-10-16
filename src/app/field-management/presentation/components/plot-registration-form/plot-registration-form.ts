@@ -12,12 +12,7 @@ import { startWith } from 'rxjs';
 import { CampaignLedger } from '../../../domain/model/entities/campaign-ledger.entity';
 import { CropType } from '../../../domain/model/entities/crop-type';
 import { YieldUnit } from '../../../domain/model/entities/yield-unit';
-
-/** Seed varieties suggested for each crop; the producer can type another one (US-34). */
-const SEED_VARIETIES: Record<CropType, string[]> = {
-  [CropType.ANDEAN_POTATO]: ['Papa Canchán', 'Papa Yungay', 'Papa Perricholi', 'Papa Única'],
-  [CropType.SPECIALTY_COFFEE]: ['Typica', 'Caturra', 'Bourbon', 'Geisha', 'Catimor'],
-};
+import { SeedVarietyCatalog } from '../../../domain/model/read-models/seed-variety-catalog';
 
 /** Data typed by the producer in the plot registration form. */
 export interface PlotRegistrationData {
@@ -100,13 +95,8 @@ export class PlotRegistrationForm {
     { requireSync: true },
   );
 
-  /** Varieties of the selected crop that match what the producer typed. */
-  readonly varieties = computed(() => {
-    const text = this.varietyText().toLowerCase();
-    return SEED_VARIETIES[this.cropType()].filter((variety) =>
-      variety.toLowerCase().includes(text),
-    );
-  });
+  /** Varieties of the selected crop that match what the producer typed (US-34). */
+  readonly varieties = computed(() => SeedVarietyCatalog.search(this.cropType(), this.varietyText()));
 
   /** Unit of the expected yield: sacks for potato, quintals for coffee. */
   readonly yieldUnit = computed(() => CampaignLedger.yieldUnitOf(this.cropType()));
@@ -124,7 +114,7 @@ export class PlotRegistrationForm {
       region: value.region,
       cropType: value.cropType,
       seedVariety: value.seedVariety,
-      customVariety: !SEED_VARIETIES[value.cropType].includes(value.seedVariety),
+      customVariety: SeedVarietyCatalog.isCustom(value.cropType, value.seedVariety),
       sowingDate: new Date(year, month - 1, day),
       expectedYield: value.expectedYield,
       yieldUnit: this.yieldUnit(),

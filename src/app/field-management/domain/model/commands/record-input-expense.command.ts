@@ -8,6 +8,11 @@ export class RecordInputExpenseCommand {
   /** Price per unit, in soles. */
   readonly unitPrice: number;
   readonly expenseDate: Date;
+  /**
+   * Code generated on the device; it keeps the expense from being saved twice
+   * when it is recorded offline and synchronized later.
+   */
+  readonly clientSyncId: string;
 
   constructor(props: {
     ledgerId: number;
@@ -15,11 +20,13 @@ export class RecordInputExpenseCommand {
     quantity: number;
     unitPrice: number;
     expenseDate: Date;
+    clientSyncId?: string;
   }) {
     this.ledgerId = props.ledgerId;
     this.inputName = props.inputName;
     this.quantity = props.quantity;
     this.unitPrice = props.unitPrice;
     this.expenseDate = props.expenseDate;
+    this.clientSyncId = props.clientSyncId ?? crypto.randomUUID();
   }
 }

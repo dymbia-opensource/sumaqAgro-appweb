@@ -7,14 +7,24 @@
   [title]="greetingKey() | translate: { name: userName() }"
   [subtitle]="
     campaign()
-      ? plotSummary() + ' | ' + ('field-management.dashboard.campaign' | translate) + ' ' + campaign()!.season
+      ? plotSummary() +
+        ' | ' +
+        ('field-management.dashboard.campaign' | translate) +
+        ' ' +
+        campaign()!.season
       : plotSummary()
   "
 >
-  <a mat-flat-button class="view-plots" routerLink="/field-management/plots">
-    <mat-icon>grid_view</mat-icon>
-    {{ 'field-management.dashboard.view-all-plots' | translate }}
-  </a>
+  <div class="header-actions">
+    <a mat-stroked-button class="view-plots" routerLink="/field-management/campaigns">
+      <mat-icon>event_note</mat-icon>
+      {{ 'field-management.campaigns.title' | translate }}
+    </a>
+    <a mat-flat-button class="view-plots" routerLink="/field-management/plots">
+      <mat-icon>grid_view</mat-icon>
+      {{ 'field-management.dashboard.view-all-plots' | translate }}
+    </a>
+  </div>
 </app-page-header>
 
 @if (error()) {

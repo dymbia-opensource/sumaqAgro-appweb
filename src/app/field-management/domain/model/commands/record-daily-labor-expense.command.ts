@@ -12,6 +12,11 @@ export class RecordDailyLaborExpenseCommand {
   /** Wage per worker per day, in soles. */
   readonly dailyWage: number;
   readonly expenseDate: Date;
+  /**
+   * Code generated on the device; it keeps the expense from being saved twice
+   * when it is recorded offline and synchronized later.
+   */
+  readonly clientSyncId: string;
 
   constructor(props: {
     ledgerId: number;
@@ -20,6 +25,7 @@ export class RecordDailyLaborExpenseCommand {
     days: number;
     dailyWage: number;
     expenseDate: Date;
+    clientSyncId?: string;
   }) {
     this.ledgerId = props.ledgerId;
     this.activity = props.activity;
@@ -27,5 +33,6 @@ export class RecordDailyLaborExpenseCommand {
     this.days = props.days;
     this.dailyWage = props.dailyWage;
     this.expenseDate = props.expenseDate;
+    this.clientSyncId = props.clientSyncId ?? crypto.randomUUID();
   }
 }

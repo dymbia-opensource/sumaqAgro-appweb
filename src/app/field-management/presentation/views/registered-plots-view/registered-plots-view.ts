@@ -81,6 +81,14 @@ export class RegisteredPlotsView {
     this.router.navigate(['field-management/plots', plot.id, 'boundary']).then();
   }
 
+  onViewDetail(plot: FieldPlot) {
+    this.router.navigate(['field-management/plots', plot.id]).then();
+  }
+
+  onRecordSoil(plot: FieldPlot) {
+    this.router.navigate(['field-management/plots', plot.id, 'soil']).then();
+  }
+
   /** Deletes the plot only if the producer confirms. */
   onDeletePlot(plot: FieldPlot) {
     const message = this.translate.instant('field-management.plots.delete-confirm', {

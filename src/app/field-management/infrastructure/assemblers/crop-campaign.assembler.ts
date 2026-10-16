@@ -34,6 +34,7 @@ export class CropCampaignAssembler implements BaseAssembler<
       season: resource.season,
       cropType: resource.cropType as CropType,
       seedVariety: resource.seedVariety,
+      customSeedVariety: resource.seedVarietyCustom ?? false,
       sowingDate: resource.sowingDate ? fromApiDate(resource.sowingDate) : null,
       status: resource.status as CampaignStatus,
     });
@@ -49,6 +50,7 @@ export class CropCampaignAssembler implements BaseAssembler<
     season: entity.season,
     cropType: entity.cropType,
     seedVariety: entity.seedVariety,
+    seedVarietyCustom: entity.customSeedVariety,
     sowingDate: entity.sowingDate ? toApiDate(entity.sowingDate) : null,
     status: entity.status,
   });

@@ -1,0 +1,50 @@
+:host {
+  display: block;
+  min-width: 0;
+}
+
+.cadastre-card {
+  border-radius: 20px;
+}
+
+.cadastre-card [mat-card-avatar] {
+  color: var(--mat-sys-primary);
+  font-size: 32px;
+  width: 32px;
+  height: 32px;
+}
+
+.status {
+  margin-left: auto;
+}
+
+.data {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 8px 16px;
+  margin: 16px 0;
+}
+
+.data dt {
+  font-weight: 600;
+}
+
+.data dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.code {
+  font-family: monospace;
+}
+
+.vertices summary {
+  cursor: pointer;
+  color: var(--mat-sys-primary);
+  font: var(--mat-sys-label-large);
+}
+
+.vertices ol {
+  margin: 8px 0 0;
+  font-family: monospace;
+}

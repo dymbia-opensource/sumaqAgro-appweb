@@ -77,7 +77,8 @@
       "plan-title": "Información de Plan Gratuito",
       "plan-text": "Tu cuenta independiente te permite registrar hasta {{ quota }} parcelas familiares.",
       "plan-full": "Ya usaste los {{ quota }} cupos de tu plan gratuito. Actualiza tu plan para registrar más parcelas.",
-      "delete-confirm": "¿Eliminar la parcela \"{{ name }}\"? Esta acción no se puede deshacer."
+      "delete-confirm": "¿Eliminar la parcela \"{{ name }}\"? Esta acción no se puede deshacer.",
+      "view-detail": "Ver mapa y detalle"
     },
     "plot-form": {
       "title": "Registrar Nueva Parcela (Cupo {{ slot }} de {{ quota }})",
@@ -150,7 +151,12 @@
       "save-polygon": "No pudimos guardar el polígono. Inténtalo de nuevo.",
       "delete-plot": "No pudimos eliminar la parcela.",
       "record-expense": "No pudimos guardar el gasto. Inténtalo de nuevo.",
-      "save-yield": "No pudimos guardar el rendimiento esperado. Inténtalo de nuevo."
+      "save-yield": "No pudimos guardar el rendimiento esperado. Inténtalo de nuevo.",
+      "save-soil": "No pudimos guardar el análisis de suelo. Revisa los valores e inténtalo de nuevo.",
+      "start-campaign": "No pudimos iniciar la campaña. Inténtalo de nuevo.",
+      "close-campaign": "No pudimos cerrar la campaña. Inténtalo de nuevo.",
+      "save-actual-yield": "No pudimos guardar el rendimiento real. Inténtalo de nuevo.",
+      "export-report": "No pudimos exportar el reporte de costos."
     },
     "finances": {
       "subtitle": "{{ plot }} | Campaña {{ season }}",
@@ -175,7 +181,9 @@
       "update-yield": "Actualizar",
       "yield-required": "Ingresa el rendimiento que esperas cosechar para calcular el precio de equilibrio.",
       "actual-yield": "Calculado con la cosecha real: {{ quantity }} {{ unit }}.",
-      "suggested-price": "No vendas por menos de {{ price }}"
+      "suggested-price": "No vendas por menos de {{ price }}",
+      "filter": "Filtrar gastos por tipo",
+      "all-categories": "Todos"
     },
     "expense-form": {
       "title": "Registrar un gasto",
@@ -205,6 +213,87 @@
       "HILLING": "Aporque",
       "SPRAYING": "Fumigación",
       "HARVEST": "Cosecha"
+    },
+    "campaigns": {
+      "title": "Mis Campañas",
+      "subtitle": "{{ plot }} · {{ count }} campaña(s)",
+      "new": "Iniciar Nueva Campaña",
+      "new-subtitle": "Nueva temporada de cultivo de {{ plot }}. Se abre su bitácora de costos automáticamente.",
+      "start": "Iniciar campaña",
+      "season-hint": "Temporada {{ season }}",
+      "sowing-date": "Fecha de siembra",
+      "not-sown": "Aún no sembrado",
+      "expense-count": "{{ count }} gasto(s) registrado(s)",
+      "close": "Cerrar campaña",
+      "close-title": "¿Cerrar la temporada {{ season }}?",
+      "close-warning": "La campaña queda de solo lectura y su bitácora de costos ya no acepta gastos.",
+      "actual-yield-hint": "Opcional: lo que cosechaste. También puedes registrarlo después.",
+      "one-in-progress": "Esta parcela ya tiene una campaña en curso. Ciérrala antes de iniciar otra.",
+      "empty": "Esta parcela aún no tiene campañas."
+    },
+    "reports": {
+      "title": "Reportes de Costos",
+      "export": "Exportar reporte",
+      "cost-per-hectare": "Costo por hectárea",
+      "actual-yield": "Rendimiento real",
+      "actual-yield-subtitle": "Se registra al pesar el lote en el acopio, o puedes escribirlo tú.",
+      "harvested": "Cosechado",
+      "breakeven-title": "Reporte de punto de equilibrio",
+      "breakeven-subtitle": "Precio mínimo por unidad para recuperar lo invertido.",
+      "with-expected-yield": "Con el rendimiento esperado",
+      "with-actual-yield": "Con el rendimiento real",
+      "simulator": "Simulador de precio de venta",
+      "margin": "Margen de ganancia: {{ margin }}%",
+      "suggested": "Precio sugerido: {{ price }} {{ unit }}",
+      "sale-price": "Precio que ofrece el comprador",
+      "profit": "Ganarías {{ amount }} vendiendo toda la cosecha.",
+      "loss": "Perderías {{ amount }} vendiendo toda la cosecha.",
+      "area": "Área de la parcela: {{ area }} ha",
+      "per-hectare": "por hectárea",
+      "yield-per-hectare": "Rendimiento: {{ quantity }} {{ unit }} por hectárea",
+      "no-area": "Delimita la parcela o declara su área para calcular el costo por hectárea."
+    },
+    "offline": {
+      "no-connection": "Estás sin conexión. Tus gastos se guardan en este dispositivo.",
+      "pending": "{{ count }} gasto(s) pendiente(s) de sincronizar.",
+      "syncing": "Sincronizando...",
+      "sync-now": "Sincronizar ahora"
+    },
+    "plot-detail": {
+      "title": "Detalle de la Parcela",
+      "subtitle": "Mapa satelital y datos catastrales de la parcela",
+      "map": "Mapa satelital con el polígono de la parcela",
+      "no-polygon": "El polígono de esta parcela aún no está delimitado.",
+      "cadastre": "Datos catastrales",
+      "vertices": "Vértices",
+      "agromonitoring": "Polígono en AgroMonitoring",
+      "not-found": "No encontramos esta parcela."
+    },
+    "soil": {
+      "title": "Análisis de Suelo",
+      "subtitle": "Análisis inicial del suelo de {{ plot }}",
+      "recorded-at": "Análisis del {{ date }}",
+      "ph": "pH del suelo",
+      "ph-hint": "De 0 (ácido) a 14 (alcalino).",
+      "ph-range": "El pH debe estar entre 0 y 14.",
+      "texture": "Textura",
+      "organic-matter": "Materia orgánica",
+      "percentage-range": "Ingresa un porcentaje entre 0 y 100.",
+      "date": "Fecha del análisis",
+      "needs-liming": "El suelo es demasiado ácido para {{ crop }}: aplica cal antes de sembrar.",
+      "ph-ok": "El pH es adecuado para {{ crop }}.",
+      "low-organic-matter": "Materia orgánica baja: agrega compost o guano.",
+      "empty": "Aún no se registra el análisis de suelo de esta parcela.",
+      "record": "Registrar análisis",
+      "update": "Actualizar análisis"
+    },
+    "soil-texture": {
+      "SANDY": "Arenoso",
+      "LOAMY": "Franco",
+      "CLAY": "Arcilloso",
+      "SILTY": "Limoso",
+      "SANDY_LOAM": "Franco arenoso",
+      "CLAY_LOAM": "Franco arcilloso"
     }
   }
 }
