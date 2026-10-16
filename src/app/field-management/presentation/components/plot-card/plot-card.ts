@@ -44,6 +44,12 @@ export class PlotCard {
   /** The producer wants to mark the polygon of the plot. */
   readonly delineate = output<FieldPlot>();
 
+  /** The producer wants to see the map and cadastral data of the plot. */
+  readonly viewDetail = output<FieldPlot>();
+
+  /** The producer wants to record the soil analysis of the plot. */
+  readonly recordSoil = output<FieldPlot>();
+
   /** The producer wants to delete the plot. */
   readonly remove = output<FieldPlot>();
 }

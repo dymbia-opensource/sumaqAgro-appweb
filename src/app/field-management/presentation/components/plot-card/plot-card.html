@@ -16,6 +16,14 @@
         <mat-icon>home</mat-icon>
         {{ 'field-management.plots.view-on-dashboard' | translate }}
       </button>
+      <button mat-menu-item (click)="viewDetail.emit(plot())">
+        <mat-icon>map</mat-icon>
+        {{ 'field-management.plots.view-detail' | translate }}
+      </button>
+      <button mat-menu-item (click)="recordSoil.emit(plot())">
+        <mat-icon>science</mat-icon>
+        {{ 'field-management.soil.title' | translate }}
+      </button>
       <button mat-menu-item (click)="delineate.emit(plot())">
         <mat-icon>polyline</mat-icon>
         {{ 'field-management.plots.delineate' | translate }}
