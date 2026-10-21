@@ -4,6 +4,8 @@ import { BaseResource } from '../../../shared/infrastructure/base-response';
  * Resource representation of a crop campaign.
  */
 export interface CropCampaignResource extends BaseResource {
+  /** Stable client operation identifier, absent on legacy resources. */
+  clientSyncId?: string;
   /** Unique identifier of the campaign. */
   id: number;
   /** Plot where the campaign takes place. */

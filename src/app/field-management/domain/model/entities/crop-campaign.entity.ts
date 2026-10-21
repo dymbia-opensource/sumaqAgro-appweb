@@ -17,6 +17,8 @@ import { CropType } from './crop-type';
  * `RecordSowingDate` and `CloseCropCampaign`.
  */
 export class CropCampaign extends AggregateRoot {
+  /** Stable operation reference used to reconcile interrupted creation requests. */
+  readonly clientSyncId: string;
   private _plotId: number;
   private _season: string;
   private _cropType: CropType;
@@ -26,6 +28,7 @@ export class CropCampaign extends AggregateRoot {
   private _status: CampaignStatus;
 
   constructor(props: {
+    clientSyncId?: string;
     id: number;
     plotId: number;
     season: string;
@@ -36,6 +39,7 @@ export class CropCampaign extends AggregateRoot {
     status?: CampaignStatus;
   }) {
     super({ id: props.id });
+    this.clientSyncId = props.clientSyncId ?? '';
     this._plotId = props.plotId;
     this._season = props.season;
     this._cropType = props.cropType;
@@ -57,15 +61,22 @@ export class CropCampaign extends AggregateRoot {
    * @returns The new campaign, with the `CropCampaignStarted` event.
    * @throws Error when the season is empty or the plot has a campaign in progress.
    */
-  static start(command: StartCropCampaignCommand, plotCampaigns: CropCampaign[] = []): CropCampaign {
+  static start(
+    command: StartCropCampaignCommand,
+    plotCampaigns: CropCampaign[] = [],
+    clientSyncId = '',
+  ): CropCampaign {
     const season = command.season.trim();
     if (!season) {
       throw new Error('The season of the campaign is required.');
     }
-    if (plotCampaigns.some((campaign) => campaign.plotId === command.plotId && campaign.isActive())) {
+    if (
+      plotCampaigns.some((campaign) => campaign.plotId === command.plotId && campaign.isActive())
+    ) {
       throw new Error('The plot already has a campaign in progress.');
     }
     const campaign = new CropCampaign({
+      clientSyncId,
       id: 0,
       plotId: command.plotId,
       season,
@@ -179,12 +190,15 @@ export class CropCampaign extends AggregateRoot {
   close(): void {
     this.ensureActive();
     this._status = CampaignStatus.FINISHED;
-    this.raise(new CropCampaignClosedEvent({ campaignId: this.id as number, plotId: this._plotId }));
+    this.raise(
+      new CropCampaignClosedEvent({ campaignId: this.id as number, plotId: this._plotId }),
+    );
   }
 
   /** Copy of the campaign without its pending events, to change it before the API confirms. */
   clone(): CropCampaign {
     return new CropCampaign({
+      clientSyncId: this.clientSyncId,
       id: this.id as number,
       plotId: this._plotId,
       season: this._season,

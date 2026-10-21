@@ -1,0 +1,19 @@
+@if (store.pendingCreation(); as draft) {
+  <section [attr.aria-label]="'field-management.recovery.title' | translate">
+    <h2>{{ 'field-management.recovery.title' | translate }}</h2>
+    <p>
+      {{
+        draft.plot?.name || ('field-management.recovery.plot' | translate) + ' #' + draft.plotId
+      }}
+      · {{ draft.season }} · {{ draft.variety }}
+    </p>
+    <p role="status">{{ 'field-management.recovery.' + draft.step | translate }}</p>
+    <p>{{ 'field-management.recovery.explanation' | translate }}</p>
+    <button mat-flat-button [disabled]="store.loading()" (click)="resume()">
+      {{ 'field-management.recovery.resume' | translate }}
+    </button>
+  </section>
+}
+@if (store.recoveryStorageError()) {
+  <p role="alert">{{ 'field-management.errors.recovery-storage' | translate }}</p>
+}

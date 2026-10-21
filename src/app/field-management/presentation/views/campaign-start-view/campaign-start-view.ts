@@ -1,3 +1,4 @@
+import { CreationRecoveryPanel } from '../../components/creation-recovery-panel/creation-recovery-panel';
 import { Component, computed, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -5,7 +6,10 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { Router, RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { MessageCard } from '../../../../shared/presentation/components/message-card/message-card';
-import { Breadcrumb, PageHeader } from '../../../../shared/presentation/components/page-header/page-header';
+import {
+  Breadcrumb,
+  PageHeader,
+} from '../../../../shared/presentation/components/page-header/page-header';
 import { FieldManagementStore } from '../../../application/field-management.store';
 import { RecordSowingDateCommand } from '../../../domain/model/commands/record-sowing-date.command';
 import { SelectCropTypeCommand } from '../../../domain/model/commands/select-crop-type.command';
@@ -24,6 +28,7 @@ const CAMPAIGNS_ROUTE = '/field-management/campaigns';
 @Component({
   selector: 'app-campaign-start-view',
   imports: [
+    CreationRecoveryPanel,
     RouterLink,
     MatButtonModule,
     MatCardModule,
@@ -42,6 +47,7 @@ export class CampaignStartView {
 
   // Store state
   readonly loading = this.store.loading;
+  readonly pendingCreation = this.store.pendingCreation;
   readonly error = this.store.error;
   readonly plot = this.store.selectedPlot;
   readonly hasCampaignInProgress = this.store.hasCampaignInProgress;
@@ -54,7 +60,9 @@ export class CampaignStartView {
   ];
 
   /** The new campaign suggests the crop of the previous one. */
-  readonly previousCropType = computed(() => this.store.activeCampaign()?.cropType ?? CropType.ANDEAN_POTATO);
+  readonly previousCropType = computed(
+    () => this.store.activeCampaign()?.cropType ?? CropType.ANDEAN_POTATO,
+  );
 
   // Actions
   /** Turns the form data into domain commands and sends them to the store. */
@@ -71,7 +79,11 @@ export class CampaignStartView {
         }),
         sowingDate: new RecordSowingDateCommand({ campaignId: 0, sowingDate: data.sowingDate }),
         expectedYield: data.expectedYield
-          ? new SetExpectedYieldCommand({ ledgerId: 0, expectedYield: data.expectedYield, unit: data.yieldUnit })
+          ? new SetExpectedYieldCommand({
+              ledgerId: 0,
+              expectedYield: data.expectedYield,
+              unit: data.yieldUnit,
+            })
           : undefined,
       },
       () => this.onCancel(),

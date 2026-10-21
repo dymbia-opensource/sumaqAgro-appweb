@@ -19,6 +19,8 @@ import { SoilBaseline } from './soil-baseline';
  * and `RecordSoilBaseline`.
  */
 export class FieldPlot extends AggregateRoot {
+  /** Stable operation reference used to reconcile interrupted creation requests. */
+  readonly clientSyncId: string;
   private _ownerUserId: number;
   private _name: string;
   private _region: string;
@@ -29,6 +31,7 @@ export class FieldPlot extends AggregateRoot {
   private _soilBaseline: SoilBaseline | null;
 
   constructor(props: {
+    clientSyncId?: string;
     id: number;
     ownerUserId: number;
     name: string;
@@ -40,6 +43,7 @@ export class FieldPlot extends AggregateRoot {
     soilBaseline?: SoilBaseline | null;
   }) {
     super({ id: props.id });
+    this.clientSyncId = props.clientSyncId ?? '';
     this._ownerUserId = props.ownerUserId;
     this._name = props.name;
     this._region = props.region;
@@ -56,7 +60,7 @@ export class FieldPlot extends AggregateRoot {
    * @returns The new plot, with the `FieldPlotRegistered` event.
    * @throws Error when the name or the region is empty, or the area is negative.
    */
-  static register(command: RegisterFieldPlotCommand): FieldPlot {
+  static register(command: RegisterFieldPlotCommand, clientSyncId = ''): FieldPlot {
     const name = command.name.trim();
     const region = command.region.trim();
     if (!name) {
@@ -69,15 +73,14 @@ export class FieldPlot extends AggregateRoot {
       throw new Error('The declared area cannot be negative.');
     }
     const plot = new FieldPlot({
+      clientSyncId,
       id: 0,
       ownerUserId: command.ownerUserId,
       name,
       region,
       areaHectares: command.declaredAreaHectares,
     });
-    plot.raise(
-      new FieldPlotRegisteredEvent({ plotId: 0, ownerUserId: command.ownerUserId, name }),
-    );
+    plot.raise(new FieldPlotRegisteredEvent({ plotId: 0, ownerUserId: command.ownerUserId, name }));
     return plot;
   }
 
@@ -143,7 +146,9 @@ export class FieldPlot extends AggregateRoot {
     }
     this._boundary = [...coordinates];
     this._areaHectares = FieldPlot.calculateAreaHectares(coordinates);
-    this.raise(new PlotBoundaryDelineatedEvent({ plotId: this.id as number, boundary: this.boundary }));
+    this.raise(
+      new PlotBoundaryDelineatedEvent({ plotId: this.id as number, boundary: this.boundary }),
+    );
     this.raise(
       new PlotAreaCalculatedEvent({ plotId: this.id as number, areaHectares: this._areaHectares }),
     );
@@ -168,9 +173,7 @@ export class FieldPlot extends AggregateRoot {
     }
     this._agroMonitoringPolygonId = agroMonitoringPolygonId;
     this._status = PlotStatus.ACTIVE_MONITORING;
-    this.raise(
-      new PlotPolygonLinkedEvent({ plotId: this.id as number, agroMonitoringPolygonId }),
-    );
+    this.raise(new PlotPolygonLinkedEvent({ plotId: this.id as number, agroMonitoringPolygonId }));
   }
 
   /**
@@ -186,13 +189,17 @@ export class FieldPlot extends AggregateRoot {
       recordedAt: command.recordedAt,
     });
     this.raise(
-      new SoilBaselineRecordedEvent({ plotId: this.id as number, soilBaseline: this._soilBaseline }),
+      new SoilBaselineRecordedEvent({
+        plotId: this.id as number,
+        soilBaseline: this._soilBaseline,
+      }),
     );
   }
 
   /** Copy of the plot without its pending events, to change it before the API confirms. */
   clone(): FieldPlot {
     return new FieldPlot({
+      clientSyncId: this.clientSyncId,
       id: this.id as number,
       ownerUserId: this._ownerUserId,
       name: this._name,

@@ -30,6 +30,7 @@ export class CropCampaignAssembler implements BaseAssembler<
   toEntityFromResource = (resource: CropCampaignResource): CropCampaign =>
     new CropCampaign({
       id: resource.id,
+      clientSyncId: resource.clientSyncId,
       plotId: resource.plotId,
       season: resource.season,
       cropType: resource.cropType as CropType,
@@ -46,6 +47,7 @@ export class CropCampaignAssembler implements BaseAssembler<
    */
   toResourceFromEntity = (entity: CropCampaign): CropCampaignResource => ({
     id: entity.id as number,
+    clientSyncId: entity.clientSyncId || undefined,
     plotId: entity.plotId,
     season: entity.season,
     cropType: entity.cropType,

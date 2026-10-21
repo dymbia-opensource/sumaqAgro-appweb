@@ -33,6 +33,7 @@ export class FieldPlotAssembler implements BaseAssembler<
   toEntityFromResource = (resource: FieldPlotResource): FieldPlot =>
     new FieldPlot({
       id: resource.id,
+      clientSyncId: resource.clientSyncId,
       ownerUserId: resource.ownerUserId,
       name: resource.name,
       region: resource.region,
@@ -52,6 +53,7 @@ export class FieldPlotAssembler implements BaseAssembler<
    */
   toResourceFromEntity = (entity: FieldPlot): FieldPlotResource => ({
     id: entity.id as number,
+    clientSyncId: entity.clientSyncId || undefined,
     ownerUserId: entity.ownerUserId,
     name: entity.name,
     region: entity.region,

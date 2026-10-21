@@ -5,6 +5,8 @@ import { SoilBaselineResource } from './soil-baseline.response';
  * Resource representation of a field plot.
  */
 export interface FieldPlotResource extends BaseResource {
+  /** Stable client operation identifier, absent on legacy resources. */
+  clientSyncId?: string;
   /** Unique identifier of the plot. */
   id: number;
   /** Producer who owns the plot. */

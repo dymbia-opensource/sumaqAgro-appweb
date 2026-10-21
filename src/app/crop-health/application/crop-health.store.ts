@@ -508,38 +508,64 @@ export class CropHealthStore {
     this.mutate(
       () => {
         const user = this.activeUser();
-        const current = this.inspections().find((item) => item.id === id);
-        if (!this.canPrescribe() || !user || !current) this.denied();
-        const report = this.copyReport(this.report(current!.reportId));
-        if (report.status !== 'PENDING') throw new Error('crop-health.errors.invalid-transition');
-        const inspection = new FieldInspection({
-          id: current!.id,
-          reportId: current!.reportId,
-          scheduledAt: current!.scheduledAt,
-          notes: current!.notes,
-          status: current!.status,
-          completedAt: current!.completedAt,
-          inspectorUserId: current!.inspectorUserId,
-        });
-        let saved: Observable<FieldInspection>;
-        if (inspection.status === 'COMPLETED') {
-          if (inspection.inspectorUserId !== user!.id || report.status !== 'PENDING') this.denied();
-          saved = of(inspection);
-        } else {
-          inspection.complete(notes, user!.id);
-          saved = defer(() => this.api.updateInspection(inspection));
-        }
-        return this.withResponsibility(current!.reportId, () => saved).pipe(
-          tap((result) => {
-            inspectionSaved = true;
-            this.inspectionsSignal.update((items) =>
-              items.map((item) => (item.id === result.id ? result : item)),
-            );
+        const visible = this.inspections().find((item) => item.id === id);
+        if (!this.canPrescribe() || !user || !visible) this.denied();
+        const visibleReport = this.report(visible!.reportId);
+        return this.withResponsibility(visible!.reportId, () =>
+          forkJoin({
+            inspections: this.api.getInspectionsByReportId(visible!.reportId),
+            reports: this.api.getPestReportsByPlot(visibleReport.plotId),
           }),
-          switchMap(() => {
-            if (report.status !== 'PENDING') return of(report);
-            report.markInspected();
-            return this.withResponsibility(Number(report.id), () => this.api.updateReport(report));
+        ).pipe(
+          switchMap((data) => {
+            const current = data.inspections.find(
+              (item) => item.id === id && item.reportId === visible!.reportId,
+            );
+            const report = data.reports.find(
+              (item) =>
+                item.id === visibleReport.id &&
+                item.plotId === visibleReport.plotId &&
+                item.reporterId === visibleReport.reporterId,
+            );
+            if (!current || !report || !['PENDING', 'INSPECTED'].includes(report.status))
+              this.denied();
+            const inspection = new FieldInspection({
+              id: current.id,
+              reportId: current.reportId,
+              scheduledAt: current.scheduledAt,
+              notes: current.notes,
+              status: current.status,
+              completedAt: current.completedAt,
+              inspectorUserId: current.inspectorUserId,
+            });
+            if (inspection.status === 'COMPLETED' && inspection.inspectorUserId !== user!.id)
+              this.denied();
+            let saved: Observable<FieldInspection>;
+            if (inspection.status === 'COMPLETED') saved = of(inspection);
+            else {
+              if (report.status !== 'PENDING')
+                throw new Error('crop-health.errors.invalid-transition');
+              inspection.complete(notes, user!.id);
+              saved = this.withResponsibility(current.reportId, () =>
+                this.api.updateInspection(inspection),
+              );
+            }
+            return saved.pipe(
+              tap((result) => {
+                inspectionSaved = true;
+                this.inspectionsSignal.update((items) =>
+                  items.map((item) => (item.id === result.id ? result : item)),
+                );
+              }),
+              switchMap(() => {
+                if (report.status === 'INSPECTED') return of(report);
+                const inspected = this.copyReport(report);
+                inspected.markInspected();
+                return this.withResponsibility(Number(report.id), () =>
+                  this.api.updateReport(inspected),
+                );
+              }),
+            );
           }),
         );
       },
@@ -641,6 +667,15 @@ export class CropHealthStore {
               (command.outcome === 'RECOVERED' && evolved.length !== prescriptions.length)
             )
               throw new Error('crop-health.errors.assessment-evidence');
+            const pending = data.assessments.find(
+              (item) =>
+                item.data.outcome === 'RECOVERED' &&
+                item.data.agronomistUserId === user.id &&
+                JSON.stringify([...item.data.evidenceIds].sort()) ===
+                  JSON.stringify(evidence.map((item) => item.data.id).sort()),
+            );
+            if (pending && pending.data.id !== command.id && report!.status === 'INSPECTED')
+              throw new Error('crop-health.errors.closure-pending');
             const existing = data.assessments.find((item) => item.data.id === command.id);
             const assessment = new CaseAssessment({
               ...command,
@@ -693,6 +728,41 @@ export class CropHealthStore {
           ? 'crop-health.errors.assessment-partial'
           : 'crop-health.errors.save-assessment',
     );
+  }
+
+  /** Identifies a saved recovery evaluation whose unchanged evidence still permits closure retry. */
+  pendingClosure(id: number): CaseAssessment | null {
+    if (
+      !this.canPrescribe() ||
+      !this.pestReports().some((report) => report.id === id && report.status === 'INSPECTED')
+    )
+      return null;
+    const evidenceIds = this.followUps()
+      .filter((item) => item.data.reportId === id)
+      .map((item) => item.data.id)
+      .sort();
+    return (
+      this.assessments()
+        .filter(
+          (item) =>
+            item.data.reportId === id &&
+            item.data.outcome === 'RECOVERED' &&
+            item.data.agronomistUserId === this.activeUser()?.id &&
+            JSON.stringify([...item.data.evidenceIds].sort()) === JSON.stringify(evidenceIds),
+        )
+        .sort((a, b) => b.data.recordedAt.localeCompare(a.data.recordedAt))[0] ?? null
+    );
+  }
+
+  /** Reuses the persisted evaluation ID and notes rather than registering a second conclusion. */
+  synchronizeClosure(id: number, onSaved: () => void, onFailure: () => void): void {
+    const saved = this.pendingClosure(id);
+    if (!saved) {
+      this.setError('write', 'crop-health.errors.evaluation-required');
+      onFailure();
+      return;
+    }
+    this.recordAssessment(saved.data, onSaved, onFailure);
   }
 
   /**

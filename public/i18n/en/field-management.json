@@ -166,7 +166,17 @@
       "quota-unavailable": "Your capacity could not be confirmed. Refresh the data before registering another plot.",
       "quota-check": "Could not check capacity with the server. No new plot was registered.",
       "registration-unconfirmed": "Registration could not be confirmed. Refresh the list before retrying: the plot may have been saved.",
-      "registration-partial": "The plot was registered and occupies a slot, but its initial campaign could not be completed. Review it in Manage Plots before registering again."
+      "registration-partial": "The plot was registered and occupies a slot, but its initial campaign could not be completed. Review it in Manage Plots before registering again.",
+      "recovery-storage": "The local draft is unavailable. Check browser storage; do not clear its data while a save is pending.",
+      "recovery-conflict": "Server resources do not match this pending operation. No duplicate was created; review the plot, campaign and ledger relationships.",
+      "recovery-missing": "No pending save was found for this producer.",
+      "recovery-pending": "An operation is already pending. Continue from the recovery panel.",
+      "recovery-failed": "The save could not be completed. The draft is retained: select Continue pending save to reconcile saved resources.",
+      "expense-storage": "The expense could not be retained in this browser. Your form remains available; check storage before continuing.",
+      "expense-conflict": "This expense identifier is already associated with different data. The original record was retained.",
+      "expense-sync-pending": "Some expenses retained on this device have unconfirmed synchronization. Retry using Sync now.",
+      "expense-sync-busy": "Wait for expense synchronization to finish.",
+      "expense-legacy": "Some older expenses have no identified producer. They remain in this browser and require ownership review before synchronization."
     },
     "finances": {
       "subtitle": "{{ plot }} | Season {{ season }}",
@@ -304,6 +314,15 @@
       "SILTY": "Silty",
       "SANDY_LOAM": "Sandy loam",
       "CLAY_LOAM": "Clay loam"
+    },
+    "recovery": {
+      "title": "Save awaiting completion",
+      "plot": "Plot",
+      "PLOT": "Pending: confirm whether the plot was saved.",
+      "CAMPAIGN": "Plot confirmed. Pending: confirm the campaign.",
+      "LEDGER": "Campaign confirmed. Pending: confirm the cost ledger.",
+      "explanation": "The original data is retained in this browser. Continue checks saved resources and completes missing steps, even when the plot quota is full.",
+      "resume": "Continue pending save"
     }
   }
 }

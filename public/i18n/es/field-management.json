@@ -166,7 +166,17 @@
       "quota-unavailable": "No se pudo confirmar tu cupo. Actualiza los datos antes de registrar otra parcela.",
       "quota-check": "No se pudo comprobar el cupo con el servidor. No se registró una nueva parcela.",
       "registration-unconfirmed": "No se pudo confirmar el registro. Actualiza la lista antes de volver a intentarlo: la parcela podría haberse guardado.",
-      "registration-partial": "La parcela ya está registrada y ocupa un cupo, pero no se completó su campaña inicial. Revisa la parcela desde Administrar parcelas antes de volver a registrar."
+      "registration-partial": "La parcela ya está registrada y ocupa un cupo, pero no se completó su campaña inicial. Revisa la parcela desde Administrar parcelas antes de volver a registrar.",
+      "recovery-storage": "No se pudo acceder al borrador local. Revisa el almacenamiento del navegador; no borres sus datos mientras exista un guardado pendiente.",
+      "recovery-conflict": "Los registros del servidor no coinciden con la operación pendiente. No creamos duplicados: revisa la relación entre parcela, campaña y libro.",
+      "recovery-missing": "No se encontró un guardado pendiente para este productor.",
+      "recovery-pending": "Ya existe una operación pendiente. Continúa desde el panel de recuperación.",
+      "recovery-failed": "No se completó el guardado. Conservamos el borrador: pulsa Continuar guardado pendiente para comprobar lo ya registrado.",
+      "expense-storage": "No se pudo conservar el gasto en este navegador. El formulario sigue disponible; revisa el almacenamiento antes de continuar.",
+      "expense-conflict": "El identificador del gasto ya está asociado a otros datos. Conservamos el registro anterior.",
+      "expense-sync-pending": "Hay gastos guardados en este dispositivo cuya sincronización no se confirmó. Reintenta desde Sincronizar ahora.",
+      "expense-sync-busy": "Espera a que termine la sincronización de los gastos.",
+      "expense-legacy": "Hay gastos de una versión anterior sin productor identificado. Se conservan en el navegador y requieren revisar su titular antes de sincronizarlos."
     },
     "finances": {
       "subtitle": "{{ plot }} | Campaña {{ season }}",
@@ -304,6 +314,15 @@
       "SILTY": "Limoso",
       "SANDY_LOAM": "Franco arenoso",
       "CLAY_LOAM": "Franco arcilloso"
+    },
+    "recovery": {
+      "title": "Guardado pendiente de completar",
+      "plot": "Parcela",
+      "PLOT": "Pendiente: confirmar si la parcela ya se guardó.",
+      "CAMPAIGN": "Parcela confirmada. Pendiente: confirmar la campaña.",
+      "LEDGER": "Campaña confirmada. Pendiente: confirmar el libro de costos.",
+      "explanation": "Conservamos los datos originales en este navegador. Continuar comprueba lo ya guardado y completa los pasos pendientes, aunque no queden cupos libres.",
+      "resume": "Continuar guardado pendiente"
     }
   }
 }

@@ -192,6 +192,15 @@ export class FarmerCaseView {
     );
   }
 
+  /** Completes a previously saved recovery conclusion, including after a browser reload. */
+  synchronizeClosure(): void {
+    this.store.synchronizeClosure(
+      this.id(),
+      () => this.assessmentSaved.set(true),
+      () => {},
+    );
+  }
+
   /** Shows the prescribed product beside each evidence record. */
   prescriptionLabel(id: number): string {
     return this.prescriptions().find((item) => item.id === id)?.recommendedProducts ?? `#${id}`;

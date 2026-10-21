@@ -1,3 +1,4 @@
+import { FieldCreationRecovery } from './field-creation-recovery';
 import {
   computed,
   DestroyRef,
@@ -109,6 +110,7 @@ const EMPTY_VEGETATION: VegetationState = { observations: [], loading: false, er
 @Injectable({ providedIn: 'root' })
 export class FieldManagementStore {
   private readonly fieldManagementApi = inject(FieldManagementApi);
+  private readonly creationRecovery = inject(FieldCreationRecovery);
   private readonly demoSession = inject(DemoSessionService);
   private readonly cropHealthApi = inject(CropHealthApi);
   private readonly plotSelection = inject(PlotSelectionService);
@@ -126,11 +128,12 @@ export class FieldManagementStore {
   private readonly domainEventsSubject = new Subject<FieldManagementEvent>();
   private plotsLoad?: Subscription;
   private plotMutation?: Subscription;
+  private expensesSync?: Subscription;
   private plotRevision = 0;
   private readonly quotaOwner = signal<number | null>(null);
   private readonly quotaLoaded = signal(false);
   private readonly plotMutationBusy = signal(false);
-  private readonly registrationIncompleteSignal = signal(false);
+
   private ledgersLoad?: Subscription;
 
   /** Plots of the producer. */
@@ -160,6 +163,7 @@ export class FieldManagementStore {
 
   /** Expenses recorded offline that are waiting to be synchronized. */
   readonly pendingExpenseCount = this.offlineQueue.size;
+  readonly legacyExpenseCount = this.offlineQueue.legacyCount;
 
   /** `true` while the offline expenses are being synchronized. */
   readonly syncing = this.syncingSignal.asReadonly();
@@ -199,7 +203,9 @@ export class FieldManagementStore {
   );
 
   /** A saved plot whose initial campaign failed must be reviewed before another registration. */
-  readonly registrationIncomplete = this.registrationIncompleteSignal.asReadonly();
+  readonly pendingCreation = this.creationRecovery.draft;
+  readonly recoveryStorageError = this.creationRecovery.storageError;
+  readonly registrationIncomplete = computed(() => !!this.pendingCreation());
 
   /** `true` only when a loaded producer has a free slot and no operation is in flight (US-22). */
   readonly canRegisterPlot = computed(
@@ -208,7 +214,8 @@ export class FieldManagementStore {
       this.remainingPlotSlots() > 0 &&
       !this.loading() &&
       !this.plotMutationBusy() &&
-      !this.registrationIncomplete(),
+      !this.registrationIncomplete() &&
+      !this.recoveryStorageError(),
   );
 
   /** Plot shown on the dashboard. */
@@ -318,7 +325,7 @@ export class FieldManagementStore {
     this.plotMutationBusy.set(false);
     this.quotaOwner.set(ownerUserId);
     this.quotaLoaded.set(false);
-    this.registrationIncompleteSignal.set(false);
+    this.creationRecovery.refresh();
     this.plotsLoad?.unsubscribe();
     this.ledgersLoad?.unsubscribe();
     this.plotsLoadingSignal.set(true);
@@ -406,10 +413,15 @@ export class FieldManagementStore {
     setup: CropCampaignSetup,
     onRegistered?: (plot: FieldPlot) => void,
   ): void => {
-    if (this.plotMutationBusy()) return;
-    const ownerUserId = this.currentUserId();
-    if (ownerUserId === null || command.ownerUserId !== ownerUserId) {
+    if (this.plotMutationBusy() || this.loading()) return;
+    const owner = this.currentUserId();
+    if (owner === null || command.ownerUserId !== owner) {
       this.errorSignal.set('field-management.errors.plot-not-owned');
+      return;
+    }
+    this.creationRecovery.refresh();
+    if (this.pendingCreation()) {
+      this.errorSignal.set('field-management.errors.recovery-pending');
       return;
     }
     if (!this.canRegisterPlot()) {
@@ -420,86 +432,71 @@ export class FieldManagementStore {
       );
       return;
     }
-    let plot: FieldPlot;
     try {
-      plot = FieldPlot.register(command);
+      this.creationRecovery.begin(setup, command);
     } catch (error) {
-      this.fail(error, 'field-management.errors.register-plot');
+      this.fail(error, this.recoveryMessage(error, 'field-management.errors.register-plot'));
       return;
     }
+    this.resumePendingCreation(onRegistered);
+  };
+
+  /**
+   * Continues the persisted operation without consuming another slot or repeating confirmed POSTs.
+   * @param onCompleted - Receives the confirmed plot once its campaign and ledger are available.
+   * @remarks Reads are scoped to the current producer; session changes cancel the entire chain.
+   */
+  resumePendingCreation(onCompleted?: (plot: FieldPlot) => void): void {
+    const owner = this.currentUserId();
+    if (owner === null || this.plotMutationBusy() || this.loading()) return;
     const revision = this.plotRevision;
-    const events = plot.pullDomainEvents();
-    let created = false;
-    let quotaChecked = false;
-    let creationStarted = false;
     this.plotMutationBusy.set(true);
     this.startLoading();
-    this.plotMutation = this.fieldManagementApi
-      .getPlotsByOwner(ownerUserId)
-      .pipe(
-        switchMap((records) => {
-          if (!this.isPlotParticipant(ownerUserId, revision))
-            return throwError(() => new Error('field-management.errors.plot-not-owned'));
-          const owned = this.ownedPlots(records, ownerUserId);
-          this.plotsSignal.set(owned);
-          quotaChecked = true;
-          if (owned.length >= this.plotQuota())
-            return throwError(() => new Error('field-management.errors.quota-reached'));
-          creationStarted = true;
-          return this.fieldManagementApi.createPlot(plot);
-        }),
-        tap((createdPlot) => {
-          if (
-            !this.isPlotParticipant(ownerUserId, revision) ||
-            createdPlot.ownerUserId !== ownerUserId
-          )
-            throw new Error('field-management.errors.plot-not-owned');
-          created = true;
-          // The slot is consumed as soon as the plot exists, even if its campaign later fails.
+    this.plotMutation = this.creationRecovery
+      .resume(
+        this.plotQuota(),
+        (plot) => {
+          if (!this.isPlotParticipant(owner, revision)) return;
           this.plotsSignal.update((plots) => [
-            ...plots.filter((item) => item.id !== createdPlot.id),
-            createdPlot,
+            ...plots.filter((item) => item.id !== plot.id),
+            plot,
           ]);
-          this.campaignsByPlotSignal.update((campaigns) =>
-            new Map(campaigns).set(createdPlot.id as number, []),
+          this.quotaLoaded.set(true);
+        },
+        (campaign) => {
+          if (!this.isPlotParticipant(owner, revision)) return;
+          this.campaignsByPlotSignal.update((current) =>
+            new Map(current).set(campaign.plotId, [
+              ...(current.get(campaign.plotId) ?? []).filter((item) => item.id !== campaign.id),
+              campaign,
+            ]),
           );
-        }),
-        switchMap((createdPlot) =>
-          this.createCampaignWithLedger(createdPlot.id as number, setup, []).pipe(
-            map((result) => ({ createdPlot, ...result })),
-          ),
-        ),
+        },
       )
       .subscribe({
-        next: ({ createdPlot, campaign, ledger, events: campaignEvents }) => {
-          if (!this.isPlotParticipant(ownerUserId, revision)) return;
-          this.campaignsByPlotSignal.update((campaigns) =>
-            new Map(campaigns).set(createdPlot.id as number, [campaign]),
-          );
-          this.setLedger(campaign.id as number, ledger);
+        next: ({ plot, campaign, ledger }) => {
+          if (!this.isPlotParticipant(owner, revision)) return;
+          this.setLedger(Number(campaign.id), ledger);
           this.plotMutationBusy.set(false);
           this.loadingSignal.set(false);
-          this.publish([...events, ...campaignEvents]);
-          this.selectPlot(createdPlot.id as number);
-          onRegistered?.(createdPlot);
+          this.selectPlot(Number(plot.id));
+          onCompleted?.(plot);
         },
         error: (error) => {
-          if (!this.isPlotParticipant(ownerUserId, revision)) return;
+          if (!this.isPlotParticipant(owner, revision)) return;
           this.plotMutationBusy.set(false);
-          this.registrationIncompleteSignal.set(created);
-          // A lost POST response leaves an unknown count: refresh before attempting another write.
-          if (!quotaChecked || (creationStarted && !created)) this.quotaLoaded.set(false);
-          const key = created
-            ? 'field-management.errors.registration-partial'
-            : error instanceof Error && error.message.startsWith('field-management.errors.')
-              ? error.message
-              : creationStarted
-                ? 'field-management.errors.registration-unconfirmed'
-                : 'field-management.errors.quota-check';
-          this.fail(error, key);
+          if (this.pendingCreation()?.step === 'PLOT') this.quotaLoaded.set(false);
+          this.fail(error, this.recoveryMessage(error, 'field-management.errors.recovery-failed'));
         },
       });
-  };
+  }
+
+  /** Preserves actionable workflow errors while normalizing network failures. */
+  private recoveryMessage(error: unknown, fallback: string): string {
+    return error instanceof Error && error.message.startsWith('field-management.errors.')
+      ? error.message
+      : fallback;
+  }
 
   /**
    * Saves the GPS polygon of a plot and its area (US-29), and links it to
@@ -650,23 +647,29 @@ export class FieldManagementStore {
     onStarted?: (campaign: CropCampaign) => void,
   ): void => {
     const plotId = setup.start.plotId;
-    if (!this.findPlot(plotId)) return;
-    this.startLoading();
-    this.createCampaignWithLedger(
-      plotId,
-      setup,
-      this.campaignsByPlotSignal().get(plotId) ?? [],
-    ).subscribe({
-      next: ({ campaign, ledger, events }) => {
-        this.campaignsByPlotSignal.update((campaigns) =>
-          new Map(campaigns).set(plotId, [...(campaigns.get(plotId) ?? []), campaign]),
-        );
-        this.setLedger(campaign.id as number, ledger);
-        this.loadingSignal.set(false);
-        this.publish(events);
-        onStarted?.(campaign);
-      },
-      error: (error) => this.fail(error, 'field-management.errors.start-campaign'),
+    if (
+      !this.findPlot(plotId) ||
+      this.currentUserId() === null ||
+      this.loading() ||
+      this.plotMutationBusy()
+    )
+      return;
+    this.creationRecovery.refresh();
+    if (this.pendingCreation()) {
+      this.errorSignal.set('field-management.errors.recovery-pending');
+      return;
+    }
+    try {
+      this.creationRecovery.begin(setup);
+    } catch (error) {
+      this.fail(error, this.recoveryMessage(error, 'field-management.errors.start-campaign'));
+      return;
+    }
+    this.resumePendingCreation(() => {
+      const campaign = this.campaignsByPlotSignal()
+        .get(plotId)
+        ?.find((item) => item.isActive());
+      if (campaign) onStarted?.(campaign);
     });
   };
 
@@ -731,17 +734,12 @@ export class FieldManagementStore {
    * it is synchronized when the connection comes back.
    */
   recordExpense = (command: RecordExpenseCommand, onRecorded?: () => void): void => {
-    if (!this.network.online()) {
-      this.recordOffline(command, onRecorded);
-      return;
-    }
-    this.saveLedger(
-      command.ledgerId,
-      (ledger) => FieldManagementStore.applyExpense(ledger, command),
-      'field-management.errors.record-expense',
-      onRecorded,
-      () => this.recordOffline(command, onRecorded),
-    );
+    if (this.loading() || this.syncingSignal()) return;
+    // Persist the operation before the first PUT so even a lost response keeps the original ID.
+    this.recordOffline(command, () => {
+      onRecorded?.();
+      if (this.network.online()) this.syncPendingExpenses();
+    });
   };
 
   /** Changes the expected yield, which updates the breakeven price (US-40). */
@@ -807,26 +805,69 @@ export class FieldManagementStore {
    * The ledger ignores the expenses that were already saved.
    */
   syncPendingExpenses = (): void => {
-    if (this.syncingSignal() || !this.network.online()) return;
+    const user = this.demoSession.activeUser();
+    if (this.syncingSignal() || !this.network.online() || user?.experience !== 'FARMER') return;
     const ledgerIds = this.offlineQueue.pendingLedgerIds();
-    if (ledgerIds.length === 0) return;
+    if (!ledgerIds.length) return;
+    const current = () =>
+      user === this.demoSession.activeUser() && this.currentUserId() === user.id;
+    const check = () => {
+      if (!current()) throw new Error('field-management.errors.plot-not-owned');
+    };
+    let failed = false;
     this.syncingSignal.set(true);
-    from(ledgerIds)
+    this.expensesSync = from(ledgerIds)
       .pipe(
         concatMap((ledgerId) => {
+          check();
           const commands = this.offlineQueue.pendingOf(ledgerId);
           return this.fieldManagementApi.getLedgerById(ledgerId).pipe(
             switchMap((saved) => {
-              const ledger = saved.clone();
-              commands.forEach((command) => FieldManagementStore.applyExpense(ledger, command));
-              const events = ledger.pullDomainEvents();
-              return this.fieldManagementApi
-                .updateLedger(ledger)
-                .pipe(map((updated) => ({ updated, events, commands })));
+              check();
+              if (Number(saved.id) !== ledgerId)
+                throw new Error('field-management.errors.plot-not-owned');
+              return this.fieldManagementApi.getCampaignById(saved.campaignId).pipe(
+                switchMap((campaign) =>
+                  this.fieldManagementApi.getPlotById(campaign.plotId).pipe(
+                    switchMap((plot) => {
+                      check();
+                      if (
+                        plot.ownerUserId !== user.id ||
+                        campaign.id !== saved.campaignId ||
+                        plot.id !== campaign.plotId
+                      )
+                        throw new Error('field-management.errors.plot-not-owned');
+                      const missing = commands.filter(
+                        (command) => !saved.hasEntryWithSyncId(command.clientSyncId),
+                      );
+                      const ledger = saved.clone();
+                      missing.forEach((command) =>
+                        FieldManagementStore.applyExpense(ledger, command),
+                      );
+                      const events = ledger.pullDomainEvents();
+                      return (
+                        missing.length ? this.fieldManagementApi.updateLedger(ledger) : of(saved)
+                      ).pipe(
+                        map((updated) => {
+                          check();
+                          if (
+                            updated.id !== saved.id ||
+                            updated.campaignId !== saved.campaignId ||
+                            commands.some(
+                              (command) => !updated.hasEntryWithSyncId(command.clientSyncId),
+                            )
+                          )
+                            throw new Error('field-management.errors.expense-sync-pending');
+                          return { updated, events, commands };
+                        }),
+                      );
+                    }),
+                  ),
+                ),
+              );
             }),
-            // A ledger that fails (for example, it was deleted) does not stop the others.
-            catchError((error) => {
-              console.error(error);
+            catchError(() => {
+              failed = true;
               return of(null);
             }),
           );
@@ -834,73 +875,32 @@ export class FieldManagementStore {
       )
       .subscribe({
         next: (result) => {
-          if (!result) return;
-          this.offlineQueue.remove(result.commands.map((command) => command.clientSyncId));
-          this.setLedger(result.updated.campaignId, result.updated);
-          this.publish(result.events);
+          if (!current() || !result) return;
+          try {
+            this.offlineQueue.remove(result.commands.map((command) => command.clientSyncId));
+            this.setLedger(result.updated.campaignId, result.updated);
+            this.publish(result.events);
+          } catch {
+            failed = true;
+          }
         },
-        complete: () => this.syncingSignal.set(false),
+        error: () => {
+          if (current()) {
+            this.syncingSignal.set(false);
+            this.errorSignal.set('field-management.errors.expense-sync-pending');
+          }
+        },
+        complete: () => {
+          if (!current()) return;
+          this.syncingSignal.set(false);
+          if (failed) this.errorSignal.set('field-management.errors.expense-sync-pending');
+          else if (this.errorSignal() === 'field-management.errors.expense-sync-pending')
+            this.errorSignal.set(null);
+        },
       });
   };
 
   // ---------- Helpers ----------
-
-  /**
-   * Starts a campaign, applies its setup commands and opens its ledger (policy P8).
-   *
-   * @remarks
-   * With the RESTful API the backend opens the ledger when it receives
-   * `CropCampaignStarted`; with the fake API the store creates it.
-   */
-  private createCampaignWithLedger(
-    plotId: number,
-    setup: CropCampaignSetup,
-    plotCampaigns: CropCampaign[],
-  ): Observable<{
-    campaign: CropCampaign;
-    ledger: CampaignLedger;
-    events: FieldManagementEvent[];
-  }> {
-    let campaign: CropCampaign;
-    try {
-      campaign = CropCampaign.start(
-        new StartCropCampaignCommand({ plotId, season: setup.start.season }),
-        plotCampaigns,
-      );
-      campaign.selectCropType(setup.cropType.cropType);
-      campaign.specifySeedVariety(setup.seedVariety.varietyName, setup.seedVariety.custom);
-      campaign.recordSowingDate(setup.sowingDate.sowingDate);
-    } catch (error) {
-      return throwError(() => error);
-    }
-    const campaignEvents = campaign.pullDomainEvents();
-    return this.fieldManagementApi.createCampaign(campaign).pipe(
-      switchMap((created) => {
-        // Policy P8: Whenever CropCampaignStarted Then OpenCampaignLedger.
-        const ledger = CampaignLedger.open(
-          new OpenCampaignLedgerCommand({
-            campaignId: created.id as number,
-            yieldUnit: CampaignLedger.yieldUnitOf(created.cropType),
-          }),
-        );
-        try {
-          if (setup.expectedYield) {
-            ledger.setExpectedYield(setup.expectedYield.expectedYield, ledger.yieldUnit);
-          }
-        } catch (error) {
-          return throwError(() => error);
-        }
-        const ledgerEvents = ledger.pullDomainEvents();
-        return this.fieldManagementApi.createLedger(ledger).pipe(
-          map((createdLedger) => ({
-            campaign: created,
-            ledger: createdLedger,
-            events: [...campaignEvents, ...ledgerEvents],
-          })),
-        );
-      }),
-    );
-  }
 
   /**
    * Applies a change to a copy of a plot and saves it; the shown plot only
@@ -949,6 +949,10 @@ export class FieldManagementStore {
     onSaved?: () => void,
     onOffline?: () => void,
   ): void {
+    if (this.syncingSignal()) {
+      this.errorSignal.set('field-management.errors.expense-sync-busy');
+      return;
+    }
     const current = this.findLedger(ledgerId);
     if (!current) return;
     const ledger = current.clone();
@@ -994,7 +998,12 @@ export class FieldManagementStore {
     }
     // The events are published when the expense reaches the API.
     ledger.pullDomainEvents();
-    this.offlineQueue.enqueue(command);
+    try {
+      this.offlineQueue.enqueue(command);
+    } catch (error) {
+      this.fail(error, this.recoveryMessage(error, 'field-management.errors.expense-storage'));
+      return;
+    }
     this.setLedger(ledger.campaignId, ledger);
     this.errorSignal.set(null);
     onRecorded?.();
@@ -1060,11 +1069,13 @@ export class FieldManagementStore {
   /** Forgets the plots of the previous user (after signing out). */
   private clearState(): void {
     this.plotRevision++;
+    this.expensesSync?.unsubscribe();
+    this.syncingSignal.set(false);
     this.plotMutation?.unsubscribe();
     this.plotMutationBusy.set(false);
     this.quotaLoaded.set(false);
     this.quotaOwner.set(null);
-    this.registrationIncompleteSignal.set(false);
+    this.creationRecovery.refresh();
     this.plotsLoadingSignal.set(false);
     this.plotsLoad?.unsubscribe();
     this.ledgersLoad?.unsubscribe();

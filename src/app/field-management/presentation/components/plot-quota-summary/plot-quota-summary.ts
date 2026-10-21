@@ -1,3 +1,4 @@
+import { CreationRecoveryPanel } from '../creation-recovery-panel/creation-recovery-panel';
 import { Component, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
@@ -7,7 +8,7 @@ import { FieldManagementStore } from '../../../application/field-management.stor
 /** Shared Seed-plan usage indicator; an unavailable count is never presented as free capacity. */
 @Component({
   selector: 'app-plot-quota-summary',
-  imports: [TranslatePipe, MatButtonModule, MatProgressBarModule],
+  imports: [CreationRecoveryPanel, TranslatePipe, MatButtonModule, MatProgressBarModule],
   templateUrl: './plot-quota-summary.html',
   styles: [
     ':host { display:block; padding:20px; border:1px solid var(--mat-sys-outline-variant); border-radius:16px; background:var(--mat-sys-surface-container-low); } p { margin:0 0 12px; } mat-progress-bar { margin-bottom:12px; }',

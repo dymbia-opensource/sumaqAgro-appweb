@@ -106,7 +106,8 @@
       "assessment-evidence": "Application and evolution for the same prescription are required. All prescriptions need this follow-up before closure.",
       "assessment-conflict": "The saved evaluation differs from this draft or the current evidence. Refresh the case before continuing.",
       "assessment-partial": "The evaluation was saved but closure was not confirmed. Retry the same draft to synchronize without duplicating it.",
-      "save-assessment": "Could not save the evaluation. Your draft is preserved for retry."
+      "save-assessment": "Could not save the evaluation. Your draft is preserved for retry.",
+      "closure-pending": "A saved recovery evaluation is awaiting closure. Use Synchronize case closure."
     },
     "no-inspections": "No inspections",
     "no-prescriptions": "No prescriptions",
@@ -235,7 +236,9 @@
       "assessment-notes": "Findings and evaluation rationale",
       "save-evaluation": "Record evaluation",
       "awaiting-evidence": "Waiting for farmer application and evolution records for the same prescription.",
-      "evaluation-saved": "Evaluation saved. The case status reflects the recorded conclusion."
+      "evaluation-saved": "Evaluation saved. The case status reflects the recorded conclusion.",
+      "pending-closure": "The recovery evaluation is already saved. Case closure still needs confirmation.",
+      "sync-closure": "Synchronize case closure"
     }
   }
 }

@@ -1,3 +1,6 @@
+@if (legacyExpenseCount()) {
+  <p role="alert">{{ 'field-management.errors.expense-legacy' | translate }}</p>
+}
 @if (loading()) {
   <mat-progress-bar mode="indeterminate" [attr.aria-label]="'common.loading' | translate" />
 }

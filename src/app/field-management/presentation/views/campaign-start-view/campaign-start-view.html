@@ -5,16 +5,25 @@
 <app-page-header
   [breadcrumbs]="breadcrumbs"
   [title]="'field-management.campaigns.new' | translate"
-  [subtitle]="plot() ? ('field-management.campaigns.new-subtitle' | translate: { plot: plot()!.name }) : ''"
+  [subtitle]="
+    plot() ? ('field-management.campaigns.new-subtitle' | translate: { plot: plot()!.name }) : ''
+  "
 />
 
 @if (error(); as error) {
   <app-message-card icon="error" [message]="error | translate" [alert]="true" />
 }
 
-@if (!plot()) {
+<app-creation-recovery-panel />
+
+@if (pendingCreation()) {
+  <!-- The persisted draft is resumed from the panel above. -->
+} @else if (!plot()) {
   @if (!loading()) {
-    <app-message-card icon="grid_view" [message]="'field-management.finances.no-ledger' | translate">
+    <app-message-card
+      icon="grid_view"
+      [message]="'field-management.finances.no-ledger' | translate"
+    >
       <mat-card-actions align="end">
         <a mat-flat-button routerLink="/field-management/plots">
           {{ 'field-management.finances.select-plot' | translate }}
@@ -24,7 +33,11 @@
   }
 } @else if (hasCampaignInProgress()) {
   <!-- A plot cannot have two campaigns in progress -->
-  <app-message-card icon="lock" [message]="'field-management.campaigns.one-in-progress' | translate" [alert]="true">
+  <app-message-card
+    icon="lock"
+    [message]="'field-management.campaigns.one-in-progress' | translate"
+    [alert]="true"
+  >
     <mat-card-actions align="end">
       <button mat-stroked-button (click)="onCancel()">{{ 'common.back' | translate }}</button>
     </mat-card-actions>

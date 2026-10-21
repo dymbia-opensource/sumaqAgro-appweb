@@ -29,7 +29,10 @@ export class CampaignLedgersApiEndpoint extends BaseApiEndpoint<
    */
   getByCampaign(campaignId: number): Observable<CampaignLedger | null> {
     return this.getAllBy({ campaignId }, 'Failed to fetch the cost ledger of the campaign').pipe(
-      map((ledgers) => ledgers[0] ?? null),
+      map((ledgers) => {
+        if (ledgers.length > 1) throw new Error('field-management.errors.recovery-conflict');
+        return ledgers[0] ?? null;
+      }),
     );
   }
 }

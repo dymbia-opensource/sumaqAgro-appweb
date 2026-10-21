@@ -174,7 +174,16 @@
       }
       @if (store.canPrescribe() && report.status === 'INSPECTED') {
         <p>{{ 'crop-health.advisor.assessment-notice' | translate }}</p>
-        @if (store.canAssess(+report.id)) {
+        @if (store.pendingClosure(+report.id)) {
+          <p>{{ 'crop-health.advisor.pending-closure' | translate }}</p>
+          <button
+            mat-flat-button
+            [disabled]="store.saving() || store.clinicalLoading()"
+            (click)="synchronizeClosure()"
+          >
+            {{ 'crop-health.advisor.sync-closure' | translate }}
+          </button>
+        } @else if (store.canAssess(+report.id)) {
           <form #assessmentFormRef="ngForm" [formGroup]="assessmentForm" (ngSubmit)="evaluate()">
             <mat-form-field appearance="outline"
               ><mat-label>{{ 'crop-health.advisor.conclusion' | translate }}</mat-label>

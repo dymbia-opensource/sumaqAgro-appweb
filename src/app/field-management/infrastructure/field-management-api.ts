@@ -99,7 +99,12 @@ export class FieldManagementApi extends BaseApi {
 
   /** Ignores stale membership references to plots that have been deleted. */
   getPlotsByIds = (ids: number[]): Observable<FieldPlot[]> =>
-    this.plotsEndpoint.getAll().pipe(map(plots => plots.filter(plot => ids.includes(plot.id as number))));
+    this.plotsEndpoint
+      .getAll()
+      .pipe(map((plots) => plots.filter((plot) => ids.includes(plot.id as number))));
+
+  /** Loads the canonical campaign before validating ownership of a queued expense. */
+  getCampaignById = (id: number): Observable<CropCampaign> => this.campaignsEndpoint.getById(id);
 
   // ---------- Crop campaigns ----------
 
