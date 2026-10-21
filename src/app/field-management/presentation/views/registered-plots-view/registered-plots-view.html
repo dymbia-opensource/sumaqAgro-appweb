@@ -6,9 +6,12 @@
   [breadcrumbs]="breadcrumbs"
   [title]="'field-management.plots.title' | translate"
   [subtitle]="
-    'field-management.plots.subtitle' | translate: { used: plotCount(), quota: plotQuota() }
+    (plotQuotaReady() ? 'field-management.plots.subtitle' : 'field-management.plots.quota-checking')
+      | translate: { used: plotCount(), quota: plotQuota() }
   "
 />
+
+<app-plot-quota-summary />
 
 @if (error(); as error) {
   <app-message-card icon="error" [message]="error | translate" [alert]="true" />
@@ -21,6 +24,7 @@
       [plot]="plot"
       [campaign]="campaigns().get(plot.id)"
       [position]="index + 1"
+      [deletionDisabled]="loading() || !plotQuotaReady()"
       (viewOnDashboard)="onSelectPlot($event)"
       (delineate)="onDelineate($event)"
       (viewDetail)="onViewDetail($event)"
@@ -42,11 +46,7 @@
     <mat-icon mat-card-avatar>workspace_premium</mat-icon>
     <mat-card-title>{{ 'field-management.plots.plan-title' | translate }}</mat-card-title>
     <mat-card-subtitle>
-      @if (canRegisterPlot()) {
-        {{ 'field-management.plots.plan-text' | translate: { quota: plotQuota() } }}
-      } @else {
-        {{ 'field-management.plots.plan-full' | translate: { quota: plotQuota() } }}
-      }
+      {{ 'field-management.plots.plan-text' | translate: { quota: plotQuota() } }}
     </mat-card-subtitle>
   </mat-card-header>
 </mat-card>

@@ -1,7 +1,17 @@
-import { computed, effect, inject, Injectable, Signal, signal, untracked } from '@angular/core';
+import {
+  computed,
+  DestroyRef,
+  effect,
+  inject,
+  Injectable,
+  Signal,
+  signal,
+  untracked,
+} from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import {
   catchError,
+  tap,
   concatMap,
   forkJoin,
   from,
@@ -42,7 +52,10 @@ import { FieldManagementEvent } from '../domain/model/events/field-management.ev
 import { CampaignSummary } from '../domain/model/read-models/campaign-summary';
 import { FieldManagementApi } from '../infrastructure/field-management-api';
 import { NetworkStatus } from '../infrastructure/offline/network-status';
-import { ExpenseCommand, OfflineExpenseQueue } from '../infrastructure/offline/offline-expense-queue';
+import {
+  ExpenseCommand,
+  OfflineExpenseQueue,
+} from '../infrastructure/offline/offline-expense-queue';
 import { FileDownloader } from '../infrastructure/reports/file-downloader';
 
 /**
@@ -112,10 +125,18 @@ export class FieldManagementStore {
   private readonly syncingSignal = signal(false);
   private readonly domainEventsSubject = new Subject<FieldManagementEvent>();
   private plotsLoad?: Subscription;
+  private plotMutation?: Subscription;
+  private plotRevision = 0;
+  private readonly quotaOwner = signal<number | null>(null);
+  private readonly quotaLoaded = signal(false);
+  private readonly plotMutationBusy = signal(false);
+  private readonly registrationIncompleteSignal = signal(false);
   private ledgersLoad?: Subscription;
 
   /** Plots of the producer. */
-  readonly plots = this.plotsSignal.asReadonly();
+  readonly plots = computed(() =>
+    this.plotsSignal().filter((plot) => plot.ownerUserId === this.currentUserId()),
+  );
 
   /** `true` while the plots of the producer are being loaded. */
   readonly plotsLoading = this.plotsLoadingSignal.asReadonly();
@@ -131,7 +152,8 @@ export class FieldManagementStore {
    * (for example, Crop Health schedules the satellite monitoring with
    * `SowingDateRecorded`, policy P4).
    */
-  readonly domainEvents$: Observable<FieldManagementEvent> = this.domainEventsSubject.asObservable();
+  readonly domainEvents$: Observable<FieldManagementEvent> =
+    this.domainEventsSubject.asObservable();
 
   /** `true` while the device has connection. */
   readonly online = this.network.online;
@@ -148,7 +170,9 @@ export class FieldManagementStore {
    * comes from IamStore.
    */
   readonly currentUserId = computed(() =>
-    this.demoSession.activeUser()?.experience === 'FARMER' ? this.demoSession.activeUser()!.id : null,
+    this.demoSession.activeUser()?.experience === 'FARMER'
+      ? this.demoSession.activeUser()!.id
+      : null,
   );
 
   /** Number of plots of the producer. */
@@ -157,8 +181,35 @@ export class FieldManagementStore {
   /** Plots allowed by the plan of the producer. */
   readonly plotQuota = signal(SEED_PLAN_PLOT_QUOTA).asReadonly();
 
-  /** `true` while the producer can register another plot (US-22). */
-  readonly canRegisterPlot = computed(() => this.plotCount() < this.plotQuota());
+  /** Quota is known only after a successful read for the currently selected producer. */
+  readonly plotQuotaReady = computed(
+    () =>
+      this.currentUserId() !== null &&
+      this.quotaOwner() === this.currentUserId() &&
+      this.quotaLoaded() &&
+      !this.plotsLoading(),
+  );
+
+  /** Remaining slots never become negative, including legacy accounts above the quota. */
+  readonly remainingPlotSlots = computed(() => Math.max(0, this.plotQuota() - this.plotCount()));
+
+  /** Indicates an actual full plan, independently of loading or a failed quota check. */
+  readonly plotQuotaReached = computed(
+    () => this.plotQuotaReady() && this.plotCount() >= this.plotQuota(),
+  );
+
+  /** A saved plot whose initial campaign failed must be reviewed before another registration. */
+  readonly registrationIncomplete = this.registrationIncompleteSignal.asReadonly();
+
+  /** `true` only when a loaded producer has a free slot and no operation is in flight (US-22). */
+  readonly canRegisterPlot = computed(
+    () =>
+      this.plotQuotaReady() &&
+      this.remainingPlotSlots() > 0 &&
+      !this.loading() &&
+      !this.plotMutationBusy() &&
+      !this.registrationIncomplete(),
+  );
 
   /** Plot shown on the dashboard. */
   readonly selectedPlot = computed(() =>
@@ -174,7 +225,9 @@ export class FieldManagementStore {
   readonly activeCampaign = computed(() => FieldManagementStore.currentOf(this.campaigns()));
 
   /** `true` when the selected plot has a campaign in progress. */
-  readonly hasCampaignInProgress = computed(() => this.campaigns().some((campaign) => campaign.isActive()));
+  readonly hasCampaignInProgress = computed(() =>
+    this.campaigns().some((campaign) => campaign.isActive()),
+  );
 
   /** Cost ledger of the active campaign of the selected plot, or `null`. */
   readonly ledger = computed(() => {
@@ -213,6 +266,7 @@ export class FieldManagementStore {
    * offline expenses every time the connection comes back.
    */
   constructor() {
+    inject(DestroyRef).onDestroy(() => this.clearState());
     effect(() => {
       const userId = this.currentUserId();
       untracked(() => (userId === null ? this.clearState() : this.loadMyPlots(userId)));
@@ -254,6 +308,17 @@ export class FieldManagementStore {
    * @param ownerUserId - Producer who owns the plots.
    */
   loadMyPlots = (ownerUserId: number): void => {
+    if (
+      ownerUserId !== this.currentUserId() ||
+      (this.plotMutationBusy() && this.quotaOwner() === ownerUserId)
+    )
+      return;
+    const revision = ++this.plotRevision;
+    this.plotMutation?.unsubscribe();
+    this.plotMutationBusy.set(false);
+    this.quotaOwner.set(ownerUserId);
+    this.quotaLoaded.set(false);
+    this.registrationIncompleteSignal.set(false);
     this.plotsLoad?.unsubscribe();
     this.ledgersLoad?.unsubscribe();
     this.plotsLoadingSignal.set(true);
@@ -262,6 +327,7 @@ export class FieldManagementStore {
       .getPlotsByOwner(ownerUserId)
       .pipe(
         retry(2),
+        map((plots) => this.ownedPlots(plots, ownerUserId)),
         switchMap((plots) =>
           plots.length === 0
             ? of({ plots, campaigns: [] as CropCampaign[][] })
@@ -272,7 +338,8 @@ export class FieldManagementStore {
       )
       .subscribe({
         next: ({ plots, campaigns }) => {
-          if (this.currentUserId() !== ownerUserId) return;
+          if (!this.isPlotParticipant(ownerUserId, revision)) return;
+          this.quotaLoaded.set(true);
           this.plotsLoadingSignal.set(false);
           this.plotsSignal.set(plots);
           this.campaignsByPlotSignal.set(
@@ -288,6 +355,8 @@ export class FieldManagementStore {
           }
         },
         error: (error) => {
+          if (!this.isPlotParticipant(ownerUserId, revision)) return;
+          this.quotaLoaded.set(false);
           this.plotsLoadingSignal.set(false);
           this.fail(error, 'field-management.errors.load-plots');
         },
@@ -326,7 +395,9 @@ export class FieldManagementStore {
 
   /**
    * Registers a plot "without polygon" with its first campaign and its cost ledger (US-28, US-32 to US-36).
-   * @param command - Name, region and declared area of the plot.
+   * @remarks Rechecks the owner-scoped quota before POST and serializes local mutations.
+   * The backend must enforce the quota atomically across browsers and clients.
+   * @param command - Owner, name, region and declared area of the plot.
    * @param setup - Commands of the first campaign.
    * @param onRegistered - Called with the new plot, to continue with its polygon.
    */
@@ -335,8 +406,18 @@ export class FieldManagementStore {
     setup: CropCampaignSetup,
     onRegistered?: (plot: FieldPlot) => void,
   ): void => {
+    if (this.plotMutationBusy()) return;
+    const ownerUserId = this.currentUserId();
+    if (ownerUserId === null || command.ownerUserId !== ownerUserId) {
+      this.errorSignal.set('field-management.errors.plot-not-owned');
+      return;
+    }
     if (!this.canRegisterPlot()) {
-      this.errorSignal.set('field-management.errors.quota-reached');
+      this.errorSignal.set(
+        this.plotQuotaReached()
+          ? 'field-management.errors.quota-reached'
+          : 'field-management.errors.quota-unavailable',
+      );
       return;
     }
     let plot: FieldPlot;
@@ -346,30 +427,77 @@ export class FieldManagementStore {
       this.fail(error, 'field-management.errors.register-plot');
       return;
     }
+    const revision = this.plotRevision;
     const events = plot.pullDomainEvents();
+    let created = false;
+    let quotaChecked = false;
+    let creationStarted = false;
+    this.plotMutationBusy.set(true);
     this.startLoading();
-    this.fieldManagementApi
-      .createPlot(plot)
+    this.plotMutation = this.fieldManagementApi
+      .getPlotsByOwner(ownerUserId)
       .pipe(
+        switchMap((records) => {
+          if (!this.isPlotParticipant(ownerUserId, revision))
+            return throwError(() => new Error('field-management.errors.plot-not-owned'));
+          const owned = this.ownedPlots(records, ownerUserId);
+          this.plotsSignal.set(owned);
+          quotaChecked = true;
+          if (owned.length >= this.plotQuota())
+            return throwError(() => new Error('field-management.errors.quota-reached'));
+          creationStarted = true;
+          return this.fieldManagementApi.createPlot(plot);
+        }),
+        tap((createdPlot) => {
+          if (
+            !this.isPlotParticipant(ownerUserId, revision) ||
+            createdPlot.ownerUserId !== ownerUserId
+          )
+            throw new Error('field-management.errors.plot-not-owned');
+          created = true;
+          // The slot is consumed as soon as the plot exists, even if its campaign later fails.
+          this.plotsSignal.update((plots) => [
+            ...plots.filter((item) => item.id !== createdPlot.id),
+            createdPlot,
+          ]);
+          this.campaignsByPlotSignal.update((campaigns) =>
+            new Map(campaigns).set(createdPlot.id as number, []),
+          );
+        }),
         switchMap((createdPlot) =>
           this.createCampaignWithLedger(createdPlot.id as number, setup, []).pipe(
-            map((created) => ({ createdPlot, ...created })),
+            map((result) => ({ createdPlot, ...result })),
           ),
         ),
       )
       .subscribe({
         next: ({ createdPlot, campaign, ledger, events: campaignEvents }) => {
-          this.plotsSignal.update((plots) => [...plots, createdPlot]);
+          if (!this.isPlotParticipant(ownerUserId, revision)) return;
           this.campaignsByPlotSignal.update((campaigns) =>
             new Map(campaigns).set(createdPlot.id as number, [campaign]),
           );
           this.setLedger(campaign.id as number, ledger);
+          this.plotMutationBusy.set(false);
           this.loadingSignal.set(false);
           this.publish([...events, ...campaignEvents]);
           this.selectPlot(createdPlot.id as number);
           onRegistered?.(createdPlot);
         },
-        error: (error) => this.fail(error, 'field-management.errors.register-plot'),
+        error: (error) => {
+          if (!this.isPlotParticipant(ownerUserId, revision)) return;
+          this.plotMutationBusy.set(false);
+          this.registrationIncompleteSignal.set(created);
+          // A lost POST response leaves an unknown count: refresh before attempting another write.
+          if (!quotaChecked || (creationStarted && !created)) this.quotaLoaded.set(false);
+          const key = created
+            ? 'field-management.errors.registration-partial'
+            : error instanceof Error && error.message.startsWith('field-management.errors.')
+              ? error.message
+              : creationStarted
+                ? 'field-management.errors.registration-unconfirmed'
+                : 'field-management.errors.quota-check';
+          this.fail(error, key);
+        },
       });
   };
 
@@ -450,26 +578,62 @@ export class FieldManagementStore {
    * @param id - The ID of the plot to delete.
    */
   deletePlot = (id: number): void => {
+    if (this.plotMutationBusy() || this.loading()) return;
+    const ownerUserId = this.currentUserId();
+    const plot = this.findPlot(id);
+    if (
+      ownerUserId === null ||
+      !this.plotQuotaReady() ||
+      !plot ||
+      plot.ownerUserId !== ownerUserId
+    ) {
+      this.errorSignal.set('field-management.errors.plot-not-owned');
+      return;
+    }
+    const revision = this.plotRevision;
+    this.plotMutationBusy.set(true);
     this.startLoading();
-    this.fieldManagementApi
-      .deletePlot(id)
-      .pipe(retry(2))
+    this.plotMutation = this.fieldManagementApi
+      .getPlotById(id)
+      .pipe(
+        switchMap((current) => {
+          if (
+            !this.isPlotParticipant(ownerUserId, revision) ||
+            current.id !== id ||
+            current.ownerUserId !== ownerUserId
+          )
+            return throwError(() => new Error('field-management.errors.plot-not-owned'));
+          return this.fieldManagementApi.deletePlot(id);
+        }),
+      )
       .subscribe({
         next: () => {
+          if (!this.isPlotParticipant(ownerUserId, revision)) return;
           this.plotsSignal.update((plots) => plots.filter((plot) => plot.id !== id));
           this.campaignsByPlotSignal.update((campaigns) => {
             const next = new Map(campaigns);
             next.delete(id);
             return next;
           });
+          this.plotMutationBusy.set(false);
           this.loadingSignal.set(false);
           if (this.plotSelection.selectedPlotId() === id) {
-            const first = this.plots()[0];
             this.plotSelection.select(null);
+            const first = this.plots()[0];
             if (first) this.selectPlot(first.id as number);
           }
         },
-        error: (error) => this.fail(error, 'field-management.errors.delete-plot'),
+        error: (error) => {
+          if (!this.isPlotParticipant(ownerUserId, revision)) return;
+          this.plotMutationBusy.set(false);
+          // Failed or ambiguous deletion never frees a local slot without confirmation.
+          this.fail(
+            error,
+            error instanceof Error && error.message === 'field-management.errors.plot-not-owned'
+              ? error.message
+              : 'field-management.errors.delete-plot',
+          );
+        },
       });
   };
 
@@ -481,11 +645,18 @@ export class FieldManagementStore {
    * @param setup - Commands of the new campaign.
    * @param onStarted - Called with the new campaign.
    */
-  startCampaign = (setup: CropCampaignSetup, onStarted?: (campaign: CropCampaign) => void): void => {
+  startCampaign = (
+    setup: CropCampaignSetup,
+    onStarted?: (campaign: CropCampaign) => void,
+  ): void => {
     const plotId = setup.start.plotId;
     if (!this.findPlot(plotId)) return;
     this.startLoading();
-    this.createCampaignWithLedger(plotId, setup, this.campaignsByPlotSignal().get(plotId) ?? []).subscribe({
+    this.createCampaignWithLedger(
+      plotId,
+      setup,
+      this.campaignsByPlotSignal().get(plotId) ?? [],
+    ).subscribe({
       next: ({ campaign, ledger, events }) => {
         this.campaignsByPlotSignal.update((campaigns) =>
           new Map(campaigns).set(plotId, [...(campaigns.get(plotId) ?? []), campaign]),
@@ -518,7 +689,8 @@ export class FieldManagementStore {
     const ledger = currentLedger?.clone() ?? null;
     try {
       campaign.close();
-      if (ledger && actualYield) ledger.recordActualYield(actualYield.actualYield, actualYield.unit);
+      if (ledger && actualYield)
+        ledger.recordActualYield(actualYield.actualYield, actualYield.unit);
       ledger?.freeze();
     } catch (error) {
       this.fail(error, 'field-management.errors.close-campaign');
@@ -684,10 +856,17 @@ export class FieldManagementStore {
     plotId: number,
     setup: CropCampaignSetup,
     plotCampaigns: CropCampaign[],
-  ): Observable<{ campaign: CropCampaign; ledger: CampaignLedger; events: FieldManagementEvent[] }> {
+  ): Observable<{
+    campaign: CropCampaign;
+    ledger: CampaignLedger;
+    events: FieldManagementEvent[];
+  }> {
     let campaign: CropCampaign;
     try {
-      campaign = CropCampaign.start(new StartCropCampaignCommand({ plotId, season: setup.start.season }), plotCampaigns);
+      campaign = CropCampaign.start(
+        new StartCropCampaignCommand({ plotId, season: setup.start.season }),
+        plotCampaigns,
+      );
       campaign.selectCropType(setup.cropType.cropType);
       campaign.specifySeedVariety(setup.seedVariety.varietyName, setup.seedVariety.custom);
       campaign.recordSowingDate(setup.sowingDate.sowingDate);
@@ -880,6 +1059,12 @@ export class FieldManagementStore {
 
   /** Forgets the plots of the previous user (after signing out). */
   private clearState(): void {
+    this.plotRevision++;
+    this.plotMutation?.unsubscribe();
+    this.plotMutationBusy.set(false);
+    this.quotaLoaded.set(false);
+    this.quotaOwner.set(null);
+    this.registrationIncompleteSignal.set(false);
     this.plotsLoadingSignal.set(false);
     this.plotsLoad?.unsubscribe();
     this.ledgersLoad?.unsubscribe();
@@ -889,6 +1074,20 @@ export class FieldManagementStore {
     this.ledgersByCampaignSignal.set(new Map());
     this.plotSelection.select(null);
     this.errorSignal.set(null);
+  }
+
+  /** Keeps quota counts account-scoped even if a demo endpoint returns unrelated rows. */
+  private ownedPlots(plots: FieldPlot[], ownerUserId: number): FieldPlot[] {
+    return [
+      ...new Map(
+        plots.filter((plot) => plot.ownerUserId === ownerUserId).map((plot) => [plot.id, plot]),
+      ).values(),
+    ];
+  }
+
+  /** Rejects delayed responses from a previous account or an obsolete quota snapshot. */
+  private isPlotParticipant(ownerUserId: number, revision: number): boolean {
+    return this.currentUserId() === ownerUserId && this.plotRevision === revision;
   }
 
   private startLoading(): void {
@@ -910,7 +1109,8 @@ export class FieldManagementStore {
   /** Sends an expense command to the method of the ledger that handles it. */
   private static applyExpense(ledger: CampaignLedger, command: RecordExpenseCommand): void {
     if (command instanceof RecordInputExpenseCommand) ledger.recordInputExpense(command);
-    else if (command instanceof RecordDailyLaborExpenseCommand) ledger.recordDailyLaborExpense(command);
+    else if (command instanceof RecordDailyLaborExpenseCommand)
+      ledger.recordDailyLaborExpense(command);
     else ledger.recordFieldFreightExpense(command);
   }
 

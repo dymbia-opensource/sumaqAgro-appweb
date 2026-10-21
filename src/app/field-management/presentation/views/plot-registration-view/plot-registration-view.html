@@ -1,34 +1,31 @@
 @if (loading()) {
   <mat-progress-bar mode="indeterminate" [attr.aria-label]="'common.loading' | translate" />
 }
-
 <app-page-header
   [breadcrumbs]="breadcrumbs"
-  [title]="'field-management.plot-form.title' | translate: { slot: slotNumber(), quota: plotQuota() }"
+  [title]="
+    (plotQuotaReady() && !plotQuotaReached()
+      ? 'field-management.plot-form.title'
+      : 'field-management.plots.register'
+    ) | translate: { slot: slotNumber(), quota: plotQuota() }
+  "
   [subtitle]="'field-management.plot-form.subtitle' | translate"
 />
-
-<app-registration-steps [current]="1" />
-
-@if (!canRegisterPlot()) {
-  <!-- The plan has no free slots (US-22) -->
-  <app-message-card
-    icon="workspace_premium"
-    [message]="'field-management.plots.plan-full' | translate: { quota: plotQuota() }"
-    [alert]="true"
-  >
-    <mat-card-actions align="end">
-      <button mat-stroked-button (click)="onCancel()">{{ 'common.back' | translate }}</button>
-    </mat-card-actions>
-  </app-message-card>
-} @else {
-  @if (error(); as error) {
-    <app-message-card icon="error" [message]="error | translate" [alert]="true" />
-  }
-
+<app-plot-quota-summary />
+@if (error(); as error) {
+  <app-message-card icon="error" [message]="error | translate" [alert]="true" />
+}
+@if (plotQuotaReached() || registrationIncomplete()) {
+  <button mat-stroked-button (click)="onCancel()">
+    {{ 'field-management.plots.manage' | translate }}
+  </button>
+} @else if (plotQuotaReady()) {
+  <app-registration-steps [current]="1" />
   <app-plot-registration-form
-    [saving]="loading()"
+    [saving]="loading() || !canRegisterPlot()"
     (submitted)="onRegister($event)"
     (cancel)="onCancel()"
   />
+} @else {
+  <button mat-stroked-button (click)="onCancel()">{{ 'common.back' | translate }}</button>
 }

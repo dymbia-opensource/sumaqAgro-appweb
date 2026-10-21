@@ -50,6 +50,9 @@ export class PlotCard {
   /** The producer wants to record the soil analysis of the plot. */
   readonly recordSoil = output<FieldPlot>();
 
+  /** Prevents overlapping plot mutations or deletion before ownership has loaded. */
+  readonly deletionDisabled = input(false);
+
   /** The producer wants to delete the plot. */
   readonly remove = output<FieldPlot>();
 }

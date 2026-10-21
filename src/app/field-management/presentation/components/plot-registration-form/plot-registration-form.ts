@@ -96,13 +96,16 @@ export class PlotRegistrationForm {
   );
 
   /** Varieties of the selected crop that match what the producer typed (US-34). */
-  readonly varieties = computed(() => SeedVarietyCatalog.search(this.cropType(), this.varietyText()));
+  readonly varieties = computed(() =>
+    SeedVarietyCatalog.search(this.cropType(), this.varietyText()),
+  );
 
   /** Unit of the expected yield: sacks for potato, quintals for coffee. */
   readonly yieldUnit = computed(() => CampaignLedger.yieldUnitOf(this.cropType()));
 
   /** Sends the data when the form is valid; otherwise shows the errors. */
   onSubmit() {
+    if (this.saving()) return;
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
