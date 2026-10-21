@@ -41,9 +41,9 @@
   ],
   "cooperative-members": [
     {
-      "id": 1,
+      "id": 11,
       "cooperativeId": 1,
-      "name": "Alex Nina Condori",
+      "name": "Guillermo",
       "plots": [
         {
           "id": 1,
@@ -53,16 +53,7 @@
           "campaignId": 2,
           "variety": "Papa Canchan",
           "cropType": "ANDEAN_POTATO"
-        }
-      ],
-      "fullName": "Alex Nina Condori",
-      "active": true
-    },
-    {
-      "id": 2,
-      "cooperativeId": 1,
-      "name": "Mateo Florez",
-      "plots": [
+        },
         {
           "id": 2,
           "name": "Finca San Ramón",
@@ -73,8 +64,18 @@
           "cropType": "SPECIALTY_COFFEE"
         }
       ],
+      "fullName": "Guillermo",
+      "active": true,
+      "userId": 1
+    },
+    {
+      "id": 2,
+      "cooperativeId": 1,
+      "name": "Mateo Florez",
+      "plots": [],
       "fullName": "Mateo Florez",
-      "active": true
+      "active": true,
+      "userId": null
     },
     {
       "id": 3,
@@ -92,7 +93,8 @@
         }
       ],
       "fullName": "Rosa Melgar",
-      "active": true
+      "active": true,
+      "userId": 2
     }
   ],
   "cooperative-dashboards": [
@@ -450,8 +452,8 @@
       "id": 1,
       "code": "BATCH-2026-08",
       "cooperativeId": 1,
-      "memberId": 1,
-      "memberName": "Alex Nina Condori",
+      "memberId": 11,
+      "memberName": "Guillermo",
       "plotId": 1,
       "plotName": "Fundo Los Pinos",
       "plotRegion": "Junín - Valle del Mantaro",
@@ -477,8 +479,8 @@
       "id": 2,
       "code": "BATCH-2026-07",
       "cooperativeId": 1,
-      "memberId": 2,
-      "memberName": "Mateo Florez",
+      "memberId": 11,
+      "memberName": "Guillermo",
       "plotId": 2,
       "plotName": "Finca San Ramón",
       "plotRegion": "Junín - Chanchamayo",
