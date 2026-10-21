@@ -28,7 +28,7 @@
         <mat-icon>polyline</mat-icon>
         {{ 'field-management.plots.delineate' | translate }}
       </button>
-      <button mat-menu-item (click)="remove.emit(plot())">
+      <button mat-menu-item [disabled]="deletionDisabled()" (click)="remove.emit(plot())">
         <mat-icon>delete</mat-icon>
         {{ 'common.delete' | translate }}
       </button>

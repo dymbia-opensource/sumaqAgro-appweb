@@ -1,10 +1,13 @@
+import { PlotQuotaSummary } from '../../components/plot-quota-summary/plot-quota-summary';
 import { Component, computed, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { Router } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
-import { Breadcrumb, PageHeader } from '../../../../shared/presentation/components/page-header/page-header';
+import {
+  Breadcrumb,
+  PageHeader,
+} from '../../../../shared/presentation/components/page-header/page-header';
 import { MessageCard } from '../../../../shared/presentation/components/message-card/message-card';
 import { FieldManagementStore } from '../../../application/field-management.store';
 import { RecordSowingDateCommand } from '../../../domain/model/commands/record-sowing-date.command';
@@ -24,8 +27,8 @@ import { RegistrationSteps } from '../../components/registration-steps/registrat
 @Component({
   selector: 'app-plot-registration-view',
   imports: [
+    PlotQuotaSummary,
     MatButtonModule,
-    MatCardModule,
     MatProgressBarModule,
     TranslatePipe,
     PageHeader,
@@ -44,6 +47,9 @@ export class PlotRegistrationView {
   readonly loading = this.fieldManagementStore.loading;
   readonly error = this.fieldManagementStore.error;
   readonly canRegisterPlot = this.fieldManagementStore.canRegisterPlot;
+  readonly plotQuotaReady = this.fieldManagementStore.plotQuotaReady;
+  readonly plotQuotaReached = this.fieldManagementStore.plotQuotaReached;
+  readonly registrationIncomplete = this.fieldManagementStore.registrationIncomplete;
   readonly plotQuota = this.fieldManagementStore.plotQuota;
 
   // UI state

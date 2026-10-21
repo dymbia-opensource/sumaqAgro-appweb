@@ -76,9 +76,14 @@
       "register": "Register New Plot",
       "plan-title": "Seed Plan Information",
       "plan-text": "Your independent account lets you register up to {{ quota }} family plots.",
-      "plan-full": "You already used the {{ quota }} slots of your Seed plan. Upgrade your plan to register more plots.",
+      "plan-full": "You have reached the Seed plan limit of {{ quota }} plots. A slot becomes available when a plot deletion is confirmed.",
       "delete-confirm": "Delete the plot \"{{ name }}\"? This action cannot be undone.",
-      "view-detail": "View map and details"
+      "view-detail": "View map and details",
+      "quota-usage": "Seed plan: {{ used }} of {{ quota }} registered plots",
+      "quota-remaining": "Available slots: {{ remaining }}",
+      "quota-counting": "Every registered plot occupies a slot, even without a polygon or campaign.",
+      "quota-checking": "Checking your Seed plan capacity…",
+      "quota-refresh": "Refresh capacity"
     },
     "plot-form": {
       "title": "Register New Plot (Slot {{ slot }} of {{ quota }})",
@@ -156,7 +161,12 @@
       "start-campaign": "We could not start the campaign. Try again.",
       "close-campaign": "We could not close the campaign. Try again.",
       "save-actual-yield": "We could not save the actual yield. Try again.",
-      "export-report": "We could not export the cost report."
+      "export-report": "We could not export the cost report.",
+      "plot-not-owned": "This action requires a plot and the active producer account.",
+      "quota-unavailable": "Your capacity could not be confirmed. Refresh the data before registering another plot.",
+      "quota-check": "Could not check capacity with the server. No new plot was registered.",
+      "registration-unconfirmed": "Registration could not be confirmed. Refresh the list before retrying: the plot may have been saved.",
+      "registration-partial": "The plot was registered and occupies a slot, but its initial campaign could not be completed. Review it in Manage Plots before registering again."
     },
     "finances": {
       "subtitle": "{{ plot }} | Season {{ season }}",

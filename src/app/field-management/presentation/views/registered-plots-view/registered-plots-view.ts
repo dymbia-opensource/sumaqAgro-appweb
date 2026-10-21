@@ -1,11 +1,15 @@
-import { Component, computed, inject } from '@angular/core';
+import { PlotQuotaSummary } from '../../components/plot-quota-summary/plot-quota-summary';
+import { Component, computed, inject, Signal } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { Router } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { Breadcrumb, PageHeader } from '../../../../shared/presentation/components/page-header/page-header';
+import {
+  Breadcrumb,
+  PageHeader,
+} from '../../../../shared/presentation/components/page-header/page-header';
 import { MessageCard } from '../../../../shared/presentation/components/message-card/message-card';
 import { FieldManagementStore } from '../../../application/field-management.store';
 import { FieldPlot } from '../../../domain/model/entities/field-plot.entity';
@@ -16,6 +20,7 @@ import { PlotSlotCard } from '../../components/plot-slot-card/plot-slot-card';
 @Component({
   selector: 'app-registered-plots-view',
   imports: [
+    PlotQuotaSummary,
     MatCardModule,
     MatDividerModule,
     MatIconModule,
@@ -35,12 +40,16 @@ export class RegisteredPlotsView {
   private readonly translate = inject(TranslateService);
 
   // Store state
-  readonly plots = this.fieldManagementStore.plots;
+  /** Account-scoped plot collection exposed with an explicit template contract. */
+  readonly plots: Signal<FieldPlot[]> = this.fieldManagementStore.plots;
   readonly loading = this.fieldManagementStore.loading;
   readonly error = this.fieldManagementStore.error;
   readonly plotCount = this.fieldManagementStore.plotCount;
   readonly plotQuota = this.fieldManagementStore.plotQuota;
   readonly canRegisterPlot = this.fieldManagementStore.canRegisterPlot;
+  readonly plotQuotaReady = this.fieldManagementStore.plotQuotaReady;
+  readonly plotQuotaReached = this.fieldManagementStore.plotQuotaReached;
+  readonly registrationIncomplete = this.fieldManagementStore.registrationIncomplete;
 
   // UI state
   protected readonly breadcrumbs: Breadcrumb[] = [
@@ -48,12 +57,14 @@ export class RegisteredPlotsView {
     { label: 'field-management.plots.manage' },
   ];
 
-  /** Slot numbers still free in the plan (e.g. [3] when 2 of 3 are used). */
-  readonly freeSlots = computed(() =>
-    Array.from(
-      { length: Math.max(this.plotQuota() - this.plotCount(), 0) },
-      (_, index) => this.plotCount() + index + 1,
-    ),
+  /** Free slot numbers are shown only after the current producer quota has loaded. */
+  readonly freeSlots: Signal<number[]> = computed<number[]>(() =>
+    !this.canRegisterPlot()
+      ? []
+      : Array.from(
+          { length: Math.max(this.plotQuota() - this.plotCount(), 0) },
+          (_, index) => this.plotCount() + index + 1,
+        ),
   );
 
   /** Current campaign of each plot, by plot ID. */
@@ -69,6 +80,7 @@ export class RegisteredPlotsView {
 
   // Actions
   onRegisterNewPlot() {
+    if (!this.canRegisterPlot()) return;
     this.router.navigate(['field-management/plots/new']).then();
   }
 

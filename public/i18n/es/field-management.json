@@ -76,9 +76,14 @@
       "register": "Registrar Nueva Parcela",
       "plan-title": "Información del Plan Semilla",
       "plan-text": "Tu cuenta independiente te permite registrar hasta {{ quota }} parcelas familiares.",
-      "plan-full": "Ya usaste los {{ quota }} cupos de tu Plan Semilla. Actualiza tu plan para registrar más parcelas.",
+      "plan-full": "Has alcanzado el límite de {{ quota }} parcelas del Plan Semilla. Un cupo se libera cuando se confirma la eliminación de una parcela.",
       "delete-confirm": "¿Eliminar la parcela \"{{ name }}\"? Esta acción no se puede deshacer.",
-      "view-detail": "Ver mapa y detalle"
+      "view-detail": "Ver mapa y detalle",
+      "quota-usage": "Plan Semilla: {{ used }} de {{ quota }} parcelas registradas",
+      "quota-remaining": "Cupos disponibles: {{ remaining }}",
+      "quota-counting": "Cada parcela registrada ocupa un cupo, incluso si todavía no tiene polígono o campaña.",
+      "quota-checking": "Comprobando los cupos de tu Plan Semilla…",
+      "quota-refresh": "Actualizar cupos"
     },
     "plot-form": {
       "title": "Registrar Nueva Parcela (Cupo {{ slot }} de {{ quota }})",
@@ -156,7 +161,12 @@
       "start-campaign": "No pudimos iniciar la campaña. Inténtalo de nuevo.",
       "close-campaign": "No pudimos cerrar la campaña. Inténtalo de nuevo.",
       "save-actual-yield": "No pudimos guardar el rendimiento real. Inténtalo de nuevo.",
-      "export-report": "No pudimos exportar el reporte de costos."
+      "export-report": "No pudimos exportar el reporte de costos.",
+      "plot-not-owned": "Esta acción requiere una parcela y una cuenta del productor activo.",
+      "quota-unavailable": "No se pudo confirmar tu cupo. Actualiza los datos antes de registrar otra parcela.",
+      "quota-check": "No se pudo comprobar el cupo con el servidor. No se registró una nueva parcela.",
+      "registration-unconfirmed": "No se pudo confirmar el registro. Actualiza la lista antes de volver a intentarlo: la parcela podría haberse guardado.",
+      "registration-partial": "La parcela ya está registrada y ocupa un cupo, pero no se completó su campaña inicial. Revisa la parcela desde Administrar parcelas antes de volver a registrar."
     },
     "finances": {
       "subtitle": "{{ plot }} | Campaña {{ season }}",
