@@ -1,6 +1,8 @@
 import { DatePipe } from '@angular/common';
 import {
   Component,
+  ElementRef,
+  afterRenderEffect,
   computed,
   effect,
   inject,
@@ -23,7 +25,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { CropHealthStore } from '../../../application/crop-health.store';
 import { todayInLima } from '../../../domain/model/validation';
@@ -53,6 +55,8 @@ import { todayInLima } from '../../../domain/model/validation';
 })
 export class FarmerCaseView {
   private readonly translate = inject(TranslateService);
+  private readonly route = inject(ActivatedRoute);
+  private readonly assessmentSection = viewChild<ElementRef<HTMLElement>>('assessmentSection');
   readonly locale = computed(() => (this.translate.currentLang() === 'es' ? 'es' : 'en'));
   readonly id = input.required({ transform: numberAttribute });
   readonly store = inject(CropHealthStore);
@@ -76,7 +80,28 @@ export class FarmerCaseView {
   readonly saved = signal(false);
   readonly loaded = signal(false);
   readonly today = todayInLima();
-  private readonly formDirective = viewChild(FormGroupDirective);
+  private readonly formDirective = viewChild('followUpForm', { read: FormGroupDirective });
+  private readonly assessmentDirective = viewChild('assessmentFormRef', {
+    read: FormGroupDirective,
+  });
+  private assessmentDraft: { fingerprint: string; id: string } | null = null;
+  readonly assessmentSaved = signal(false);
+  readonly evaluations = computed(() =>
+    this.store
+      .assessments()
+      .filter((item) => item.data.reportId === this.id())
+      .sort((a, b) => a.data.recordedAt.localeCompare(b.data.recordedAt)),
+  );
+  readonly assessmentForm = new FormGroup({
+    outcome: new FormControl<'FOLLOW_UP_REQUIRED' | 'RECOVERED'>('FOLLOW_UP_REQUIRED', {
+      nonNullable: true,
+      validators: [Validators.required],
+    }),
+    notes: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required, Validators.minLength(10), Validators.maxLength(2000)],
+    }),
+  });
   private draft: { fingerprint: string; id: string } | null = null;
   readonly form = new FormGroup({
     prescriptionId: new FormControl(0, { nonNullable: true, validators: [Validators.min(1)] }),
@@ -95,6 +120,11 @@ export class FarmerCaseView {
   });
 
   constructor() {
+    afterRenderEffect(() => {
+      const section = this.assessmentSection();
+      if (this.route.snapshot.fragment === 'assessment' && this.loaded() && section)
+        section.nativeElement.scrollIntoView({ block: 'start' });
+    });
     effect(() => {
       const ready = this.store.scopeReady();
       const user = this.store.activeUser();
@@ -103,6 +133,10 @@ export class FarmerCaseView {
         this.loaded.set(false);
         this.saved.set(false);
         this.draft = null;
+        this.assessmentDraft = null;
+        this.assessmentSaved.set(false);
+        this.assessmentForm.enable();
+        this.assessmentForm.reset({ outcome: 'FOLLOW_UP_REQUIRED', notes: '' });
         this.form.enable();
         this.form.reset({
           prescriptionId: 0,
@@ -128,6 +162,34 @@ export class FarmerCaseView {
       if (!this.form.controls.prescriptionId.value)
         this.form.controls.prescriptionId.setValue(Number(this.prescriptions()[0]?.id ?? 0));
     });
+  }
+
+  /** Records the professional conclusion with a stable ID retained on failed writes. */
+  evaluate(): void {
+    this.assessmentSaved.set(false);
+    this.assessmentForm.markAllAsTouched();
+    if (this.assessmentForm.invalid || this.store.saving() || !this.store.canAssess(this.id()))
+      return;
+    const value = this.assessmentForm.getRawValue();
+    const notes = value.notes.trim();
+    if (notes.length < 10) {
+      this.assessmentForm.controls.notes.setErrors({ minlength: true });
+      return;
+    }
+    const fingerprint = JSON.stringify({ ...value, notes, reportId: this.id() });
+    if (this.assessmentDraft?.fingerprint !== fingerprint)
+      this.assessmentDraft = { fingerprint, id: crypto.randomUUID() };
+    this.assessmentForm.disable();
+    this.store.recordAssessment(
+      { ...value, notes, reportId: this.id(), id: this.assessmentDraft.id },
+      () => {
+        this.assessmentForm.enable();
+        this.assessmentDirective()?.resetForm({ outcome: 'FOLLOW_UP_REQUIRED', notes: '' });
+        this.assessmentDraft = null;
+        this.assessmentSaved.set(true);
+      },
+      () => this.assessmentForm.enable(),
+    );
   }
 
   /** Shows the prescribed product beside each evidence record. */

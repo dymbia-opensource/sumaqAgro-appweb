@@ -19,7 +19,34 @@
           'crop-health.report-statuses.' + report.status | translate
         }}</mat-card-subtitle></mat-card-header
       ><mat-card-content
-        ><p>{{ report.description }}</p>
+        ><p>
+          {{ 'crop-health.advisor.producer' | translate }}:
+          {{ store.producerName(report.reporterId) }} · #{{ report.reporterId }}
+        </p>
+        <p>{{ report.description }}</p>
+        @if (report.photo) {
+          <a [href]="report.photo" target="_blank" rel="noopener noreferrer">{{
+            'crop-health.view-photo' | translate
+          }}</a>
+        }
+        <nav>
+          @if (store.canSchedule() && report.status === 'PENDING') {
+            <a
+              mat-stroked-button
+              routerLink="/crop-health/inspections"
+              [queryParams]="{ reportId: report.id }"
+              >{{ 'crop-health.inspections-title' | translate }}</a
+            >
+          }
+          @if (store.canPrescribe() && report.status === 'INSPECTED') {
+            <a
+              mat-stroked-button
+              routerLink="/crop-health/prescribe"
+              [queryParams]="{ reportId: report.id }"
+              >{{ 'crop-health.btn-prescribe' | translate }}</a
+            >
+          }
+        </nav>
         <p>
           {{ 'crop-health.form-severity' | translate }}:
           {{ 'crop-health.severities.' + report.severity | translate }}
@@ -79,7 +106,7 @@
       <p>{{ 'crop-health.case.no-follow-up' | translate }}</p>
     }
     @if (store.canReport() && report.status === 'INSPECTED' && prescriptions().length) {
-      <form [formGroup]="form" (ngSubmit)="submit()">
+      <form #followUpForm="ngForm" [formGroup]="form" (ngSubmit)="submit()">
         <h2>{{ 'crop-health.case.record' | translate }}</h2>
         @if (form.invalid && form.touched) {
           <p role="alert">{{ 'crop-health.case.form-validation' | translate }}</p>
@@ -123,6 +150,66 @@
         </button>
       </form>
     }
+    <section id="assessment" #assessmentSection>
+      <h2>{{ 'crop-health.advisor.assessments' | translate }}</h2>
+      @for (evaluation of evaluations(); track evaluation.data.id) {
+        <mat-card appearance="outlined"
+          ><mat-card-content>
+            <p>
+              <strong>{{ 'crop-health.advisor.' + evaluation.data.outcome | translate }}</strong>
+            </p>
+            <p>
+              {{ store.advisorName(evaluation.data.agronomistUserId) }} ·
+              {{ evaluation.data.recordedAt | date: 'medium' : '-0500' : locale() }}
+            </p>
+            <p class="notes">{{ evaluation.data.notes }}</p>
+            <p>
+              {{ 'crop-health.advisor.evidence-reviewed' | translate }}:
+              {{ evaluation.data.evidenceIds.length }}
+            </p>
+          </mat-card-content></mat-card
+        >
+      } @empty {
+        <p>{{ 'crop-health.advisor.no-assessments' | translate }}</p>
+      }
+      @if (store.canPrescribe() && report.status === 'INSPECTED') {
+        <p>{{ 'crop-health.advisor.assessment-notice' | translate }}</p>
+        @if (store.canAssess(+report.id)) {
+          <form #assessmentFormRef="ngForm" [formGroup]="assessmentForm" (ngSubmit)="evaluate()">
+            <mat-form-field appearance="outline"
+              ><mat-label>{{ 'crop-health.advisor.conclusion' | translate }}</mat-label>
+              <mat-select formControlName="outcome">
+                <mat-option value="FOLLOW_UP_REQUIRED">{{
+                  'crop-health.advisor.FOLLOW_UP_REQUIRED' | translate
+                }}</mat-option>
+                <mat-option value="RECOVERED">{{
+                  'crop-health.advisor.RECOVERED' | translate
+                }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <mat-form-field appearance="outline"
+              ><mat-label>{{ 'crop-health.advisor.assessment-notes' | translate }}</mat-label>
+              <textarea matInput rows="4" maxlength="2000" formControlName="notes"></textarea>
+              @if (assessmentForm.controls.notes.invalid && assessmentForm.controls.notes.touched) {
+                <mat-error>{{ 'crop-health.case.notes-validation' | translate }}</mat-error>
+              }
+            </mat-form-field>
+            <button
+              mat-flat-button
+              type="submit"
+              [disabled]="store.saving() || assessmentForm.disabled"
+            >
+              {{ 'crop-health.advisor.save-evaluation' | translate }}
+            </button>
+          </form>
+        } @else {
+          <p>{{ 'crop-health.advisor.awaiting-evidence' | translate }}</p>
+        }
+      }
+      @if (assessmentSaved()) {
+        <p role="status">{{ 'crop-health.advisor.evaluation-saved' | translate }}</p>
+      }
+    </section>
     @if (saved()) {
       <p role="status">{{ 'crop-health.case.saved' | translate }}</p>
     }

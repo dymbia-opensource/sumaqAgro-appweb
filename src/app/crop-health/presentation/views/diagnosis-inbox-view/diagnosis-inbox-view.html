@@ -9,6 +9,14 @@
   <h1>{{ 'crop-health.inbox-title' | translate }}</h1>
 </header>
 <nav>
+  @if (store.canPrescribe()) {
+    <a mat-stroked-button routerLink="/crop-health/assigned-plots">{{
+      'crop-health.advisor.plots' | translate
+    }}</a>
+  }
+  <button mat-button (click)="reload()" [disabled]="store.loading() || store.saving()">
+    {{ 'crop-health.advisor.refresh' | translate }}
+  </button>
   @if (store.canReport()) {
     <a mat-flat-button routerLink="/crop-health/report-pest"
       ><mat-icon>add</mat-icon>{{ 'crop-health.new-report' | translate }}</a
@@ -35,6 +43,46 @@
   >
 }
 @if (!store.clinicalLoading() && !store.clinicalError()) {
+  <section class="filters" [attr.aria-label]="'crop-health.advisor.filters' | translate">
+    <mat-form-field appearance="outline"
+      ><mat-label>{{ 'crop-health.advisor.plot' | translate }}</mat-label>
+      <mat-select [ngModel]="plotFilter()" (ngModelChange)="plotFilter.set($event)">
+        <mat-option [value]="0">{{ 'crop-health.advisor.all' | translate }}</mat-option>
+        @for (plot of store.plots(); track plot.id) {
+          <mat-option [value]="+plot.id">{{ plot.name }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline"
+      ><mat-label>{{ 'crop-health.form-severity' | translate }}</mat-label>
+      <mat-select [ngModel]="severityFilter()" (ngModelChange)="severityFilter.set($event)">
+        <mat-option value="ALL">{{ 'crop-health.advisor.all' | translate }}</mat-option>
+        @for (severity of ['LOW', 'MEDIUM', 'HIGH', 'SEVERE']; track severity) {
+          <mat-option [value]="severity">{{
+            'crop-health.severities.' + severity | translate
+          }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline"
+      ><mat-label>{{ 'crop-health.advisor.status' | translate }}</mat-label>
+      <mat-select [ngModel]="statusFilter()" (ngModelChange)="statusFilter.set($event)">
+        <mat-option value="ALL">{{ 'crop-health.advisor.all' | translate }}</mat-option>
+        @for (status of ['PENDING', 'INSPECTED', 'RESOLVED']; track status) {
+          <mat-option [value]="status">{{
+            'crop-health.report-statuses.' + status | translate
+          }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+    <button mat-button (click)="resetFilters()">
+      {{ 'crop-health.advisor.clear-filters' | translate }}
+    </button>
+  </section>
+  <p role="status">
+    {{ 'crop-health.advisor.results' | translate }}: {{ reports().length }} /
+    {{ store.pestReports().length }}
+  </p>
   <div class="inbox-list">
     @for (report of reports(); track report.id) {
       <mat-card appearance="outlined" class="report-card" [attr.data-status]="report.status">
@@ -50,6 +98,10 @@
               >
             </mat-card-header>
             <mat-card-content>
+              <p>
+                {{ 'crop-health.advisor.producer' | translate }}:
+                {{ store.producerName(report.reporterId) }} · #{{ report.reporterId }}
+              </p>
               <p class="description">{{ report.description }}</p>
               <p>
                 {{ 'crop-health.form-severity' | translate }}:
@@ -101,10 +153,13 @@
                 >{{ 'crop-health.btn-prescribe' | translate }}</a
               >
             }
-            @if (store.canResolve(+report.id)) {
-              <button mat-stroked-button [disabled]="store.saving()" (click)="resolve(+report.id)">
-                {{ 'crop-health.resolve-report' | translate }}
-              </button>
+            @if (store.canAssess(+report.id)) {
+              <a
+                mat-stroked-button
+                [routerLink]="['/crop-health/reports', report.id]"
+                fragment="assessment"
+                >{{ 'crop-health.advisor.evaluate' | translate }}</a
+              >
             }
           </mat-card-actions>
         </div>
@@ -113,7 +168,7 @@
       <mat-card appearance="outlined" class="empty-card"
         ><mat-card-content
           ><mat-icon>pest_control</mat-icon>
-          <p>{{ 'crop-health.no-reports' | translate }}</p></mat-card-content
+          <p>{{ 'crop-health.advisor.no-results' | translate }}</p></mat-card-content
         ></mat-card
       >
     }

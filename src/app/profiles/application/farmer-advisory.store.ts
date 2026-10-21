@@ -101,7 +101,12 @@ export class FarmerAdvisoryStore {
   /** Returns the professional linked by account ID, never by a coincident record ID. */
   advisorFor(plotId: number): TechnicalAdvisor | null {
     const assignment = this.assignmentFor(plotId);
-    return this.advisors().find((item) => item.userId === assignment?.advisorUserId) ?? null;
+    return (
+      this.advisors().find(
+        (item) =>
+          item.userId === (assignment?.status === 'ACTIVE' ? assignment.advisorUserId : undefined),
+      ) ?? null
+    );
   }
 
   /** Indicates whether this loaded producer can assign the referenced plot. */
@@ -142,6 +147,7 @@ export class FarmerAdvisoryStore {
               id: previous?.id ?? plotId,
               plotId,
               producerUserId: user.id,
+              status: 'ACTIVE',
               advisorUserId,
               assignedAt:
                 previous?.advisorUserId === advisorUserId ? previous.assignedAt : assignedAt,

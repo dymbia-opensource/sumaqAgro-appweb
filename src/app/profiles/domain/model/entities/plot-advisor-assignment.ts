@@ -17,6 +17,7 @@ export interface PlotAdvisorAssignment {
   plotId: number;
   producerUserId: number;
   advisorUserId: number;
+  status: 'ACTIVE' | 'INACTIVE';
   assignedAt: string;
   history: AdvisorAssignmentHistory[];
 }

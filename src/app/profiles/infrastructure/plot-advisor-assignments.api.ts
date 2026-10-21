@@ -17,6 +17,13 @@ export class PlotAdvisorAssignmentsApi {
     });
   }
 
+  /** Loads explicitly granted responsibilities; cooperative membership does not grant access. */
+  getByAdvisor(userId: number): Observable<PlotAdvisorAssignment[]> {
+    return this.http.get<PlotAdvisorAssignment[]>(this.url, {
+      params: new HttpParams().set('advisorUserId', userId),
+    });
+  }
+
   /** Reads current responsibility before a write; duplicate records require repair. */
   getByPlot(plotId: number): Observable<PlotAdvisorAssignment | null> {
     return this.http

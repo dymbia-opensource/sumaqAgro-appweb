@@ -42,6 +42,15 @@ export const cropHealthRoutes: Routes = [
     canActivateChild: [cropHealthGuard],
     children: [
       {
+        path: 'assigned-plots',
+        data: { roles: ['AGRONOMIST'] },
+        loadComponent: () =>
+          import('./presentation/views/advisor-plots-view/advisor-plots-view').then(
+            (m) => m.AdvisorPlotsView,
+          ),
+        title: 'Assigned plots – SumaqAgro',
+      },
+      {
         path: 'monitoring',
         loadComponent: cropHealthView,
         title: 'Crop Health – SumaqAgro | Multispectral Satellite Viewer',

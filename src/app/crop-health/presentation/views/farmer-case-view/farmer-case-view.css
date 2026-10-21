@@ -34,3 +34,10 @@ form mat-form-field:last-of-type {
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+#assessment {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  scroll-margin-top: 90px;
+}

@@ -26,7 +26,8 @@
     "cooperative-settings": "Configuración",
     "diagnosis-inbox": "Reportes de plagas",
     "field-inspections": "Inspecciones",
-    "prescriptions": "Recetas técnicas"
+    "prescriptions": "Recetas técnicas",
+    "assigned-plots": "Parcelas asignadas"
   },
   "layout": {
     "search": "Buscar en mi parcela...",

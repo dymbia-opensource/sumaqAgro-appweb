@@ -26,7 +26,8 @@
     "cooperative-settings": "Settings",
     "diagnosis-inbox": "Pest reports",
     "field-inspections": "Inspections",
-    "prescriptions": "Technical prescriptions"
+    "prescriptions": "Technical prescriptions",
+    "assigned-plots": "Assigned plots"
   },
   "layout": {
     "search": "Search within my plot...",
