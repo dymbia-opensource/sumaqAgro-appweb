@@ -166,7 +166,15 @@
       "potato-grading": "Los porcentajes de calibres deben sumar exactamente 100 % y el daño debe estar entre 0 y 100 %.",
       "sca-score": "El puntaje SCA debe estar entre 0 y 100.",
       "batch-not-graded": "El lote debe estar calificado antes de emitir un certificado.",
-      "already-certified": "Este lote ya tiene un certificado."
+      "already-certified": "Este lote ya tiene un certificado.",
+      "save-batch": "No se pudo guardar el lote. Intenta nuevamente.",
+      "issue-incomplete": "No se completó la emisión y actualización del lote. Recarga para consultar el estado confirmado antes de reintentar."
+    },
+    "scope": {
+      "no-membership": "Tu usuario no tiene una membresía activa vinculada. Solicita a la cooperativa que revise tu registro.",
+      "no-cooperative": "Tu usuario no tiene una cooperativa asignada como director.",
+      "not-authorized": "Esta sección está disponible para productores y directores de cooperativa. La emisión corresponde al director.",
+      "load-error": "No se pudieron consultar tus relaciones con la cooperativa. Intenta nuevamente."
     }
   }
 }

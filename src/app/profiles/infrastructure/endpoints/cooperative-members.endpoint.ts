@@ -4,7 +4,10 @@ import { environment } from '../../../../environments/environment';
 import { BaseApiEndpoint } from '../../../shared/infrastructure/base-api-endpoint';
 import { CooperativeMember } from '../../domain/model/entities/cooperative-member.entity';
 import { CooperativeMemberAssembler } from '../assemblers/cooperative-member.assembler';
-import { CooperativeMemberResource, CooperativeMembersResponse } from '../responses/cooperative-member.response';
+import {
+  CooperativeMemberResource,
+  CooperativeMembersResponse,
+} from '../responses/cooperative-member.response';
 
 /** HTTP endpoint for the cooperative member directory. */
 export class CooperativeMembersApiEndpoint extends BaseApiEndpoint<
@@ -14,7 +17,11 @@ export class CooperativeMembersApiEndpoint extends BaseApiEndpoint<
   CooperativeMemberAssembler
 > {
   constructor(http: HttpClient) {
-    super(http, `${environment.platformProviderApiBaseUrl}${environment.platformProviderCooperativeMembersEndpointPath}`, new CooperativeMemberAssembler());
+    super(
+      http,
+      `${environment.platformProviderApiBaseUrl}${environment.platformProviderCooperativeMembersEndpointPath}`,
+      new CooperativeMemberAssembler(),
+    );
   }
 
   getByCooperative(cooperativeId: number): Observable<CooperativeMember[]> {
@@ -23,5 +30,14 @@ export class CooperativeMembersApiEndpoint extends BaseApiEndpoint<
       map((members) => members.map((member) => this.assembler.toEntityFromResource(member))),
       catchError(this.handleError('Failed to fetch cooperative members')),
     );
+  }
+
+  /**
+   * Resolves memberships by their explicit account reference.
+   * @param userId - Account identifier supplied by the current session.
+   * @returns Memberships linked to that account; never matched by member ID.
+   */
+  getByUser(userId: number): Observable<CooperativeMember[]> {
+    return this.getAllBy({ userId }, 'Failed to fetch user memberships');
   }
 }

@@ -6,7 +6,6 @@ import { DemoUser } from '../../shared/domain/model/demo-user';
 import { FieldManagementApi } from '../../field-management/infrastructure/field-management-api';
 import { FieldManagementStore } from '../../field-management/application/field-management.store';
 import { FieldPlot } from '../../field-management/domain/model/entities/field-plot.entity';
-import { HarvestCertificationApi } from '../../harvest-certification/infrastructure/harvest-certification-api';
 import { ProfilesApi } from '../../profiles/infrastructure/profiles-api';
 import { TechnicalAdvisor } from '../../profiles/domain/model/entities/technical-advisor.entity';
 import { CropHealthApi } from '../infrastructure/crop-health-api';
@@ -28,7 +27,6 @@ export class CropHealthStore {
   private readonly profiles = inject(ProfilesApi);
   private readonly fields = inject(FieldManagementApi);
   private readonly fieldStore = inject(FieldManagementStore);
-  private readonly harvest = inject(HarvestCertificationApi);
   private readonly session = inject(DemoSessionService);
   private readonly selection = inject(PlotSelectionService);
   private readonly requests = new Map<string, Subscription>();
@@ -111,9 +109,9 @@ export class CropHealthStore {
   }
 
   private cooperativeScope(cooperativeId: number, advisor: TechnicalAdvisor | null) {
-    return forkJoin({ members: this.harvest.getMembers(cooperativeId), advisors: this.profiles.getTechnicalAdvisors(cooperativeId) }).pipe(
+    return forkJoin({ members: this.profiles.getCooperativeMembers(cooperativeId), advisors: this.profiles.getTechnicalAdvisors(cooperativeId) }).pipe(
       switchMap(({ members, advisors }) => {
-        const ids = [...new Set(members.filter(member => (member as typeof member & { active?: boolean }).active !== false).flatMap(member => member.plots.map(plot => plot.id)))];
+        const ids = [...new Set(members.filter(member => member.active).flatMap(member => member.plots.map(plot => plot.id)))];
         const plots = ids.length ? this.fields.getPlotsByIds(ids) : of([] as FieldPlot[]);
         return plots.pipe(map(plots => ({ plots, advisors, advisor })));
       }),

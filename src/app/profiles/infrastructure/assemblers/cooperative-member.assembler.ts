@@ -1,11 +1,16 @@
 import { BaseAssembler } from '../../../shared/infrastructure/base-assembler';
 import { CooperativeMember } from '../../domain/model/entities/cooperative-member.entity';
-import { CooperativeMemberResource, CooperativeMembersResponse } from '../responses/cooperative-member.response';
+import {
+  CooperativeMemberResource,
+  CooperativeMembersResponse,
+} from '../responses/cooperative-member.response';
 
 /** Converts cooperative member resources to their dashboard read model. */
-export class CooperativeMemberAssembler
-  implements BaseAssembler<CooperativeMember, CooperativeMemberResource, CooperativeMembersResponse>
-{
+export class CooperativeMemberAssembler implements BaseAssembler<
+  CooperativeMember,
+  CooperativeMemberResource,
+  CooperativeMembersResponse
+> {
   toEntityFromResource(resource: CooperativeMemberResource): CooperativeMember {
     return new CooperativeMember(resource);
   }
@@ -16,6 +21,8 @@ export class CooperativeMemberAssembler
       cooperativeId: entity.cooperativeId,
       fullName: entity.fullName,
       active: entity.active,
+      userId: entity.userId,
+      plots: entity.plots,
     };
   }
 

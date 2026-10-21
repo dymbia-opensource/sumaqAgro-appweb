@@ -166,7 +166,15 @@
       "potato-grading": "Grade percentages must total exactly 100%, and damage must be between 0 and 100%.",
       "sca-score": "The SCA score must be between 0 and 100.",
       "batch-not-graded": "The batch must be graded before issuing a certificate.",
-      "already-certified": "This batch already has a certificate."
+      "already-certified": "This batch already has a certificate.",
+      "save-batch": "The batch could not be saved. Please retry.",
+      "issue-incomplete": "Certificate issuance and batch update did not both complete. Reload to check the confirmed state before retrying."
+    },
+    "scope": {
+      "no-membership": "Your account has no linked active membership. Ask the cooperative to review your record.",
+      "no-cooperative": "Your account is not assigned as a cooperative director.",
+      "not-authorized": "This section is available to producers and cooperative directors. Only the director can issue certificates.",
+      "load-error": "Your cooperative relationships could not be loaded. Please retry."
     }
   }
 }

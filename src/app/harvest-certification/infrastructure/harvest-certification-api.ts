@@ -1,7 +1,8 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { inject, Service } from '@angular/core';
 import { Observable } from 'rxjs';
-import { environment } from '../../../environments/environment';
+import { ProfilesApi } from '../../profiles/infrastructure/profiles-api';
+import { CooperativeMember } from '../../profiles/domain/model/entities/cooperative-member.entity';
 import { IssueQualityCertificateCommand } from '../domain/model/commands/issue-quality-certificate.command';
 import { RegisterHarvestBatchCommand } from '../domain/model/commands/register-harvest-batch.command';
 import { HarvestBatch, HarvestBatchProps } from '../domain/model/entities/harvest-batch.entity';
@@ -12,26 +13,20 @@ import { PublicTraceabilityApiEndpoint } from './endpoints/public-traceability.e
 import { QualityCertificatesApiEndpoint } from './endpoints/quality-certificates.endpoint';
 
 /** Socio y parcelas de origen disponibles para el formulario de acopio. */
-export interface CooperativeMemberOption {
-  id: number;
-  cooperativeId: number;
-  name: string;
-  plots: { id: number; name: string; region: string; coordinates: string; campaignId: number; variety: string; cropType: HarvestBatchProps['cropType'] }[];
-}
+export type CooperativeMemberOption = CooperativeMember;
 
 /** Fachada de acceso a socios, lotes, certificados y trazabilidad pública. */
 @Service()
 export class HarvestCertificationApi {
   private readonly http = inject(HttpClient);
-  private readonly baseUrl = environment.platformProviderApiBaseUrl;
+  private readonly profiles = inject(ProfilesApi);
   private readonly batches = new HarvestBatchesApiEndpoint(this.http);
   private readonly certificates = new QualityCertificatesApiEndpoint(this.http);
   private readonly traceability = new PublicTraceabilityApiEndpoint(this.http);
 
   /** Carga socios y parcelas disponibles para una cooperativa. */
   getMembers(cooperativeId: number): Observable<CooperativeMemberOption[]> {
-    const params = new HttpParams().set('cooperativeId', cooperativeId);
-    return this.http.get<CooperativeMemberOption[]>(`${this.baseUrl}${environment.platformProviderCooperativeMembersEndpointPath}`, { params });
+    return this.profiles.getCooperativeMembers(cooperativeId);
   }
 
   getBatches(cooperativeId: number): Observable<HarvestBatch[]> {

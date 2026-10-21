@@ -52,6 +52,15 @@ export class ProfilesApi extends BaseApi {
     return this.cooperativeMembersEndpoint.getByCooperative(cooperativeId);
   }
 
+  /**
+   * Finds the cooperative memberships of an account independently of member IDs.
+   * @param userId - Current account identifier; IAM will supply it in production.
+   * @returns Membership read models owned by Profiles.
+   */
+  getMembershipsByUser(userId: number): Observable<CooperativeMember[]> {
+    return this.cooperativeMembersEndpoint.getByUser(userId);
+  }
+
   getInstitutionalDashboard(directorUserId: number): Observable<CooperativeDashboard | null> {
     return this.cooperativeDashboardEndpoint.getByDirector(directorUserId);
   }
