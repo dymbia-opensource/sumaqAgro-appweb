@@ -134,7 +134,7 @@ export class FieldManagementStore {
   private ledgersLoad?: Subscription;
 
   /** Plots of the producer. */
-  readonly plots = computed(() =>
+  readonly plots: Signal<FieldPlot[]> = computed<FieldPlot[]>(() =>
     this.plotsSignal().filter((plot) => plot.ownerUserId === this.currentUserId()),
   );
 

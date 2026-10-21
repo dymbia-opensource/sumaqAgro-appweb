@@ -1,5 +1,5 @@
 import { PlotQuotaSummary } from '../../components/plot-quota-summary/plot-quota-summary';
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, inject, Signal } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
@@ -40,7 +40,8 @@ export class RegisteredPlotsView {
   private readonly translate = inject(TranslateService);
 
   // Store state
-  readonly plots = this.fieldManagementStore.plots;
+  /** Account-scoped plot collection exposed with an explicit template contract. */
+  readonly plots: Signal<FieldPlot[]> = this.fieldManagementStore.plots;
   readonly loading = this.fieldManagementStore.loading;
   readonly error = this.fieldManagementStore.error;
   readonly plotCount = this.fieldManagementStore.plotCount;
@@ -57,7 +58,7 @@ export class RegisteredPlotsView {
   ];
 
   /** Free slot numbers are shown only after the current producer quota has loaded. */
-  readonly freeSlots = computed(() =>
+  readonly freeSlots: Signal<number[]> = computed<number[]>(() =>
     !this.canRegisterPlot()
       ? []
       : Array.from(
