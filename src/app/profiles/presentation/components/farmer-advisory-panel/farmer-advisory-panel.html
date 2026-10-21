@@ -1,0 +1,74 @@
+<mat-card appearance="outlined">
+  <mat-card-header
+    ><mat-card-title>{{ 'profiles.advisory.title' | translate }}</mat-card-title></mat-card-header
+  >
+  <mat-card-content>
+    @if (store.loading() || store.saving()) {
+      <mat-progress-bar mode="indeterminate" [attr.aria-label]="'common.loading' | translate" />
+    }
+    @if (store.error(); as error) {
+      <p role="alert">{{ error | translate }}</p>
+      <button mat-button (click)="store.reload()" [disabled]="store.saving()">
+        {{ 'common.retry' | translate }}
+      </button>
+    }
+    @if (!store.loading()) {
+      @if (advisor(); as advisor) {
+        <p>
+          <strong>{{ advisor.name }}</strong> · CIP {{ advisor.cipCode }}
+        </p>
+        <p>{{ advisor.phone }}</p>
+      } @else if (assignment()) {
+        <p>{{ 'profiles.advisory.unavailable' | translate }}</p>
+      } @else {
+        <p>{{ 'profiles.advisory.unassigned' | translate }}</p>
+      }
+      <p>{{ 'profiles.advisory.demo-notice' | translate }}</p>
+      @if (store.advisors().length) {
+        <mat-form-field appearance="outline"
+          ><mat-label>{{ 'profiles.advisory.select' | translate }}</mat-label>
+          <mat-select
+            [ngModel]="selected()"
+            (ngModelChange)="selected.set($event); confirming.set(false); saved.set(false)"
+            [disabled]="!store.canAssign(plotId())"
+          >
+            @for (advisor of store.advisors(); track advisor.userId) {
+              <mat-option [value]="advisor.userId"
+                >{{ advisor.name }} · CIP {{ advisor.cipCode }}</mat-option
+              >
+            }
+          </mat-select>
+        </mat-form-field>
+        @if (confirming()) {
+          <p role="status">{{ 'profiles.advisory.confirm' | translate }}</p>
+          <div class="actions">
+            <button mat-flat-button (click)="save()" [disabled]="!store.canAssign(plotId())">
+              {{ 'profiles.advisory.confirm-button' | translate }}</button
+            ><button mat-button (click)="confirming.set(false)" [disabled]="store.saving()">
+              {{ 'crop-health.cancel' | translate }}
+            </button>
+          </div>
+        } @else {
+          <div class="actions">
+            <button
+              mat-stroked-button
+              (click)="confirming.set(true); saved.set(false)"
+              [disabled]="
+                !store.canAssign(plotId()) ||
+                selected() === null ||
+                selected() === assignment()?.advisorUserId
+              "
+            >
+              {{ 'profiles.advisory.assign' | translate }}
+            </button>
+          </div>
+        }
+      } @else if (!store.error()) {
+        <p>{{ 'profiles.advisory.no-advisors' | translate }}</p>
+      }
+    }
+    @if (saved()) {
+      <p role="status">{{ 'profiles.advisory.saved' | translate }}</p>
+    }
+  </mat-card-content>
+</mat-card>

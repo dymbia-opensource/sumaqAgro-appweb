@@ -86,6 +86,24 @@
       "confirm-password": "Confirm new password",
       "security-description": "Password changes will be available when platform authentication is added.",
       "change-password": "Change password"
+    },
+    "advisory": {
+      "title": "Responsible plot advisor",
+      "unassigned": "This plot has no assigned advisor yet.",
+      "unavailable": "The assigned professional is unavailable in the current catalogue. You may select another.",
+      "demo-notice": "Demo assignment: this does not purchase or activate a plan. Access validation and acceptance will be implemented in the backend.",
+      "select": "Select agronomist",
+      "confirm": "Confirm this responsible advisor? Previous assignments will remain in the history.",
+      "confirm-button": "Confirm assignment",
+      "assign": "Assign or change advisor",
+      "no-advisors": "No professionals with a linked account are available.",
+      "saved": "Advisor assigned successfully.",
+      "errors": {
+        "load": "Advisors and assignments could not be loaded.",
+        "save": "Assignment could not be saved. Your selection is preserved for retry.",
+        "denied": "You may only assign available advisors to your own plots.",
+        "conflict": "Duplicate assignments were found for this plot. Request a data review."
+      }
     }
   }
 }

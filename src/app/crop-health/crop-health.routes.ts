@@ -42,6 +42,15 @@ export const cropHealthRoutes: Routes = [
     canActivateChild: [cropHealthGuard],
     children: [
       {
+        path: 'assigned-plots',
+        data: { roles: ['AGRONOMIST'] },
+        loadComponent: () =>
+          import('./presentation/views/advisor-plots-view/advisor-plots-view').then(
+            (m) => m.AdvisorPlotsView,
+          ),
+        title: 'Assigned plots – SumaqAgro',
+      },
+      {
         path: 'monitoring',
         loadComponent: cropHealthView,
         title: 'Crop Health – SumaqAgro | Multispectral Satellite Viewer',
@@ -76,6 +85,14 @@ export const cropHealthRoutes: Routes = [
         data: { roles: ['FARMER'] },
         loadComponent: pestReportForm,
         title: 'Report Pest or Disease – SumaqAgro',
+      },
+      {
+        path: 'reports/:id',
+        loadComponent: () =>
+          import('./presentation/views/farmer-case-view/farmer-case-view').then(
+            (m) => m.FarmerCaseView,
+          ),
+        title: 'Incident follow-up – SumaqAgro',
       },
       {
         path: 'prescribe',

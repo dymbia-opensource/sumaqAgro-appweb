@@ -130,22 +130,10 @@
       "region": "Junín - Valle del Mantaro",
       "status": "ACTIVE_MONITORING",
       "boundary": [
-        [
-          -12.0712,
-          -75.2135
-        ],
-        [
-          -12.0708,
-          -75.2111
-        ],
-        [
-          -12.0741,
-          -75.2104
-        ],
-        [
-          -12.0746,
-          -75.2131
-        ]
+        [-12.0712, -75.2135],
+        [-12.0708, -75.2111],
+        [-12.0741, -75.2104],
+        [-12.0746, -75.2131]
       ],
       "areaHectares": 3.5,
       "agroMonitoringPolygonId": "5f9a1c2b7e1d3a0012ab34cd",
@@ -163,22 +151,10 @@
       "region": "Junín - Chanchamayo",
       "status": "ACTIVE_MONITORING",
       "boundary": [
-        [
-          -11.1245,
-          -75.3561
-        ],
-        [
-          -11.1241,
-          -75.3524
-        ],
-        [
-          -11.1272,
-          -75.3519
-        ],
-        [
-          -11.1279,
-          -75.3557
-        ]
+        [-11.1245, -75.3561],
+        [-11.1241, -75.3524],
+        [-11.1272, -75.3519],
+        [-11.1279, -75.3557]
       ],
       "areaHectares": 2.5,
       "agroMonitoringPolygonId": "5f9a1c2b7e1d3a0012ab34ce"
@@ -200,22 +176,10 @@
       "region": "Huancavelica",
       "status": "ACTIVE_MONITORING",
       "boundary": [
-        [
-          -12.7865,
-          -74.9762
-        ],
-        [
-          -12.7861,
-          -74.9731
-        ],
-        [
-          -12.7889,
-          -74.9728
-        ],
-        [
-          -12.7893,
-          -74.9759
-        ]
+        [-12.7865, -74.9762],
+        [-12.7861, -74.9731],
+        [-12.7889, -74.9728],
+        [-12.7893, -74.9759]
       ],
       "areaHectares": 1.8,
       "agroMonitoringPolygonId": "5f9a1c2b7e1d3a0012ab34cf",
@@ -656,8 +620,72 @@
       "photo": "https://www.facebook.com/AgenciaAgrariaViru/posts/agencia-agraria-vir%C3%BA-te-recomienda-a-conocer-a-los-insectos-qu%C3%A9-se-encuentran-en/1101984545288457/",
       "clientSyncId": "96aced2b-2c22-4bb6-9139-82757749a7ec",
       "id": 3
+    },
+    {
+      "id": 4,
+      "plotId": 1,
+      "plotName": "Fundo Los Pinos",
+      "reporterId": 1,
+      "description": "Caso de demostración para consultar visita, receta y registrar seguimiento del cultivo.",
+      "severity": "LOW",
+      "status": "INSPECTED",
+      "photo": "",
+      "clientSyncId": "demo-farmer-follow-up"
     }
   ],
-  "field-inspections": [],
-  "technical-prescriptions": []
+  "field-inspections": [
+    {
+      "id": 1,
+      "reportId": 4,
+      "scheduledAt": "2026-10-15T14:00:00Z",
+      "completedAt": "2026-10-15T15:00:00Z",
+      "notes": "Visita de demostración completada para probar el seguimiento de la incidencia.",
+      "status": "COMPLETED",
+      "inspectorUserId": 4
+    }
+  ],
+  "technical-prescriptions": [
+    {
+      "id": 1,
+      "reportId": 4,
+      "agronomistId": 4,
+      "recommendedProducts": "Medida de manejo — demostración",
+      "dosageInstructions": "Indicaciones ficticias para probar el formulario de seguimiento; no utilizar como recomendación de campo.",
+      "applicationDate": "2026-10-15"
+    }
+  ],
+  "plot-advisor-assignments": [
+    {
+      "id": 1,
+      "plotId": 1,
+      "producerUserId": 1,
+      "advisorUserId": 4,
+      "assignedAt": "2026-10-15T14:00:00Z",
+      "history": [],
+      "status": "ACTIVE"
+    }
+  ],
+  "treatment-follow-ups": [
+    {
+      "prescriptionId": 1,
+      "kind": "APPLICATION",
+      "occurredOn": "2026-10-21",
+      "notes": "Registro de prueba visual: aplicación confirmada en la copia temporal.",
+      "id": "application-1-1",
+      "reportId": 4,
+      "producerUserId": 1,
+      "recordedAt": "2026-10-21T22:11:52.750Z"
+    },
+    {
+      "prescriptionId": 1,
+      "kind": "EVOLUTION",
+      "occurredOn": "2026-10-21",
+      "notes": "Registro de prueba visual: evolución del cultivo documentada por el agricultor.",
+      "id": "8fdbe294-9373-4c81-b6a5-6500cdb18a87",
+      "reportId": 4,
+      "producerUserId": 1,
+      "recordedAt": "2026-10-21T22:14:12.101Z"
+    }
+  ],
+  "case-assessments": []
 }

@@ -13,17 +13,29 @@ import { IssueTechnicalPrescriptionCommand } from '../../../domain/model/command
 
 @Component({
   selector: 'app-prescription-form',
-  imports: [ReactiveFormsModule, RouterLink, TranslatePipe, MatButtonModule, MatCardModule,
-    MatFormFieldModule, MatInputModule, MatSelectModule, MatProgressBarModule],
-  templateUrl: './prescription-form.html', styleUrl: './prescription-form.css',
+  imports: [
+    ReactiveFormsModule,
+    RouterLink,
+    TranslatePipe,
+    MatButtonModule,
+    MatCardModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatProgressBarModule,
+  ],
+  templateUrl: './prescription-form.html',
+  styleUrl: './prescription-form.css',
 })
 export class PrescriptionForm {
   private readonly fb = inject(NonNullableFormBuilder);
   private readonly route = inject(ActivatedRoute);
   readonly store = inject(CropHealthStore);
+  readonly caseId = Number(this.route.snapshot.queryParamMap.get('reportId'));
   readonly saved = signal(false);
   readonly prescriptionForm = this.fb.group({
-    reportId: [0, Validators.min(1)], agronomistId: [0, Validators.min(1)],
+    reportId: [0, Validators.min(1)],
+    agronomistId: [0, Validators.min(1)],
     agrochemical: ['', [Validators.required, Validators.pattern(/\S/)]],
     dosage: ['', [Validators.required, Validators.pattern(/\S/)]],
     instructions: ['', [Validators.required, Validators.pattern(/\S/)]],
@@ -43,7 +55,7 @@ export class PrescriptionForm {
       this.prescriptionForm.enable();
       this.prescriptionForm.reset({ agronomistId: this.store.activeUser()?.id ?? 0 });
       const reportId = Number(this.route.snapshot.queryParamMap.get('reportId'));
-      if (this.store.treatableReports().some(report => report.id === reportId)) {
+      if (this.store.treatableReports().some((report) => report.id === reportId)) {
         this.prescriptionForm.controls.reportId.setValue(reportId);
       }
     });
@@ -52,21 +64,37 @@ export class PrescriptionForm {
     this.saved.set(false);
     this.prescriptionForm.markAllAsTouched();
     const value = this.prescriptionForm.getRawValue();
-    if (this.prescriptionForm.invalid || !this.store.canPrescribe() || this.store.clinicalLoading() || this.store.saving()) return;
-    if (!this.store.pestReports().some(report => report.id === value.reportId) ||
-        !this.store.advisors().some(advisor => advisor.userId === value.agronomistId)) return;
+    if (
+      this.prescriptionForm.invalid ||
+      !this.store.canPrescribe() ||
+      this.store.clinicalLoading() ||
+      this.store.saving()
+    )
+      return;
+    if (
+      !this.store.pestReports().some((report) => report.id === value.reportId) ||
+      !this.store.advisors().some((advisor) => advisor.userId === value.agronomistId)
+    )
+      return;
     if (!Number.isFinite(Date.parse(value.applicationDate))) {
-      this.prescriptionForm.controls.applicationDate.setErrors({ invalidDate: true }); return;
+      this.prescriptionForm.controls.applicationDate.setErrors({ invalidDate: true });
+      return;
     }
     this.prescriptionForm.disable();
-    this.store.issuePrescription(new IssueTechnicalPrescriptionCommand({
-      reportId: value.reportId, agronomistId: value.agronomistId,
-      recommendedProducts: value.agrochemical.trim(),
-      dosageInstructions: value.dosage.trim() + '\n' + value.instructions.trim(),
-      applicationDate: value.applicationDate,
-    }), () => {
-      this.prescriptionForm.reset({ reportId: value.reportId, agronomistId: value.agronomistId });
-      this.prescriptionForm.enable(); this.saved.set(true);
-    }, () => this.prescriptionForm.enable());
+    this.store.issuePrescription(
+      new IssueTechnicalPrescriptionCommand({
+        reportId: value.reportId,
+        agronomistId: value.agronomistId,
+        recommendedProducts: value.agrochemical.trim(),
+        dosageInstructions: value.dosage.trim() + '\n' + value.instructions.trim(),
+        applicationDate: value.applicationDate,
+      }),
+      () => {
+        this.prescriptionForm.reset({ reportId: value.reportId, agronomistId: value.agronomistId });
+        this.prescriptionForm.enable();
+        this.saved.set(true);
+      },
+      () => this.prescriptionForm.enable(),
+    );
   }
 }

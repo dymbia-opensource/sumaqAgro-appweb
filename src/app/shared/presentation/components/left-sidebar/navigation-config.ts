@@ -53,8 +53,16 @@ export const cooperativeDirectorNavigationSections: NavigationSection[] = [
         icon: 'home',
       },
       { link: '/profiles/cooperative/members', label: 'option.member-directory', icon: 'group' },
-      { link: '/crop-health/monitoring', label: 'option.cooperative-plot-health', icon: 'description' },
-      { link: '/field-management/finances', label: 'option.cooperative-costs', icon: 'calendar_month' },
+      {
+        link: '/crop-health/monitoring',
+        label: 'option.cooperative-plot-health',
+        icon: 'description',
+      },
+      {
+        link: '/field-management/finances',
+        label: 'option.cooperative-costs',
+        icon: 'calendar_month',
+      },
       {
         link: '/harvest-certification/certificates',
         label: 'option.cooperative-certificates',
@@ -66,23 +74,38 @@ export const cooperativeDirectorNavigationSections: NavigationSection[] = [
   },
   {
     title: 'section.system',
-    options: [{ link: '/profiles/cooperative/settings', label: 'option.cooperative-settings', icon: 'settings' }],
+    options: [
+      {
+        link: '/profiles/cooperative/settings',
+        label: 'option.cooperative-settings',
+        icon: 'settings',
+      },
+    ],
   },
 ];
 
-export const agronomistNavigationSections: NavigationSection[] = [{
-  title: 'section.agricultural-operation',
-  options: [
-    { link: '/crop-health/inbox', label: 'option.diagnosis-inbox', icon: 'pest_control' },
-    { link: '/crop-health/inspections', label: 'option.field-inspections', icon: 'travel_explore' },
-    { link: '/crop-health/prescriptions', label: 'option.prescriptions', icon: 'medication' },
-    { link: '/crop-health/monitoring', label: 'option.crop-health', icon: 'eco' },
-    { link: '/crop-health/alerts', label: 'option.alerts', icon: 'warning' },
-  ],
-}];
+export const agronomistNavigationSections: NavigationSection[] = [
+  {
+    title: 'section.agricultural-operation',
+    options: [
+      { link: '/crop-health/assigned-plots', label: 'option.assigned-plots', icon: 'map' },
+      { link: '/crop-health/inbox', label: 'option.diagnosis-inbox', icon: 'pest_control' },
+      {
+        link: '/crop-health/inspections',
+        label: 'option.field-inspections',
+        icon: 'travel_explore',
+      },
+      { link: '/crop-health/prescriptions', label: 'option.prescriptions', icon: 'medication' },
+      { link: '/crop-health/monitoring', label: 'option.crop-health', icon: 'eco' },
+      { link: '/crop-health/alerts', label: 'option.alerts', icon: 'warning' },
+    ],
+  },
+];
 
 /** Returns only navigation options supported by the selected demo role. */
 export function navigationFor(experience: UserExperience): NavigationSection[] {
   if (experience === 'AGRONOMIST') return agronomistNavigationSections;
-  return experience === 'COOPERATIVE_DIRECTOR' ? cooperativeDirectorNavigationSections : farmerNavigationSections;
+  return experience === 'COOPERATIVE_DIRECTOR'
+    ? cooperativeDirectorNavigationSections
+    : farmerNavigationSections;
 }
