@@ -1,3 +1,4 @@
+import { FarmerAdvisoryPanel } from '../../../../profiles/presentation/components/farmer-advisory-panel/farmer-advisory-panel';
 import { Component, computed, inject, input, numberAttribute } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -6,7 +7,10 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { Router, RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { MessageCard } from '../../../../shared/presentation/components/message-card/message-card';
-import { Breadcrumb, PageHeader } from '../../../../shared/presentation/components/page-header/page-header';
+import {
+  Breadcrumb,
+  PageHeader,
+} from '../../../../shared/presentation/components/page-header/page-header';
 import { FieldManagementStore } from '../../../application/field-management.store';
 import { PlotCadastreCard } from '../../components/plot-cadastre-card/plot-cadastre-card';
 import { PlotPolygonViewer } from '../../components/plot-polygon-viewer/plot-polygon-viewer';
@@ -30,6 +34,7 @@ import { SoilBaselineCard } from '../../components/soil-baseline-card/soil-basel
     PlotPolygonViewer,
     PlotCadastreCard,
     SoilBaselineCard,
+    FarmerAdvisoryPanel,
   ],
   templateUrl: './plot-detail-view.html',
   styleUrl: './plot-detail-view.css',

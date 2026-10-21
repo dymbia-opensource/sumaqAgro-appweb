@@ -61,7 +61,7 @@
     "plots": {
       "manage": "Manage Plots",
       "title": "My Registered Plots",
-      "subtitle": "Manage your plots under free satellite monitoring ({{ used }} of {{ quota }} slots used).",
+      "subtitle": "Manage your plots with the Seed plan ({{ used }} of {{ quota }} slots used).",
       "plot-number": "Plot #{{ number }}",
       "crop": "Crop",
       "area": "Area",
@@ -74,9 +74,9 @@
       "slot-available": "Slot Available",
       "slot-text": "Enable the satellite monitoring of your plot #{{ number }}. No extra cost.",
       "register": "Register New Plot",
-      "plan-title": "Free Plan Information",
+      "plan-title": "Seed Plan Information",
       "plan-text": "Your independent account lets you register up to {{ quota }} family plots.",
-      "plan-full": "You already used the {{ quota }} slots of your free plan. Upgrade your plan to register more plots.",
+      "plan-full": "You already used the {{ quota }} slots of your Seed plan. Upgrade your plan to register more plots.",
       "delete-confirm": "Delete the plot \"{{ name }}\"? This action cannot be undone.",
       "view-detail": "View map and details"
     },

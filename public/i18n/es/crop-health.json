@@ -94,7 +94,14 @@
       "complete-inspection": "No se pudo completar la visita. Conserva tus notas e intenta nuevamente.",
       "inspection-status-partial": "La visita se guardó, pero no se pudo actualizar el reporte. Usa Sincronizar estado del reporte para reintentar.",
       "delete-report": "No se pudo eliminar el reporte. Intenta nuevamente.",
-      "resolve-report": "No se pudo actualizar el reporte. Intenta nuevamente."
+      "resolve-report": "No se pudo actualizar el reporte. Intenta nuevamente.",
+      "evaluation-required": "El cierre necesita una evaluación del agrónomo; emitir una receta no confirma recuperación.",
+      "follow-up-not-ready": "Solo se puede registrar seguimiento de una receta de una incidencia inspeccionada y abierta.",
+      "follow-up-date": "La fecha no puede ser futura ni anterior a la fecha indicada en la receta.",
+      "follow-up-conflict": "Este registro ya existe con otro contenido. Recarga el caso antes de continuar.",
+      "application-exists": "La aplicación de esta receta ya fue confirmada. Recarga el caso.",
+      "application-required": "Confirma primero la aplicación. La evolución no puede tener una fecha anterior.",
+      "save-follow-up": "No se pudo guardar. Conservamos el formulario; vuelve a intentarlo o recarga el caso para comprobar su estado."
     },
     "no-inspections": "Sin inspecciones",
     "no-prescriptions": "Sin recetas",
@@ -170,6 +177,29 @@
     "inspection-statuses": {
       "SCHEDULED": "Programada",
       "COMPLETED": "Completada"
+    },
+    "case": {
+      "open": "Ver caso y seguimiento",
+      "title": "Detalle y seguimiento de incidencia",
+      "no-inspections": "Todavía no se han registrado inspecciones.",
+      "no-prescriptions": "Todavía no se han registrado recetas.",
+      "follow-up": "Aplicación y evolución",
+      "evaluation-notice": "El seguimiento registra lo informado por el agricultor. La recuperación y el cierre requieren evaluación del agrónomo.",
+      "no-follow-up": "Todavía no hay registros de aplicación o evolución.",
+      "record": "Registrar seguimiento",
+      "prescription": "Receta relacionada",
+      "kind": "Tipo de registro",
+      "date": "Fecha del hecho",
+      "notes": "Observaciones (10 a 2000 caracteres)",
+      "notes-validation": "Escribe entre 10 y 2000 caracteres.",
+      "save": "Guardar seguimiento",
+      "saved": "Seguimiento guardado.",
+      "not-found": "No se encontró esta incidencia dentro de tus parcelas autorizadas.",
+      "APPLICATION": "Tratamiento aplicado",
+      "EVOLUTION": "Evolución reportada",
+      "SCHEDULED": "Programada",
+      "COMPLETED": "Completada",
+      "form-validation": "Selecciona una receta, indica una fecha y escribe entre 10 y 2000 caracteres de observaciones."
     }
   }
 }

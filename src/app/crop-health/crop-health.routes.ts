@@ -78,6 +78,14 @@ export const cropHealthRoutes: Routes = [
         title: 'Report Pest or Disease – SumaqAgro',
       },
       {
+        path: 'reports/:id',
+        loadComponent: () =>
+          import('./presentation/views/farmer-case-view/farmer-case-view').then(
+            (m) => m.FarmerCaseView,
+          ),
+        title: 'Incident follow-up – SumaqAgro',
+      },
+      {
         path: 'prescribe',
         data: { roles: ['AGRONOMIST'] },
         loadComponent: prescriptionForm,

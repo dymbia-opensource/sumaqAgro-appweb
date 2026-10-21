@@ -94,7 +94,14 @@
       "complete-inspection": "The visit could not be completed. Keep your notes and try again.",
       "inspection-status-partial": "The visit was saved, but the report could not be updated. Use Synchronize report status to retry.",
       "delete-report": "The report could not be deleted. Please try again.",
-      "resolve-report": "The report could not be updated. Please try again."
+      "resolve-report": "The report could not be updated. Please try again.",
+      "evaluation-required": "Closure requires agronomist assessment; issuing a prescription does not confirm recovery.",
+      "follow-up-not-ready": "Follow-up requires a prescription for an inspected, open incident.",
+      "follow-up-date": "The date cannot be in the future or before the prescription application date.",
+      "follow-up-conflict": "This record already exists with different content. Reload the case before continuing.",
+      "application-exists": "Application of this prescription was already confirmed. Reload the case.",
+      "application-required": "Confirm application first. Evolution cannot have an earlier date.",
+      "save-follow-up": "Could not save. Your form is preserved; retry or reload the case to check its state."
     },
     "no-inspections": "No inspections",
     "no-prescriptions": "No prescriptions",
@@ -170,6 +177,29 @@
     "inspection-statuses": {
       "SCHEDULED": "Scheduled",
       "COMPLETED": "Completed"
+    },
+    "case": {
+      "open": "View case and follow-up",
+      "title": "Incident detail and follow-up",
+      "no-inspections": "No inspections have been recorded yet.",
+      "no-prescriptions": "No prescriptions have been recorded yet.",
+      "follow-up": "Application and evolution",
+      "evaluation-notice": "Follow-up records the farmer’s observations. Recovery and closure require agronomist assessment.",
+      "no-follow-up": "No application or evolution records yet.",
+      "record": "Record follow-up",
+      "prescription": "Related prescription",
+      "kind": "Record type",
+      "date": "Event date",
+      "notes": "Observations (10 to 2000 characters)",
+      "notes-validation": "Enter between 10 and 2000 characters.",
+      "save": "Save follow-up",
+      "saved": "Follow-up saved.",
+      "not-found": "This incident was not found within your authorized plots.",
+      "APPLICATION": "Treatment applied",
+      "EVOLUTION": "Evolution reported",
+      "SCHEDULED": "Scheduled",
+      "COMPLETED": "Completed",
+      "form-validation": "Select a prescription, enter a date and write between 10 and 2000 characters of observations."
     }
   }
 }

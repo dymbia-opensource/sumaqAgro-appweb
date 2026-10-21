@@ -46,13 +46,13 @@ import { ExpenseCommand, OfflineExpenseQueue } from '../infrastructure/offline/o
 import { FileDownloader } from '../infrastructure/reports/file-downloader';
 
 /**
- * Plots included in the free Seed plan.
+ * Plots included in the Seed plan (demo quota until subscriptions are implemented).
  *
  * @remarks
  * The quota belongs to Subscriptions and Payments; with the RESTful API,
  * Field Management asks for it before registering a plot.
  */
-export const FREE_PLAN_PLOT_QUOTA = 3;
+export const SEED_PLAN_PLOT_QUOTA = 4;
 
 /** Any of the three expenses of the cost ledger (US-37 to US-39). */
 export type RecordExpenseCommand = ExpenseCommand;
@@ -155,7 +155,7 @@ export class FieldManagementStore {
   readonly plotCount = computed(() => this.plots().length);
 
   /** Plots allowed by the plan of the producer. */
-  readonly plotQuota = signal(FREE_PLAN_PLOT_QUOTA).asReadonly();
+  readonly plotQuota = signal(SEED_PLAN_PLOT_QUOTA).asReadonly();
 
   /** `true` while the producer can register another plot (US-22). */
   readonly canRegisterPlot = computed(() => this.plotCount() < this.plotQuota());

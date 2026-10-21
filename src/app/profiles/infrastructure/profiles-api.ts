@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Service } from '@angular/core';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { BaseApi } from '../../shared/infrastructure/base-api';
 import { CooperativeMember } from '../domain/model/entities/cooperative-member.entity';
 import { Cooperative } from '../domain/model/entities/cooperative.entity';
@@ -71,6 +71,21 @@ export class ProfilesApi extends BaseApi {
 
   getTechnicalAdvisors(cooperativeId: number): Observable<TechnicalAdvisor[]> {
     return this.technicalAdvisorsEndpoint.getByCooperative(cooperativeId);
+  }
+
+  /** Lists demo professionals with a linked account, without requiring cooperative membership. */
+  getAvailableAdvisors(): Observable<TechnicalAdvisor[]> {
+    return this.technicalAdvisorsEndpoint
+      .getAll()
+      .pipe(
+        map((items) => [
+          ...new Map(
+            items
+              .filter((item) => Number.isSafeInteger(item.userId) && item.userId! > 0)
+              .map((item) => [item.userId!, item]),
+          ).values(),
+        ]),
+      );
   }
 
   createTechnicalAdvisor(advisor: TechnicalAdvisor): Observable<TechnicalAdvisor> {

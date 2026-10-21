@@ -656,8 +656,70 @@
       "photo": "https://www.facebook.com/AgenciaAgrariaViru/posts/agencia-agraria-vir%C3%BA-te-recomienda-a-conocer-a-los-insectos-qu%C3%A9-se-encuentran-en/1101984545288457/",
       "clientSyncId": "96aced2b-2c22-4bb6-9139-82757749a7ec",
       "id": 3
+    },
+    {
+      "id": 4,
+      "plotId": 1,
+      "plotName": "Fundo Los Pinos",
+      "reporterId": 1,
+      "description": "Caso de demostración para consultar visita, receta y registrar seguimiento del cultivo.",
+      "severity": "LOW",
+      "status": "INSPECTED",
+      "photo": "",
+      "clientSyncId": "demo-farmer-follow-up"
     }
   ],
-  "field-inspections": [],
-  "technical-prescriptions": []
+  "field-inspections": [
+    {
+      "id": 1,
+      "reportId": 4,
+      "scheduledAt": "2026-10-15T14:00:00Z",
+      "completedAt": "2026-10-15T15:00:00Z",
+      "notes": "Visita de demostración completada para probar el seguimiento de la incidencia.",
+      "status": "COMPLETED",
+      "inspectorUserId": 4
+    }
+  ],
+  "technical-prescriptions": [
+    {
+      "id": 1,
+      "reportId": 4,
+      "agronomistId": 4,
+      "recommendedProducts": "Medida de manejo — demostración",
+      "dosageInstructions": "Indicaciones ficticias para probar el formulario de seguimiento; no utilizar como recomendación de campo.",
+      "applicationDate": "2026-10-15"
+    }
+  ],
+  "plot-advisor-assignments": [
+    {
+      "id": 1,
+      "plotId": 1,
+      "producerUserId": 1,
+      "advisorUserId": 4,
+      "assignedAt": "2026-10-15T14:00:00Z",
+      "history": []
+    }
+  ],
+  "treatment-follow-ups": [
+    {
+      "prescriptionId": 1,
+      "kind": "APPLICATION",
+      "occurredOn": "2026-10-21",
+      "notes": "Registro de prueba visual: aplicación confirmada en la copia temporal.",
+      "id": "application-1-1",
+      "reportId": 4,
+      "producerUserId": 1,
+      "recordedAt": "2026-10-21T22:11:52.750Z"
+    },
+    {
+      "prescriptionId": 1,
+      "kind": "EVOLUTION",
+      "occurredOn": "2026-10-21",
+      "notes": "Registro de prueba visual: evolución del cultivo documentada por el agricultor.",
+      "id": "8fdbe294-9373-4c81-b6a5-6500cdb18a87",
+      "reportId": 4,
+      "producerUserId": 1,
+      "recordedAt": "2026-10-21T22:14:12.101Z"
+    }
+  ]
 }

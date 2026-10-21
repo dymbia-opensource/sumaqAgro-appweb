@@ -61,7 +61,7 @@
     "plots": {
       "manage": "Administrar Parcelas",
       "title": "Mis Parcelas Registradas",
-      "subtitle": "Gestiona tus lotes bajo monitoreo satelital gratuito ({{ used }} de {{ quota }} cupos utilizados).",
+      "subtitle": "Gestiona tus parcelas con el Plan Semilla ({{ used }} de {{ quota }} cupos utilizados).",
       "plot-number": "Parcela #{{ number }}",
       "crop": "Cultivo",
       "area": "Área",
@@ -74,9 +74,9 @@
       "slot-available": "Cupo Disponible",
       "slot-text": "Habilita el monitoreo satelital de tu lote #{{ number }}. Sin costo adicional.",
       "register": "Registrar Nueva Parcela",
-      "plan-title": "Información de Plan Gratuito",
+      "plan-title": "Información del Plan Semilla",
       "plan-text": "Tu cuenta independiente te permite registrar hasta {{ quota }} parcelas familiares.",
-      "plan-full": "Ya usaste los {{ quota }} cupos de tu plan gratuito. Actualiza tu plan para registrar más parcelas.",
+      "plan-full": "Ya usaste los {{ quota }} cupos de tu Plan Semilla. Actualiza tu plan para registrar más parcelas.",
       "delete-confirm": "¿Eliminar la parcela \"{{ name }}\"? Esta acción no se puede deshacer.",
       "view-detail": "Ver mapa y detalle"
     },

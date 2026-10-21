@@ -86,6 +86,24 @@
       "confirm-password": "Confirmar nueva contraseña",
       "security-description": "El cambio de contraseña estará disponible cuando se incorpore la autenticación de la plataforma.",
       "change-password": "Cambiar contraseña"
+    },
+    "advisory": {
+      "title": "Asesor responsable de la parcela",
+      "unassigned": "Esta parcela todavía no tiene un asesor asignado.",
+      "unavailable": "El profesional asignado no está disponible en el catálogo actual. Puedes seleccionar otro.",
+      "demo-notice": "Vinculación de demostración: no compra ni activa un plan. La validación de acceso y aceptación se implementará en el backend.",
+      "select": "Seleccionar agrónomo",
+      "confirm": "¿Confirmas este responsable para la parcela? Se conservará el historial anterior.",
+      "confirm-button": "Confirmar vinculación",
+      "assign": "Vincular o cambiar asesor",
+      "no-advisors": "No hay profesionales con una cuenta vinculada disponibles.",
+      "saved": "Asesor vinculado correctamente.",
+      "errors": {
+        "load": "No se pudieron consultar los asesores y sus asignaciones.",
+        "save": "No se pudo guardar la vinculación. Conservamos tu selección para reintentar.",
+        "denied": "Solo puedes vincular asesores disponibles a tus propias parcelas.",
+        "conflict": "Hay asignaciones duplicadas para esta parcela. Solicita revisar los datos."
+      }
     }
   }
 }

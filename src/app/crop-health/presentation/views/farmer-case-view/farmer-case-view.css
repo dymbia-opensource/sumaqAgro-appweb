@@ -1,0 +1,36 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 1000px;
+  margin: auto;
+}
+h1,
+h2,
+p {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+mat-card-content {
+  padding-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+form h2,
+form mat-form-field:last-of-type {
+  grid-column: 1/-1;
+}
+.notes {
+  white-space: pre-wrap;
+}
+@media (max-width: 600px) {
+  form {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
