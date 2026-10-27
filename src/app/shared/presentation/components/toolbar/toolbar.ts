@@ -11,8 +11,8 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
-import { DemoSessionService } from '../../../application/demo-session.service';
 import { LayoutService } from '../layout/layout.service';
+import {IamStore} from '../../../../iam/application/iam.store';
 
 /**
  * Top bar of the shell: menu button (on phones), search, connection status,
@@ -39,11 +39,10 @@ import { LayoutService } from '../layout/layout.service';
 })
 export class Toolbar {
   protected readonly layout = inject(LayoutService);
-  private readonly demoSession = inject(DemoSessionService);
+  private readonly iamStore = inject(IamStore);
 
-  /** Name shown in the user menu. */
-  readonly userName = computed(() => this.demoSession.activeUser()?.displayName ?? '');
-
+  /** Account email shown until the profile provides a display name. */
+  readonly userName = computed(() => this.iamStore.currentUser()?.email ?? '');
   /** Pending notifications. Connected to the agroclimatic alerts later. */
   readonly notificationCount = signal(0);
 }
