@@ -88,4 +88,25 @@
       {{ 'iam.signIn.register' | translate }}
     </a>
   </p>
+  @if (demoAccounts.length) {
+    <details class="demo-accounts">
+      <summary>{{ 'iam.demoAccounts.title' | translate }}</summary>
+      <p>{{ 'iam.demoAccounts.description' | translate }}</p>
+      <div class="demo-account-list">
+        @for (account of demoAccounts; track account.id) {
+          <button
+            mat-stroked-button
+            type="button"
+            class="demo-account"
+            [disabled]="store.isLoading()"
+            (click)="fillDemoAccount(account)"
+          >
+            <span class="demo-account-role">{{ 'iam.roles.' + account.role | translate }}</span>
+            <span class="demo-account-email">{{ account.email }}</span>
+          </button>
+        }
+      </div>
+      <p class="demo-account-hint">{{ 'iam.demoAccounts.hint' | translate }}</p>
+    </details>
+  }
 </app-auth-layout>

@@ -1,5 +1,10 @@
 {
   "iam": {
+    "demoAccounts": {
+      "title": "Prueba con datos de ejemplo",
+      "description": "Explora SumaqAgro con una cuenta de prueba para cada rol.",
+      "hint": "Selecciona una cuenta para completar el formulario y pulsa Iniciar sesión."
+    },
     "layout": {
       "brandCaption": "Gestión agrícola conectada",
       "footer": "Para quienes cultivan el futuro de la papa y el café.",

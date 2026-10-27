@@ -1,5 +1,10 @@
 {
   "iam": {
+    "demoAccounts": {
+      "title": "Try with sample data",
+      "description": "Explore SumaqAgro with a test account for each role.",
+      "hint": "Select an account to fill the form, then press Sign in."
+    },
     "layout": {
       "brandCaption": "Connected agricultural management",
       "footer": "For those growing the future of potatoes and coffee.",

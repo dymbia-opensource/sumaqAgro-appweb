@@ -48,6 +48,24 @@ vista previa. La integración real con el backend sigue pendiente.
 
 La organización de capas y pruebas se documenta en [Arquitectura del frontend](docs/frontend-architecture.md).
 
+### Cuentas de prueba con datos existentes
+
+Con `npm run api` y `npm start` activos, abre **Prueba con datos de ejemplo** en el
+login. Elegir una cuenta completa el formulario; luego pulsa **Iniciar sesión**.
+
+| Rol | Correo | ID vinculado en la API falsa |
+|---|---|---|
+| Agricultor | `farmer@sumaqagro.test` | 1: perfil y parcelas de Guillermo |
+| Directivo | `cooperative@sumaqagro.test` | 3: Cooperativa Agraria Valle del Mantaro |
+| Agrónomo | `agronomist@sumaqagro.test` | 4: asesor y asignaciones existentes |
+
+Contraseña común de demostración: `SumaqAgroDemo2026!`.
+
+Estas cuentas se inicializan nuevamente después de recargar y solo funcionan con
+autenticación simulada en desarrollo. Las cuentas nuevas conservan sus propios
+identificadores y empiezan sin datos asociados; no heredan información de otra
+persona. No se altera `server/db.json` ni se guardan contraseñas en el navegador.
+
 | Comando | Qué hace |
 |---|---|
 | `npm start` | Aplicación en modo desarrollo (`ng serve`) |

@@ -5,13 +5,27 @@ import { SignInRequest } from './requests/sign-in.request';
 import { SignUpRequest } from './requests/sign-up.request';
 import { SignInResponse } from './responses/sign-in.response';
 import { SignUpResponse } from './responses/sign-up.response';
+import { getDevelopmentDemoAccounts } from './development-demo-accounts';
+import { UserRoleAssembler } from './assemblers/user-role.assembler';
 
 interface MockAccount {
   readonly user: SignUpResponse;
   readonly password: string;
 }
 
-const accounts = new Map<string, MockAccount>();
+const accounts = new Map<string, MockAccount>(
+  getDevelopmentDemoAccounts().map((account) => [
+    account.email,
+    {
+      user: {
+        id: account.id,
+        email: account.email,
+        roles: [UserRoleAssembler.toResource(account.role)],
+      },
+      password: account.password,
+    },
+  ]),
+);
 let nextUserId = Date.now();
 
 const signInUrl =
