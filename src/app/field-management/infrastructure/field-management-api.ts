@@ -1,22 +1,16 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { concatMap, from, map, Observable, of, switchMap, toArray } from 'rxjs';
+import { Observable } from 'rxjs';
 import { BaseApi } from '../../shared/infrastructure/base-api';
 import { CampaignLedger } from '../domain/model/entities/campaign-ledger.entity';
 import { CropCampaign } from '../domain/model/entities/crop-campaign.entity';
 import { FieldPlot } from '../domain/model/entities/field-plot.entity';
-import { AgroMonitoringPolygonsClient } from './agromonitoring/agro-monitoring-polygons.client';
-import { CampaignLedgersApiEndpoint } from './endpoints/campaign-ledgers.endpoint';
-import { CropCampaignsApiEndpoint } from './endpoints/crop-campaigns.endpoint';
-import { FieldPlotsApiEndpoint } from './endpoints/field-plots.endpoint';
-import { CampaignCostReportExporter, ExportedFile } from './reports/campaign-cost-report.exporter';
+import { CampaignLedgersApiEndpoint } from './endpoints/campaign-ledgers-api-endpoint';
+import { CropCampaignsApiEndpoint } from './endpoints/crop-campaigns-api-endpoint';
+import { FieldPlotsApiEndpoint } from './endpoints/field-plots-api-endpoint';
 
 /**
- * Infrastructure facade for the field plot, crop campaign and cost ledger endpoints.
- *
- * @remarks
- * The application layer only depends on this class, never on the endpoints,
- * the AgroMonitoring client or the report exporter.
+ * Infrastructure facade for field plot, crop campaign and cost ledger endpoint operations.
  */
 @Injectable({ providedIn: 'root' })
 export class FieldManagementApi extends BaseApi {
@@ -24,10 +18,6 @@ export class FieldManagementApi extends BaseApi {
   private readonly plotsEndpoint = new FieldPlotsApiEndpoint(this.http);
   private readonly campaignsEndpoint = new CropCampaignsApiEndpoint(this.http);
   private readonly ledgersEndpoint = new CampaignLedgersApiEndpoint(this.http);
-  private readonly agroMonitoring = new AgroMonitoringPolygonsClient();
-  private readonly costReportExporter = new CampaignCostReportExporter();
-
-  // ---------- Field plots ----------
 
   /**
    * Retrieves the plots of one producer.
@@ -38,6 +28,20 @@ export class FieldManagementApi extends BaseApi {
     this.plotsEndpoint.getByOwner(ownerUserId);
 
   /**
+   * Retrieves the plots with the given IDs; the ones that no longer exist are skipped.
+   * @param ids - The IDs of the plots.
+   * @returns Stream with the plot collection.
+   */
+  getPlotsByIds = (ids: number[]): Observable<FieldPlot[]> => this.plotsEndpoint.getByIds(ids);
+
+  /**
+   * Retrieves a single plot by ID.
+   * @param id - The ID of the plot.
+   * @returns An Observable of the FieldPlot object.
+   */
+  getPlotById = (id: number): Observable<FieldPlot> => this.plotsEndpoint.getById(id);
+
+  /**
    * Creates a new plot.
    * @param plot - The plot to create.
    * @returns An Observable of the created FieldPlot object.
@@ -45,63 +49,18 @@ export class FieldManagementApi extends BaseApi {
   createPlot = (plot: FieldPlot): Observable<FieldPlot> => this.plotsEndpoint.create(plot);
 
   /**
-   * Saves the GPS polygon (and the area) of a plot.
-   * @param plot - The plot with its new polygon.
-   * @returns An Observable of the updated FieldPlot object.
-   */
-  updateBoundary = (plot: FieldPlot): Observable<FieldPlot> =>
-    this.plotsEndpoint.update(plot, plot.id);
-
-  /**
-   * Saves a plot (for example, with its new soil analysis).
-   * @param plot - The plot to save.
+   * Updates an existing plot.
+   * @param plot - The plot to update.
    * @returns An Observable of the updated FieldPlot object.
    */
   updatePlot = (plot: FieldPlot): Observable<FieldPlot> => this.plotsEndpoint.update(plot, plot.id);
 
   /**
-   * Registers the polygon of a plot in AgroMonitoring (policy P3).
-   * @param plot - Plot with its GPS polygon.
-   * @returns The polygon identifier in AgroMonitoring.
-   */
-  registerPolygonInAgroMonitoring = (plot: FieldPlot): Observable<string> =>
-    this.agroMonitoring.registerPolygon(plot);
-
-  /**
-   * Deletes a plot by ID, with its campaigns and cost ledgers.
+   * Deletes a plot by ID.
    * @param id - The ID of the plot to delete.
    * @returns An Observable of void.
    */
-  deletePlot = (id: number): Observable<void> =>
-    this.campaignsEndpoint.getByPlot(id).pipe(
-      // One request at a time: json-server rewrites its file on every change.
-      switchMap((campaigns) => from(campaigns)),
-      concatMap((campaign) => this.deleteCampaign(campaign.id as number)),
-      toArray(),
-      switchMap(() => this.plotsEndpoint.delete(id)),
-    );
-
-  /**
-   * Deletes a campaign with its cost ledger.
-   *
-   * @remarks
-   * The RESTful API deletes them in cascade with the plot; the fake API does
-   * not, so the facade does it to avoid orphan campaigns.
-   */
-  private deleteCampaign = (campaignId: number): Observable<void> =>
-    this.ledgersEndpoint.getByCampaign(campaignId).pipe(
-      switchMap((ledger) => (ledger ? this.ledgersEndpoint.delete(ledger.id) : of(undefined))),
-      switchMap(() => this.campaignsEndpoint.delete(campaignId)),
-    );
-
-  /** Loads a canonical plot referenced by a cooperative membership. */
-  getPlotById = (id: number): Observable<FieldPlot> => this.plotsEndpoint.getById(id);
-
-  /** Ignores stale membership references to plots that have been deleted. */
-  getPlotsByIds = (ids: number[]): Observable<FieldPlot[]> =>
-    this.plotsEndpoint.getAll().pipe(map(plots => plots.filter(plot => ids.includes(plot.id as number))));
-
-  // ---------- Crop campaigns ----------
+  deletePlot = (id: number): Observable<void> => this.plotsEndpoint.delete(id);
 
   /**
    * Retrieves the campaigns of one plot.
@@ -127,7 +86,20 @@ export class FieldManagementApi extends BaseApi {
   updateCampaign = (campaign: CropCampaign): Observable<CropCampaign> =>
     this.campaignsEndpoint.update(campaign, campaign.id);
 
-  // ---------- Cost ledgers ----------
+  /**
+   * Deletes a campaign by ID.
+   * @param id - The ID of the campaign to delete.
+   * @returns An Observable of void.
+   */
+  deleteCampaign = (id: number): Observable<void> => this.campaignsEndpoint.delete(id);
+
+  /**
+   * Downloads the cost report of a campaign.
+   * @param campaignId - Campaign of the report.
+   * @returns An Observable of the report file.
+   */
+  downloadCostReport = (campaignId: number): Observable<Blob> =>
+    this.campaignsEndpoint.getCostReport(campaignId);
 
   /**
    * Retrieves the cost ledger of one campaign.
@@ -138,13 +110,14 @@ export class FieldManagementApi extends BaseApi {
     this.ledgersEndpoint.getByCampaign(campaignId);
 
   /**
-   * Retrieves a cost ledger by ID (used to synchronize the offline expenses).
-   * @param id - Ledger identifier.
+   * Retrieves a single cost ledger by ID.
+   * @param id - The ID of the ledger.
+   * @returns An Observable of the CampaignLedger object.
    */
   getLedgerById = (id: number): Observable<CampaignLedger> => this.ledgersEndpoint.getById(id);
 
   /**
-   * Creates the cost ledger of a campaign.
+   * Creates a new cost ledger.
    * @param ledger - The ledger to create.
    * @returns An Observable of the created CampaignLedger object.
    */
@@ -152,24 +125,17 @@ export class FieldManagementApi extends BaseApi {
     this.ledgersEndpoint.create(ledger);
 
   /**
-   * Saves a ledger with its expenses and expected yield.
-   * @param ledger - The ledger to save.
+   * Updates an existing cost ledger.
+   * @param ledger - The ledger to update.
    * @returns An Observable of the updated CampaignLedger object.
    */
   updateLedger = (ledger: CampaignLedger): Observable<CampaignLedger> =>
     this.ledgersEndpoint.update(ledger, ledger.id);
 
   /**
-   * Builds the cost report of a campaign.
-   *
-   * @remarks
-   * With the RESTful API this becomes `GET /campaign-ledgers/{id}/report` (PDF).
-   *
-   * @returns An Observable of the report file.
+   * Deletes a cost ledger by ID.
+   * @param id - The ID of the ledger to delete.
+   * @returns An Observable of void.
    */
-  exportCostReport = (
-    plot: FieldPlot,
-    campaign: CropCampaign,
-    ledger: CampaignLedger,
-  ): Observable<ExportedFile> => of(this.costReportExporter.export(plot, campaign, ledger));
+  deleteLedger = (id: number): Observable<void> => this.ledgersEndpoint.delete(id);
 }

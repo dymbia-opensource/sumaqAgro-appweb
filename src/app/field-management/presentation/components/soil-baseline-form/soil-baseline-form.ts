@@ -7,8 +7,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { TranslatePipe } from '@ngx-translate/core';
 import { toApiDate } from '../../../../shared/infrastructure/api-date';
-import { SoilBaseline } from '../../../domain/model/entities/soil-baseline';
-import { SoilTexture } from '../../../domain/model/entities/soil-texture';
+import { SoilBaseline, SoilTexture } from '../../../domain/model/entities/field-plot.entity';
 
 /** Data typed by the producer from the soil analysis. */
 export interface SoilBaselineData {

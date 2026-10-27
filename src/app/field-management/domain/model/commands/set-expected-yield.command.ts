@@ -1,4 +1,4 @@
-import { YieldUnit } from '../entities/yield-unit';
+import { YieldUnit } from '../entities/campaign-ledger.entity';
 
 /**
  * Sets the yield the producer expects to harvest.

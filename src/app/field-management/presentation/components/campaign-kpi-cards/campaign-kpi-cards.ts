@@ -1,5 +1,6 @@
 import { DatePipe, DecimalPipe } from '@angular/common';
-import { Component, computed, input } from '@angular/core';
+import { Component, computed, input, inject } from '@angular/core';
+import { FieldManagementStore } from '../../../application/field-management.store';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
@@ -10,7 +11,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { SatelliteObservation } from '../../../../crop-health/domain/model/entities/satellite-observation.entity';
 import { CampaignLedger } from '../../../domain/model/entities/campaign-ledger.entity';
 import { CropCampaign } from '../../../domain/model/entities/crop-campaign.entity';
-import { ExpenseCategory } from '../../../domain/model/entities/expense-category';
+import { ExpenseCategory } from '../../../domain/model/entities/expense-entry.entity';
 
 /** KPI cards of the dashboard: leaf health, total spend and breakeven price. */
 @Component({
@@ -30,6 +31,8 @@ import { ExpenseCategory } from '../../../domain/model/entities/expense-category
   styleUrl: './campaign-kpi-cards.css',
 })
 export class CampaignKpiCards {
+  protected readonly store = inject(FieldManagementStore);
+
   /** Active campaign of the selected plot. */
   readonly campaign = input<CropCampaign>();
 
@@ -51,7 +54,7 @@ export class CampaignKpiCards {
     if (!ledger) return [];
     return Object.values(ExpenseCategory).map((category) => ({
       label: `field-management.expense-category.${category}`,
-      percentage: ledger.percentageByCategory(category),
+      percentage: this.store.percentageByCategory(ledger, category),
     }));
   });
 }

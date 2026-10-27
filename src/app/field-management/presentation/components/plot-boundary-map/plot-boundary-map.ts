@@ -17,9 +17,80 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { TranslatePipe } from '@ngx-translate/core';
 import * as L from 'leaflet';
-import { FieldPlot } from '../../../domain/model/entities/field-plot.entity';
-import { GeoCoordinate } from '../../../domain/model/entities/geo-coordinate';
+import { GeoCoordinate } from '../../../domain/model/entities/field-plot.entity';
 import { PolygonStatus } from '../boundary-summary-panel/boundary-summary-panel';
+
+/** Minimum number of vertices of a polygon. */
+export const MINIMUM_VERTICES = 3;
+
+/**
+ * Area of a GPS polygon in hectares, with the shoelace formula.
+ *
+ * @remarks
+ * The coordinates are projected to meters around the center of the polygon,
+ * which is precise enough for the size of a farm plot.
+ *
+ * @param coordinates - Vertices of the polygon, in order.
+ */
+export function polygonAreaHectares(coordinates: GeoCoordinate[]): number {
+  if (coordinates.length < MINIMUM_VERTICES) return 0;
+  const meanLatitude =
+    coordinates.reduce((sum, vertex) => sum + vertex.latitude, 0) / coordinates.length;
+  const metersPerDegreeLatitude = 110_540;
+  const metersPerDegreeLongitude = 111_320 * Math.cos((meanLatitude * Math.PI) / 180);
+  const points = coordinates.map((vertex) => ({
+    x: vertex.longitude * metersPerDegreeLongitude,
+    y: vertex.latitude * metersPerDegreeLatitude,
+  }));
+  const doubleArea = points.reduce((sum, point, index) => {
+    const next = points[(index + 1) % points.length];
+    return sum + point.x * next.y - next.x * point.y;
+  }, 0);
+  return Math.abs(doubleArea) / 2 / 10_000;
+}
+
+/**
+ * Tells whether the sides of a polygon do not cross each other (US-29).
+ * @param coordinates - Vertices of the polygon, in order.
+ */
+export function isSimplePolygon(coordinates: GeoCoordinate[]): boolean {
+  const total = coordinates.length;
+  for (let i = 0; i < total; i++) {
+    for (let j = i + 1; j < total; j++) {
+      const adjacent = j === i + 1 || (i === 0 && j === total - 1);
+      if (
+        !adjacent &&
+        segmentsCross(
+          coordinates[i],
+          coordinates[(i + 1) % total],
+          coordinates[j],
+          coordinates[(j + 1) % total],
+        )
+      ) {
+        return false;
+      }
+    }
+  }
+  return true;
+}
+
+/** `true` when the segment a-b crosses the segment c-d. */
+function segmentsCross(
+  a: GeoCoordinate,
+  b: GeoCoordinate,
+  c: GeoCoordinate,
+  d: GeoCoordinate,
+): boolean {
+  const orientation = (p: GeoCoordinate, q: GeoCoordinate, r: GeoCoordinate) =>
+    Math.sign(
+      (q.longitude - p.longitude) * (r.latitude - p.latitude) -
+        (q.latitude - p.latitude) * (r.longitude - p.longitude),
+    );
+  return (
+    orientation(a, b, c) * orientation(a, b, d) < 0 &&
+    orientation(c, d, a) * orientation(c, d, b) < 0
+  );
+}
 
 /** Center used when the plot has no polygon yet (Valle del Mantaro, Junín). */
 const DEFAULT_CENTER: L.LatLngExpression = [-12.0725, -75.2121];
@@ -79,7 +150,7 @@ export class PlotBoundaryMap implements AfterViewInit, OnDestroy {
   /** Message of the coordinate search or of the GPS location. */
   readonly searchMessage = signal<string | null>(null);
 
-  protected readonly minimumVertices = FieldPlot.MINIMUM_VERTICES;
+  protected readonly minimumVertices = MINIMUM_VERTICES;
 
   constructor() {
     // Redraw the polygon every time a vertex changes.
@@ -166,7 +237,7 @@ export class PlotBoundaryMap implements AfterViewInit, OnDestroy {
     const color = status === 'CROSSED' ? '#e53935' : '#4caf50';
     if (points.length >= 2) {
       const shape =
-        points.length >= FieldPlot.MINIMUM_VERTICES
+        points.length >= MINIMUM_VERTICES
           ? L.polygon(points, { color, weight: 3, fillOpacity: 0.3 })
           : L.polyline(points, { color, weight: 3 });
       shape.addTo(this.drawingLayer);

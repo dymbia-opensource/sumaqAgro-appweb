@@ -1,5 +1,6 @@
 import { DatePipe, DecimalPipe } from '@angular/common';
-import { Component, input } from '@angular/core';
+import { Component, input, inject } from '@angular/core';
+import { FieldManagementStore } from '../../../application/field-management.store';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
@@ -15,6 +16,8 @@ import { FieldPlot } from '../../../domain/model/entities/field-plot.entity';
   styleUrl: './plot-cadastre-card.css',
 })
 export class PlotCadastreCard {
+  protected readonly store = inject(FieldManagementStore);
+
   readonly plot = input.required<FieldPlot>();
 
   /** Current campaign of the plot, if it has one. */

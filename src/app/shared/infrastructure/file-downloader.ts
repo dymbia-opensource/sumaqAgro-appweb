@@ -1,6 +1,11 @@
 import { DOCUMENT } from '@angular/common';
 import { inject, Injectable } from '@angular/core';
-import { ExportedFile } from './campaign-cost-report.exporter';
+
+/** File ready to be saved on the device. */
+export interface ExportedFile {
+  fileName: string;
+  content: Blob;
+}
 
 /**
  * Saves an exported file on the device, through the download of the browser.

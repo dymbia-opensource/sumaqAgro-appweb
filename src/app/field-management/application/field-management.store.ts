@@ -8,7 +8,6 @@ import {
   signal,
   untracked,
 } from '@angular/core';
-import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import {
   catchError,
   tap,
@@ -19,22 +18,18 @@ import {
   Observable,
   of,
   retry,
-  startWith,
-  Subject,
   Subscription,
   switchMap,
   throwError,
+  toArray,
 } from 'rxjs';
-import { SatelliteObservation } from '../../crop-health/domain/model/entities/satellite-observation.entity';
-import { CropHealthApi } from '../../crop-health/infrastructure/crop-health-api';
+import { OfflineSyncService } from '../../shared/infrastructure/offline/offline-sync.service';
+import { PendingOperationType } from '../../shared/infrastructure/offline/pending-operation';
 import { CurrentSessionService } from '../../shared/application/current-session.service';
 import { PlotSelectionService } from '../../shared/application/plot-selection.service';
 import { CloseCropCampaignCommand } from '../domain/model/commands/close-crop-campaign.command';
 import { DelineatePlotBoundaryCommand } from '../domain/model/commands/delineate-plot-boundary.command';
 import { ExportCampaignCostReportCommand } from '../domain/model/commands/export-campaign-cost-report.command';
-import { LinkPlotPolygonCommand } from '../domain/model/commands/link-plot-polygon.command';
-import { OpenCampaignLedgerCommand } from '../domain/model/commands/open-campaign-ledger.command';
-import { RecalculateBreakevenPriceCommand } from '../domain/model/commands/recalculate-breakeven-price.command';
 import { RecordActualYieldCommand } from '../domain/model/commands/record-actual-yield.command';
 import { RecordDailyLaborExpenseCommand } from '../domain/model/commands/record-daily-labor-expense.command';
 import { RecordInputExpenseCommand } from '../domain/model/commands/record-input-expense.command';
@@ -45,18 +40,18 @@ import { SelectCropTypeCommand } from '../domain/model/commands/select-crop-type
 import { SetExpectedYieldCommand } from '../domain/model/commands/set-expected-yield.command';
 import { SpecifySeedVarietyCommand } from '../domain/model/commands/specify-seed-variety.command';
 import { StartCropCampaignCommand } from '../domain/model/commands/start-crop-campaign.command';
-import { CampaignLedger } from '../domain/model/entities/campaign-ledger.entity';
-import { CropCampaign } from '../domain/model/entities/crop-campaign.entity';
-import { FieldPlot } from '../domain/model/entities/field-plot.entity';
-import { FieldManagementEvent } from '../domain/model/events/field-management.event';
-import { CampaignSummary } from '../domain/model/read-models/campaign-summary';
+import { Money } from '../../shared/domain/model/money';
+import { CampaignLedger, YieldUnit } from '../domain/model/entities/campaign-ledger.entity';
+import { CampaignStatus, CropCampaign, CropType } from '../domain/model/entities/crop-campaign.entity';
+import { ExpenseCategory, ExpenseEntry } from '../domain/model/entities/expense-entry.entity';
+import { FieldPlot, PlotStatus, SoilBaseline } from '../domain/model/entities/field-plot.entity';
 import { FieldManagementApi } from '../infrastructure/field-management-api';
-import { NetworkStatus } from '../infrastructure/offline/network-status';
 import {
   ExpenseCommand,
-  OfflineExpenseQueue,
-} from '../infrastructure/offline/offline-expense-queue';
-import { FileDownloader } from '../infrastructure/reports/file-downloader';
+  PendingExpenseAssembler,
+  PendingExpensePayload,
+} from '../infrastructure/assemblers/pending-expense-assembler';
+import { FileDownloader } from '../../shared/infrastructure/file-downloader';
 
 /**
  * Plots included in the Seed plan (demo quota until subscriptions are implemented).
@@ -86,15 +81,6 @@ export interface CropCampaignSetup {
   expectedYield?: SetExpectedYieldCommand;
 }
 
-/** Satellite observations of the selected plot and the state of their request. */
-interface VegetationState {
-  observations: SatelliteObservation[];
-  loading: boolean;
-  error: boolean;
-}
-
-const EMPTY_VEGETATION: VegetationState = { observations: [], loading: false, error: false };
-
 /**
  * Holds the Field Management state and coordinates its application behavior.
  *
@@ -110,10 +96,9 @@ const EMPTY_VEGETATION: VegetationState = { observations: [], loading: false, er
 export class FieldManagementStore {
   private readonly fieldManagementApi = inject(FieldManagementApi);
   private readonly session = inject(CurrentSessionService);
-  private readonly cropHealthApi = inject(CropHealthApi);
   private readonly plotSelection = inject(PlotSelectionService);
-  private readonly network = inject(NetworkStatus);
-  private readonly offlineQueue = inject(OfflineExpenseQueue);
+  private readonly offlineSync = inject(OfflineSyncService);
+  private readonly pendingExpenses = new PendingExpenseAssembler();
   private readonly fileDownloader = inject(FileDownloader);
 
   private readonly plotsSignal = signal<FieldPlot[]>([]);
@@ -123,7 +108,6 @@ export class FieldManagementStore {
   private readonly loadingSignal = signal<boolean>(false);
   private readonly errorSignal = signal<string | null>(null);
   private readonly syncingSignal = signal(false);
-  private readonly domainEventsSubject = new Subject<FieldManagementEvent>();
   private plotsLoad?: Subscription;
   private plotMutation?: Subscription;
   private plotRevision = 0;
@@ -147,19 +131,11 @@ export class FieldManagementStore {
   /** i18n key of the last error, or `null`. */
   readonly error = this.errorSignal.asReadonly();
 
-  /**
-   * Domain events confirmed by the API, for the policies of other contexts
-   * (for example, Crop Health schedules the satellite monitoring with
-   * `SowingDateRecorded`, policy P4).
-   */
-  readonly domainEvents$: Observable<FieldManagementEvent> =
-    this.domainEventsSubject.asObservable();
-
   /** `true` while the device has connection. */
-  readonly online = this.network.online;
+  readonly online = this.offlineSync.isOnline;
 
   /** Expenses recorded offline that are waiting to be synchronized. */
-  readonly pendingExpenseCount = this.offlineQueue.size;
+  readonly pendingExpenseCount = this.offlineSync.pendingCountOf(PendingOperationType.FIELD_EXPENSE);
 
   /** `true` while the offline expenses are being synchronized. */
   readonly syncing = this.syncingSignal.asReadonly();
@@ -222,7 +198,7 @@ export class FieldManagementStore {
 
   /** `true` when the selected plot has a campaign in progress. */
   readonly hasCampaignInProgress = computed(() =>
-    this.campaigns().some((campaign) => campaign.isActive()),
+    this.campaigns().some((campaign) => this.isActive(campaign)),
   );
 
   /** Cost ledger of the active campaign of the selected plot, or `null`. */
@@ -231,30 +207,8 @@ export class FieldManagementStore {
     return campaign ? (this.ledgersByCampaignSignal().get(campaign.id as number) ?? null) : null;
   });
 
-  /** `CampaignSummary` read model of every campaign of the selected plot, the most recent first. */
-  readonly campaignSummaries = computed(() => {
-    const plot = this.selectedPlot();
-    if (!plot) return [];
-    const ledgers = this.ledgersByCampaignSignal();
-    return [...this.campaigns()]
-      .sort((a, b) => (b.id as number) - (a.id as number))
-      .map((campaign) =>
-        CampaignSummary.of(campaign, ledgers.get(campaign.id as number) ?? null, plot.areaHectares),
-      );
-  });
-
-  // NDVI of the selected plot: the observations belong to Crop Health and
-  // are read through its API facade, reloading when the selected plot changes.
-  private readonly vegetation = toSignal(
-    toObservable(this.selectedPlot).pipe(switchMap((plot) => this.loadObservationsOf(plot))),
-    { initialValue: EMPTY_VEGETATION },
-  );
-
-  /** Satellite observations of the selected plot, oldest first. */
-  readonly observations = computed(() => this.vegetation().observations);
-  readonly latestObservation = computed(() => this.observations().at(-1));
-  readonly observationsLoading = computed(() => this.vegetation().loading);
-  readonly observationsError = computed(() => this.vegetation().error);
+  /** Cost ledger of each campaign of the producer, by campaign identifier. */
+  readonly ledgersByCampaign = this.ledgersByCampaignSignal.asReadonly();
 
   /**
    * Creates an instance of FieldManagementStore. It loads the plots of the
@@ -268,7 +222,7 @@ export class FieldManagementStore {
       untracked(() => (userId === null ? this.clearState() : this.loadMyPlots(userId)));
     });
     effect(() => {
-      if (this.network.online() && this.offlineQueue.size() > 0) {
+      if (this.offlineSync.isOnline() && this.pendingExpenseCount() > 0) {
         untracked(() => this.syncPendingExpenses());
       }
     });
@@ -291,13 +245,6 @@ export class FieldManagementStore {
    */
   getCurrentCampaignOf = (plotId: number): Signal<CropCampaign | undefined> =>
     computed(() => FieldManagementStore.currentOf(this.campaignsByPlotSignal().get(plotId) ?? []));
-
-  /**
-   * Selects the campaigns of a plot.
-   * @param plotId - Plot identifier.
-   */
-  getCampaignsOf = (plotId: number): Signal<CropCampaign[]> =>
-    computed(() => this.campaignsByPlotSignal().get(plotId) ?? []);
 
   /**
    * Loads the plots of the producer with their campaigns, and keeps (or selects) the shown plot.
@@ -418,13 +365,18 @@ export class FieldManagementStore {
     }
     let plot: FieldPlot;
     try {
-      plot = FieldPlot.register(command);
+      plot = new FieldPlot({
+        id: 0,
+        ownerUserId: command.ownerUserId,
+        name: command.name.trim(),
+        region: command.region.trim(),
+        areaHectares: command.declaredAreaHectares,
+      });
     } catch (error) {
       this.fail(error, 'field-management.errors.register-plot');
       return;
     }
     const revision = this.plotRevision;
-    const events = plot.pullDomainEvents();
     let created = false;
     let quotaChecked = false;
     let creationStarted = false;
@@ -467,7 +419,7 @@ export class FieldManagementStore {
         ),
       )
       .subscribe({
-        next: ({ createdPlot, campaign, ledger, events: campaignEvents }) => {
+        next: ({ createdPlot, campaign, ledger }) => {
           if (!this.isPlotParticipant(ownerUserId, revision)) return;
           this.campaignsByPlotSignal.update((campaigns) =>
             new Map(campaigns).set(createdPlot.id as number, [campaign]),
@@ -475,7 +427,6 @@ export class FieldManagementStore {
           this.setLedger(campaign.id as number, ledger);
           this.plotMutationBusy.set(false);
           this.loadingSignal.set(false);
-          this.publish([...events, ...campaignEvents]);
           this.selectPlot(createdPlot.id as number);
           onRegistered?.(createdPlot);
         },
@@ -509,50 +460,26 @@ export class FieldManagementStore {
   ): void => {
     const current = this.findPlot(command.plotId);
     if (!current) return;
-    const plot = current.clone();
+    const plot = this.copyPlot(current);
     try {
-      plot.delineateBoundary(command.coordinates);
+      plot.boundary = [...command.coordinates];
+      plot.areaHectares = command.areaHectares;
     } catch (error) {
       this.fail(error, 'field-management.errors.invalid-polygon');
       return;
     }
     this.startLoading();
-    // Policy P3: Whenever PlotBoundaryDelineated Then LinkPlotPolygon.
     this.fieldManagementApi
-      .registerPolygonInAgroMonitoring(plot)
-      .pipe(
-        map((agroMonitoringPolygonId) => {
-          plot.linkPolygon(agroMonitoringPolygonId);
-          return plot.pullDomainEvents();
-        }),
-        switchMap((events) =>
-          this.fieldManagementApi.updateBoundary(plot).pipe(
-            retry(2),
-            map((updated) => ({ updated, events })),
-          ),
-        ),
-      )
+      .updatePlot(plot)
+      .pipe(retry(2))
       .subscribe({
-        next: ({ updated, events }) => {
+        next: (updated) => {
           this.replacePlot(updated);
           this.loadingSignal.set(false);
-          this.publish(events);
           onDelineated?.(updated);
         },
         error: (error) => this.fail(error, 'field-management.errors.save-polygon'),
       });
-  };
-
-  /**
-   * Links (again) the polygon of a plot to AgroMonitoring.
-   * @param command - Plot and polygon identifier in AgroMonitoring.
-   */
-  linkPlotPolygon = (command: LinkPlotPolygonCommand): void => {
-    this.savePlot(
-      command.plotId,
-      (plot) => plot.linkPolygon(command.agroMonitoringPolygonId),
-      'field-management.errors.save-polygon',
-    );
   };
 
   /**
@@ -563,7 +490,14 @@ export class FieldManagementStore {
   recordSoilBaseline = (command: RecordSoilBaselineCommand, onRecorded?: () => void): void => {
     this.savePlot(
       command.plotId,
-      (plot) => plot.recordSoilBaseline(command),
+      (plot) => {
+        plot.soilBaseline = new SoilBaseline({
+          ph: command.ph,
+          texture: command.texture,
+          organicMatterPercentage: command.organicMatterPercentage,
+          recordedAt: command.recordedAt,
+        });
+      },
       'field-management.errors.save-soil',
       onRecorded,
     );
@@ -599,7 +533,7 @@ export class FieldManagementStore {
             current.ownerUserId !== ownerUserId
           )
             return throwError(() => new Error('field-management.errors.plot-not-owned'));
-          return this.fieldManagementApi.deletePlot(id);
+          return this.deletePlotWithCampaigns(id);
         }),
       )
       .subscribe({
@@ -653,13 +587,12 @@ export class FieldManagementStore {
       setup,
       this.campaignsByPlotSignal().get(plotId) ?? [],
     ).subscribe({
-      next: ({ campaign, ledger, events }) => {
+      next: ({ campaign, ledger }) => {
         this.campaignsByPlotSignal.update((campaigns) =>
           new Map(campaigns).set(plotId, [...(campaigns.get(plotId) ?? []), campaign]),
         );
         this.setLedger(campaign.id as number, ledger);
         this.loadingSignal.set(false);
-        this.publish(events);
         onStarted?.(campaign);
       },
       error: (error) => this.fail(error, 'field-management.errors.start-campaign'),
@@ -680,19 +613,17 @@ export class FieldManagementStore {
   ): void => {
     const current = this.findCampaign(command.campaignId);
     if (!current) return;
-    const campaign = current.clone();
+    const campaign = this.copyCampaign(current);
     const currentLedger = this.ledgersByCampaignSignal().get(command.campaignId) ?? null;
-    const ledger = currentLedger?.clone() ?? null;
+    const ledger = currentLedger ? this.copyLedger(currentLedger) : null;
     try {
-      campaign.close();
-      if (ledger && actualYield)
-        ledger.recordActualYield(actualYield.actualYield, actualYield.unit);
-      ledger?.freeze();
+      campaign.status = CampaignStatus.FINISHED;
+      if (ledger && actualYield) ledger.actualYield = actualYield.actualYield;
+      if (ledger) ledger.frozen = true;
     } catch (error) {
       this.fail(error, 'field-management.errors.close-campaign');
       return;
     }
-    const events = [...campaign.pullDomainEvents(), ...(ledger?.pullDomainEvents() ?? [])];
     this.startLoading();
     this.fieldManagementApi
       .updateCampaign(campaign)
@@ -710,7 +641,6 @@ export class FieldManagementStore {
           this.replaceCampaign(savedCampaign);
           if (savedLedger) this.setLedger(savedCampaign.id as number, savedLedger);
           this.loadingSignal.set(false);
-          this.publish(events);
           onClosed?.();
         },
         error: (error) => this.fail(error, 'field-management.errors.close-campaign'),
@@ -727,13 +657,13 @@ export class FieldManagementStore {
    * it is synchronized when the connection comes back.
    */
   recordExpense = (command: RecordExpenseCommand, onRecorded?: () => void): void => {
-    if (!this.network.online()) {
+    if (!this.offlineSync.isOnline()) {
       this.recordOffline(command, onRecorded);
       return;
     }
     this.saveLedger(
       command.ledgerId,
-      (ledger) => FieldManagementStore.applyExpense(ledger, command),
+      (ledger) => this.applyExpense(ledger, command),
       'field-management.errors.record-expense',
       onRecorded,
       () => this.recordOffline(command, onRecorded),
@@ -744,7 +674,10 @@ export class FieldManagementStore {
   setExpectedYield = (command: SetExpectedYieldCommand): void => {
     this.saveLedger(
       command.ledgerId,
-      (ledger) => ledger.setExpectedYield(command.expectedYield, command.unit),
+      (ledger) => {
+        ledger.expectedYield = command.expectedYield;
+        ledger.yieldUnit = command.unit;
+      },
       'field-management.errors.save-yield',
     );
   };
@@ -757,22 +690,12 @@ export class FieldManagementStore {
   recordActualYield = (command: RecordActualYieldCommand, onRecorded?: () => void): void => {
     this.saveLedger(
       command.ledgerId,
-      (ledger) => ledger.recordActualYield(command.actualYield, command.unit),
+      (ledger) => {
+        ledger.actualYield = command.actualYield;
+      },
       'field-management.errors.save-actual-yield',
       onRecorded,
     );
-  };
-
-  /**
-   * Calculates again the total investment and the breakeven price of a ledger
-   * and publishes the result. Nothing is saved: the price is derived from the
-   * expenses and the yield.
-   */
-  recalculateBreakevenPrice = (command: RecalculateBreakevenPriceCommand): void => {
-    const ledger = this.findLedger(command.ledgerId)?.clone();
-    if (!ledger) return;
-    ledger.recalculateBreakevenPrice();
-    this.publish(ledger.pullDomainEvents());
   };
 
   /**
@@ -781,19 +704,13 @@ export class FieldManagementStore {
    */
   exportCostReport = (command: ExportCampaignCostReportCommand): void => {
     const campaign = this.findCampaign(command.campaignId);
-    const plot = campaign ? this.findPlot(campaign.plotId) : undefined;
-    const ledger = this.ledgersByCampaignSignal().get(command.campaignId)?.clone();
-    if (!campaign || !plot || !ledger) {
+    if (!campaign) {
       this.errorSignal.set('field-management.errors.export-report');
       return;
     }
-    ledger.exportCostReport();
-    const events = ledger.pullDomainEvents();
-    this.fieldManagementApi.exportCostReport(plot, campaign, ledger).subscribe({
-      next: (file) => {
-        this.fileDownloader.save(file);
-        this.publish(events);
-      },
+    this.fieldManagementApi.downloadCostReport(command.campaignId).subscribe({
+      next: (content) =>
+        this.fileDownloader.save({ fileName: `cost-report-${campaign.season}.pdf`, content }),
       error: (error) => this.fail(error, 'field-management.errors.export-report'),
     });
   };
@@ -803,22 +720,24 @@ export class FieldManagementStore {
    * The ledger ignores the expenses that were already saved.
    */
   syncPendingExpenses = (): void => {
-    if (this.syncingSignal() || !this.network.online()) return;
-    const ledgerIds = this.offlineQueue.pendingLedgerIds();
+    if (this.syncingSignal() || !this.offlineSync.isOnline()) return;
+    const pending = this.offlineSync.pendingOf<PendingExpensePayload>(PendingOperationType.FIELD_EXPENSE);
+    const ledgerIds = [...new Set(pending.map((operation) => operation.payload.ledgerId))];
     if (ledgerIds.length === 0) return;
     this.syncingSignal.set(true);
     from(ledgerIds)
       .pipe(
         concatMap((ledgerId) => {
-          const commands = this.offlineQueue.pendingOf(ledgerId);
+          const commands = pending
+            .filter((operation) => operation.payload.ledgerId === ledgerId)
+            .map(this.pendingExpenses.toCommand);
           return this.fieldManagementApi.getLedgerById(ledgerId).pipe(
             switchMap((saved) => {
-              const ledger = saved.clone();
-              commands.forEach((command) => FieldManagementStore.applyExpense(ledger, command));
-              const events = ledger.pullDomainEvents();
+              const ledger = this.copyLedger(saved);
+              commands.forEach((command) => this.applyExpense(ledger, command));
               return this.fieldManagementApi
                 .updateLedger(ledger)
-                .pipe(map((updated) => ({ updated, events, commands })));
+                .pipe(map((updated) => ({ updated, commands })));
             }),
             // A ledger that fails (for example, it was deleted) does not stop the others.
             catchError((error) => {
@@ -831,15 +750,105 @@ export class FieldManagementStore {
       .subscribe({
         next: (result) => {
           if (!result) return;
-          this.offlineQueue.remove(result.commands.map((command) => command.clientSyncId));
+          this.offlineSync.remove(result.commands.map((command) => command.clientSyncId));
           this.setLedger(result.updated.campaignId, result.updated);
-          this.publish(result.events);
         },
         complete: () => this.syncingSignal.set(false),
       });
   };
 
+  // ---------- Figures ----------
+  // The fake API does not calculate them; the views read them from here.
+
+  /** `true` while the campaign is in progress. */
+  isActive = (campaign: CropCampaign): boolean => campaign.status === CampaignStatus.IN_PROGRESS;
+
+  /** `true` when the plot is monitored by satellite. */
+  isMonitored = (plot: FieldPlot): boolean => plot.status === PlotStatus.ACTIVE_MONITORING;
+
+  /** Unit of the yield of a crop: sacks for potato and quintals for coffee. */
+  yieldUnitOf = (cropType: CropType): YieldUnit =>
+    cropType === CropType.SPECIALTY_COFFEE ? YieldUnit.QUINTAL : YieldUnit.SACK;
+
+  /** Agricultural season of a date: `YYYY-I` from January to June, `YYYY-II` from July. */
+  seasonOf = (date: Date): string => `${date.getFullYear()}-${date.getMonth() < 6 ? 'I' : 'II'}`;
+
+  /** Expenses of a ledger, optionally of one category, the most recent first. */
+  expenseHistory = (ledger: CampaignLedger, category?: ExpenseCategory | null): ExpenseEntry[] =>
+    [...ledger.entries]
+      .sort((a, b) => b.expenseDate.getTime() - a.expenseDate.getTime())
+      .filter((entry) => !category || entry.category === category);
+
+  /** Total of one expense: quantity × unit price. */
+  expenseTotal = (entry: ExpenseEntry): Money => entry.unitPrice.multiply(entry.quantity);
+
+  /** Sum of all the expenses of the campaign. */
+  totalInvestment = (ledger: CampaignLedger): Money =>
+    ledger.entries.reduce((sum, entry) => sum.add(this.expenseTotal(entry)), new Money(0, ledger.currency));
+
+  /** Sum of the expenses of one category. */
+  totalByCategory = (ledger: CampaignLedger, category: ExpenseCategory): Money =>
+    ledger.entries
+      .filter((entry) => entry.category === category)
+      .reduce((sum, entry) => sum.add(this.expenseTotal(entry)), new Money(0, ledger.currency));
+
+  /** Share of one category in the total investment, from 0 to 100. */
+  percentageByCategory = (ledger: CampaignLedger, category: ExpenseCategory): number => {
+    const total = this.totalInvestment(ledger).amount;
+    return total === 0 ? 0 : (this.totalByCategory(ledger, category).amount / total) * 100;
+  };
+
+  /** Yield used by the breakeven price: the actual one if known, otherwise the expected one. */
+  referenceYield = (ledger: CampaignLedger): number => ledger.actualYield ?? ledger.expectedYield;
+
+  /** Minimum price per unit to recover the investment: total investment ÷ yield. */
+  breakevenPrice = (ledger: CampaignLedger): Money => {
+    const yieldQuantity = this.referenceYield(ledger);
+    return yieldQuantity > 0
+      ? this.totalInvestment(ledger).multiply(1 / yieldQuantity)
+      : new Money(0, ledger.currency);
+  };
+
+  /** Breakeven price plus a profit margin, rounded up to the next whole unit. */
+  suggestedPrice = (ledger: CampaignLedger, marginPercentage = 0): Money =>
+    new Money(Math.ceil(this.breakevenPrice(ledger).amount * (1 + marginPercentage / 100)), ledger.currency);
+
+  /** Investment per hectare of the plot, of one category or of all of them. */
+  costPerHectare = (ledger: CampaignLedger, areaHectares: number, category?: ExpenseCategory): Money => {
+    if (areaHectares <= 0) return new Money(0, ledger.currency);
+    const total = category ? this.totalByCategory(ledger, category) : this.totalInvestment(ledger);
+    return total.multiply(1 / areaHectares);
+  };
+
+  /** Yield per hectare of the plot. */
+  yieldPerHectare = (ledger: CampaignLedger, areaHectares: number): number =>
+    areaHectares <= 0 ? 0 : this.referenceYield(ledger) / areaHectares;
+
   // ---------- Helpers ----------
+
+  /**
+   * Deletes a plot with its campaigns and cost ledgers, one request at a time.
+   *
+   * @remarks
+   * The RESTful API deletes them in cascade; the fake API does not, so the
+   * store does it to avoid orphan campaigns. json-server rewrites its file on
+   * every change, so the requests go one after the other.
+   */
+  private deletePlotWithCampaigns(plotId: number): Observable<void> {
+    return this.fieldManagementApi.getCampaignsByPlot(plotId).pipe(
+      switchMap((campaigns) => from(campaigns)),
+      concatMap((campaign) =>
+        this.fieldManagementApi.getLedgerByCampaign(campaign.id as number).pipe(
+          switchMap((ledger) =>
+            ledger ? this.fieldManagementApi.deleteLedger(ledger.id as number) : of(undefined),
+          ),
+          switchMap(() => this.fieldManagementApi.deleteCampaign(campaign.id as number)),
+        ),
+      ),
+      toArray(),
+      switchMap(() => this.fieldManagementApi.deletePlot(plotId)),
+    );
+  }
 
   /**
    * Starts a campaign, applies its setup commands and opens its ledger (policy P8).
@@ -855,44 +864,38 @@ export class FieldManagementStore {
   ): Observable<{
     campaign: CropCampaign;
     ledger: CampaignLedger;
-    events: FieldManagementEvent[];
   }> {
     let campaign: CropCampaign;
     try {
-      campaign = CropCampaign.start(
-        new StartCropCampaignCommand({ plotId, season: setup.start.season }),
-        plotCampaigns,
-      );
-      campaign.selectCropType(setup.cropType.cropType);
-      campaign.specifySeedVariety(setup.seedVariety.varietyName, setup.seedVariety.custom);
-      campaign.recordSowingDate(setup.sowingDate.sowingDate);
+      campaign = new CropCampaign({
+        id: 0,
+        plotId,
+        season: setup.start.season.trim(),
+        cropType: setup.cropType.cropType,
+        seedVariety: setup.seedVariety.varietyName.trim(),
+        customSeedVariety: setup.seedVariety.custom,
+        sowingDate: setup.sowingDate.sowingDate,
+      });
     } catch (error) {
       return throwError(() => error);
     }
-    const campaignEvents = campaign.pullDomainEvents();
     return this.fieldManagementApi.createCampaign(campaign).pipe(
       switchMap((created) => {
         // Policy P8: Whenever CropCampaignStarted Then OpenCampaignLedger.
-        const ledger = CampaignLedger.open(
-          new OpenCampaignLedgerCommand({
-            campaignId: created.id as number,
-            yieldUnit: CampaignLedger.yieldUnitOf(created.cropType),
-          }),
-        );
+        const ledger = new CampaignLedger({
+          id: 0,
+          campaignId: created.id as number,
+          yieldUnit: this.yieldUnitOf(created.cropType),
+        });
         try {
           if (setup.expectedYield) {
-            ledger.setExpectedYield(setup.expectedYield.expectedYield, ledger.yieldUnit);
+            ledger.expectedYield = setup.expectedYield.expectedYield;
           }
         } catch (error) {
           return throwError(() => error);
         }
-        const ledgerEvents = ledger.pullDomainEvents();
         return this.fieldManagementApi.createLedger(ledger).pipe(
-          map((createdLedger) => ({
-            campaign: created,
-            ledger: createdLedger,
-            events: [...campaignEvents, ...ledgerEvents],
-          })),
+          map((createdLedger) => ({ campaign: created, ledger: createdLedger })),
         );
       }),
     );
@@ -910,14 +913,13 @@ export class FieldManagementStore {
   ): void {
     const current = this.findPlot(plotId);
     if (!current) return;
-    const plot = current.clone();
+    const plot = this.copyPlot(current);
     try {
       change(plot);
     } catch (error) {
       this.fail(error, errorKey);
       return;
     }
-    const events = plot.pullDomainEvents();
     this.startLoading();
     this.fieldManagementApi
       .updatePlot(plot)
@@ -926,7 +928,6 @@ export class FieldManagementStore {
         next: (saved) => {
           this.replacePlot(saved);
           this.loadingSignal.set(false);
-          this.publish(events);
           onSaved?.();
         },
         error: (error) => this.fail(error, errorKey),
@@ -947,14 +948,13 @@ export class FieldManagementStore {
   ): void {
     const current = this.findLedger(ledgerId);
     if (!current) return;
-    const ledger = current.clone();
+    const ledger = this.copyLedger(current);
     try {
       change(ledger);
     } catch (error) {
       this.fail(error, errorKey);
       return;
     }
-    const events = ledger.pullDomainEvents();
     this.startLoading();
     this.fieldManagementApi
       .updateLedger(ledger)
@@ -963,11 +963,10 @@ export class FieldManagementStore {
         next: (saved) => {
           this.setLedger(saved.campaignId, saved);
           this.loadingSignal.set(false);
-          this.publish(events);
           onSaved?.();
         },
         error: (error) => {
-          if (onOffline && !this.network.online()) {
+          if (onOffline && !this.offlineSync.isOnline()) {
             this.loadingSignal.set(false);
             onOffline();
             return;
@@ -981,24 +980,17 @@ export class FieldManagementStore {
   private recordOffline(command: RecordExpenseCommand, onRecorded?: () => void): void {
     const current = this.findLedger(command.ledgerId);
     if (!current) return;
-    const ledger = current.clone();
+    const ledger = this.copyLedger(current);
     try {
-      FieldManagementStore.applyExpense(ledger, command);
+      this.applyExpense(ledger, command);
     } catch (error) {
       this.fail(error, 'field-management.errors.record-expense');
       return;
     }
-    // The events are published when the expense reaches the API.
-    ledger.pullDomainEvents();
-    this.offlineQueue.enqueue(command);
+    this.offlineSync.enqueue(this.pendingExpenses.toOperation(command));
     this.setLedger(ledger.campaignId, ledger);
     this.errorSignal.set(null);
     onRecorded?.();
-  }
-
-  /** Sends each confirmed domain event to the subscribers. */
-  private publish(events: FieldManagementEvent[]): void {
-    events.forEach((event) => this.domainEventsSubject.next(event));
   }
 
   private findPlot(plotId: number): FieldPlot | undefined {
@@ -1038,21 +1030,6 @@ export class FieldManagementStore {
   }
 
   /** A plot without polygon has no satellite observations yet. */
-  private loadObservationsOf(plot: FieldPlot | undefined): Observable<VegetationState> {
-    if (!plot?.hasPolygon()) return of(EMPTY_VEGETATION);
-    return this.cropHealthApi.getObservationsByPlot(plot.id as number).pipe(
-      map((observations) => ({
-        observations: observations
-          .filter((item) => item.plotId === plot.id && item.stressAreaHectares <= plot.areaHectares)
-          .sort((a, b) => Date.parse(a.date) - Date.parse(b.date)),
-        loading: false,
-        error: false,
-      })),
-      startWith({ ...EMPTY_VEGETATION, loading: true }),
-      catchError(() => of({ ...EMPTY_VEGETATION, error: true })),
-    );
-  }
-
   /** Forgets the plots of the previous user (after signing out). */
   private clearState(): void {
     this.plotRevision++;
@@ -1102,16 +1079,87 @@ export class FieldManagementStore {
     this.loadingSignal.set(false);
   }
 
-  /** Sends an expense command to the method of the ledger that handles it. */
-  private static applyExpense(ledger: CampaignLedger, command: RecordExpenseCommand): void {
-    if (command instanceof RecordInputExpenseCommand) ledger.recordInputExpense(command);
+  /**
+   * Adds an expense command to a ledger: inputs (quantity × unit price),
+   * labor (workers × days at the daily wage) or freight (one trip).
+   * An expense already recorded with the same device code is ignored.
+   */
+  private applyExpense(ledger: CampaignLedger, command: RecordExpenseCommand): void {
+    if (command instanceof RecordInputExpenseCommand)
+      this.addExpense(ledger, ExpenseCategory.INPUTS, command.inputName, command.quantity, command.unitPrice, command);
     else if (command instanceof RecordDailyLaborExpenseCommand)
-      ledger.recordDailyLaborExpense(command);
-    else ledger.recordFieldFreightExpense(command);
+      this.addExpense(ledger, ExpenseCategory.LABOR, command.activity, command.workers * command.days, command.dailyWage, command);
+    else this.addExpense(ledger, ExpenseCategory.FREIGHT, command.route, 1, command.cost, command);
+  }
+
+  private addExpense(
+    ledger: CampaignLedger,
+    category: ExpenseCategory,
+    description: string,
+    quantity: number,
+    unitPrice: number,
+    command: RecordExpenseCommand,
+  ): void {
+    if (ledger.entries.some((entry) => entry.clientSyncId === command.clientSyncId)) return;
+    const nextId = Math.max(0, ...ledger.entries.map((entry) => entry.id as number)) + 1;
+    ledger.entries = [
+      ...ledger.entries,
+      new ExpenseEntry({
+        id: nextId,
+        ledgerId: ledger.id as number,
+        category,
+        description: description.trim(),
+        quantity,
+        unitPrice: new Money(unitPrice, ledger.currency),
+        expenseDate: command.expenseDate,
+        clientSyncId: command.clientSyncId,
+      }),
+    ];
+  }
+
+  /** Copies of the entities, changed before the API confirms. */
+  private copyPlot(plot: FieldPlot): FieldPlot {
+    return new FieldPlot({
+      id: plot.id as number,
+      ownerUserId: plot.ownerUserId,
+      name: plot.name,
+      region: plot.region,
+      status: plot.status,
+      boundary: [...plot.boundary],
+      areaHectares: plot.areaHectares,
+      agroMonitoringPolygonId: plot.agroMonitoringPolygonId,
+      soilBaseline: plot.soilBaseline,
+    });
+  }
+
+  private copyCampaign(campaign: CropCampaign): CropCampaign {
+    return new CropCampaign({
+      id: campaign.id as number,
+      plotId: campaign.plotId,
+      season: campaign.season,
+      cropType: campaign.cropType,
+      seedVariety: campaign.seedVariety,
+      customSeedVariety: campaign.customSeedVariety,
+      sowingDate: campaign.sowingDate,
+      status: campaign.status,
+    });
+  }
+
+  private copyLedger(ledger: CampaignLedger): CampaignLedger {
+    return new CampaignLedger({
+      id: ledger.id as number,
+      campaignId: ledger.campaignId,
+      entries: [...ledger.entries],
+      expectedYield: ledger.expectedYield,
+      actualYield: ledger.actualYield,
+      yieldUnit: ledger.yieldUnit,
+      frozen: ledger.frozen,
+      currency: ledger.currency,
+    });
   }
 
   /** Campaign in progress, or the most recent one. */
   private static currentOf(campaigns: CropCampaign[]): CropCampaign | undefined {
-    return campaigns.find((campaign) => campaign.isActive()) ?? campaigns.at(-1);
+    return campaigns.find((campaign) => campaign.status === CampaignStatus.IN_PROGRESS) ?? campaigns.at(-1);
   }
 }

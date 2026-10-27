@@ -8,8 +8,12 @@ import { Breadcrumb, PageHeader } from '../../../../shared/presentation/componen
 import { MessageCard } from '../../../../shared/presentation/components/message-card/message-card';
 import { FieldManagementStore } from '../../../application/field-management.store';
 import { DelineatePlotBoundaryCommand } from '../../../domain/model/commands/delineate-plot-boundary.command';
-import { FieldPlot } from '../../../domain/model/entities/field-plot.entity';
-import { GeoCoordinate } from '../../../domain/model/entities/geo-coordinate';
+import { FieldPlot, GeoCoordinate } from '../../../domain/model/entities/field-plot.entity';
+import {
+  isSimplePolygon,
+  MINIMUM_VERTICES,
+  polygonAreaHectares,
+} from '../../components/plot-boundary-map/plot-boundary-map';
 import {
   BoundarySummaryPanel,
   PolygonStatus,
@@ -76,16 +80,16 @@ export class PlotBoundaryMapView {
   /** Corners marked so far, in order. */
   readonly markedCoordinates = signal<GeoCoordinate[]>([]);
 
-  /** The domain entity calculates the area (US-29). */
+  /** Area of the polygon, in hectares (US-29). */
   readonly areaHectares = computed(() =>
-    FieldPlot.calculateAreaHectares(this.markedCoordinates()),
+    polygonAreaHectares(this.markedCoordinates()),
   );
 
   /** OPEN: fewer than 3 corners, CROSSED: sides cross, CLOSED: ready to save. */
   readonly polygonStatus = computed<PolygonStatus>(() => {
     const coordinates = this.markedCoordinates();
-    if (coordinates.length < FieldPlot.MINIMUM_VERTICES) return 'OPEN';
-    return FieldPlot.isSimplePolygon(coordinates) ? 'CLOSED' : 'CROSSED';
+    if (coordinates.length < MINIMUM_VERTICES) return 'OPEN';
+    return isSimplePolygon(coordinates) ? 'CLOSED' : 'CROSSED';
   });
 
   constructor() {
@@ -124,6 +128,7 @@ export class PlotBoundaryMapView {
       new DelineatePlotBoundaryCommand({
         plotId: this.plotId,
         coordinates: this.markedCoordinates(),
+        areaHectares: this.areaHectares(),
       }),
       (plot) => this.showSavedDialog(plot),
     );

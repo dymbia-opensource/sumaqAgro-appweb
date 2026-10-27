@@ -9,9 +9,7 @@ import { FieldManagementStore } from '../../../application/field-management.stor
   selector: 'app-plot-quota-summary',
   imports: [TranslatePipe, MatButtonModule, MatProgressBarModule],
   templateUrl: './plot-quota-summary.html',
-  styles: [
-    ':host { display:block; padding:20px; border:1px solid var(--mat-sys-outline-variant); border-radius:16px; background:var(--mat-sys-surface-container-low); } p { margin:0 0 12px; } mat-progress-bar { margin-bottom:12px; }',
-  ],
+  styleUrl: './plot-quota-summary.css',
 })
 export class PlotQuotaSummary {
   readonly store = inject(FieldManagementStore);

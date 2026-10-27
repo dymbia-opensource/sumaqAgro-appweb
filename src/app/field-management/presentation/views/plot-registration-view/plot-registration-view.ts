@@ -80,7 +80,7 @@ export class PlotRegistrationView {
       {
         start: new StartCropCampaignCommand({
           plotId: 0,
-          season: CropCampaign.seasonOf(data.sowingDate),
+          season: this.fieldManagementStore.seasonOf(data.sowingDate),
         }),
         cropType: new SelectCropTypeCommand({ campaignId: 0, cropType: data.cropType }),
         seedVariety: new SpecifySeedVarietyCommand({

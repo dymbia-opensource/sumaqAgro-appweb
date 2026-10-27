@@ -1,4 +1,4 @@
-import { SoilTexture } from '../entities/soil-texture';
+import { SoilTexture } from '../entities/field-plot.entity';
 
 /**
  * Records the initial soil analysis of a plot.

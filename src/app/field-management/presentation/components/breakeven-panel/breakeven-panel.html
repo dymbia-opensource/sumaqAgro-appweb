@@ -10,13 +10,13 @@
     <form class="yield-form" (ngSubmit)="onSave()">
       <mat-form-field subscriptSizing="dynamic">
         <mat-label>{{ 'field-management.finances.expected-yield' | translate }}</mat-label>
-        <input matInput type="number" min="1" [formControl]="expectedYield" [readonly]="ledger().isFrozen()" />
+        <input matInput type="number" min="1" [formControl]="expectedYield" [readonly]="ledger().frozen" />
         <span matTextSuffix>{{ unit }}</span>
         @if (expectedYield.invalid && expectedYield.touched) {
           <mat-error>{{ 'field-management.expense-form.positive' | translate }}</mat-error>
         }
       </mat-form-field>
-      @if (!ledger().isFrozen()) {
+      @if (!ledger().frozen) {
         <button mat-stroked-button type="submit" [disabled]="saving() || expectedYield.pristine">
           {{ 'field-management.finances.update-yield' | translate }}
         </button>
@@ -24,7 +24,7 @@
     </form>
 
     @if (ledger().expectedYield > 0 || ledger().actualYield) {
-      <p class="price">{{ ledger().breakevenPrice().format() }}</p>
+      <p class="price">{{ store.breakevenPrice(ledger()).format() }}</p>
       <p class="hint">
         {{ 'field-management.finances.breakeven-hint' | translate: { unit: ('field-management.yield-unit.per-' + ledger().yieldUnit | translate) } }}
       </p>
@@ -38,7 +38,7 @@
           <mat-icon matChipAvatar>sell</mat-icon>
           {{
             'field-management.finances.suggested-price'
-              | translate: { price: ledger().suggestedPrice().format() }
+              | translate: { price: store.suggestedPrice(ledger()).format() }
           }}
         </mat-chip>
       </mat-chip-set>

@@ -7,8 +7,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { TranslatePipe } from '@ngx-translate/core';
 import { CropCampaign } from '../../../domain/model/entities/crop-campaign.entity';
-import { FieldPlot } from '../../../domain/model/entities/field-plot.entity';
-import { GeoCoordinate } from '../../../domain/model/entities/geo-coordinate';
+import { FieldPlot, GeoCoordinate } from '../../../domain/model/entities/field-plot.entity';
 
 /** Status of the polygon being marked. */
 export type PolygonStatus = 'OPEN' | 'CLOSED' | 'CROSSED';

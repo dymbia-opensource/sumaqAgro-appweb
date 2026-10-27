@@ -1,4 +1,4 @@
-import { YieldUnit } from '../entities/yield-unit';
+import { YieldUnit } from '../entities/campaign-ledger.entity';
 
 /**
  * Records the yield actually harvested (policy P10: when Harvest Certification

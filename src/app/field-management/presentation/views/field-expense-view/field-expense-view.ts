@@ -11,7 +11,7 @@ import { FieldManagementStore, RecordExpenseCommand } from '../../../application
 import { RecordDailyLaborExpenseCommand } from '../../../domain/model/commands/record-daily-labor-expense.command';
 import { RecordFieldFreightExpenseCommand } from '../../../domain/model/commands/record-field-freight-expense.command';
 import { RecordInputExpenseCommand } from '../../../domain/model/commands/record-input-expense.command';
-import { ExpenseCategory } from '../../../domain/model/entities/expense-category';
+import { ExpenseCategory } from '../../../domain/model/entities/expense-entry.entity';
 import {
   FieldExpenseData,
   FieldExpenseForm,
@@ -71,7 +71,7 @@ export class FieldExpenseView {
   protected readonly icons = EXPENSE_CATEGORY_ICONS;
 
   /** Expenses can only be added to an open ledger. */
-  readonly canRecord = computed(() => !!this.ledger() && !this.ledger()!.isFrozen());
+  readonly canRecord = computed(() => !!this.ledger() && !this.ledger()!.frozen);
 
   // Actions
   onSync() {
