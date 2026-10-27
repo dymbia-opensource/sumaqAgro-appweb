@@ -85,4 +85,10 @@
       }}
     </button>
   </form>
+  <p class="auth-link">
+    {{ 'iam.signIn.noAccount' | translate }}
+    <a routerLink="/iam/sign-up">
+      {{ 'iam.signIn.register' | translate }}
+    </a>
+  </p>
 </app-auth-layout>

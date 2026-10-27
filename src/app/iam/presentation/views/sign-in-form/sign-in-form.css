@@ -55,3 +55,16 @@ mat-form-field {
   color: #19532d;
   background: #edf7ee;
 }
+
+.auth-link {
+  margin: 24px 0 0;
+  text-align: center;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.auth-link a {
+  color: #23603a;
+  font-weight: 600;
+  text-underline-offset: 3px;
+}

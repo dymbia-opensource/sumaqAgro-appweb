@@ -5,7 +5,25 @@
       "subtitle": "Enter your credentials to access your account.",
       "submit": "Sign in",
       "pending": "Signing in…",
-      "success": "You have signed in successfully."
+      "success": "You have signed in successfully.",
+      "noAccount": "Don't have an account?",
+      "register": "Sign up"
+    },
+    "signUp": {
+      "title": "Create your account",
+      "subtitle": "Start managing your agricultural activity.",
+      "roleLabel": "What is your role?",
+      "passwordHint": "Use at least 8 characters.",
+      "submit": "Create account",
+      "pending": "Creating account…",
+      "hasAccount": "Already have an account?",
+      "successTitle": "Your account is ready",
+      "successMessage": "You can now sign in with your email and password."
+    },
+    "roles": {
+      "FARMER": "Farmer",
+      "COOPERATIVE_DIRECTOR": "Cooperative director",
+      "AGRONOMIST": "Agronomic advisor"
     },
     "fields": {
       "email": "Email address",
@@ -17,7 +35,8 @@
     },
     "validation": {
       "required": "This field is required.",
-      "email": "Enter a valid email address."
+      "email": "Enter a valid email address.",
+      "passwordLength": "The password must contain at least 8 characters."
     },
     "errors": {
       "INVALID_CREDENTIALS": "The email or password is incorrect.",

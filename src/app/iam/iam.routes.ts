@@ -8,6 +8,12 @@ export const iamRoutes: Routes = [
     title: 'Iniciar sesión | SumaqAgro',
   },
   {
+    path: 'sign-up',
+    loadComponent: () =>
+      import('./presentation/views/sign-up-form/sign-up-form').then((m) => m.SignUpForm),
+    title: 'Crear cuenta | SumaqAgro',
+  },
+  {
     path: '',
     redirectTo: 'sign-in',
     pathMatch: 'full',
