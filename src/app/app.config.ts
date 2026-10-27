@@ -5,7 +5,7 @@ import {
   provideBrowserGlobalErrorListeners,
 } from '@angular/core';
 import { registerLocaleData } from '@angular/common';
-import { HttpClient, provideHttpClient, withFetch } from '@angular/common/http';
+import { HttpClient, provideHttpClient, withFetch,withInterceptors } from '@angular/common/http';
 import localeEsPe from '@angular/common/locales/es-PE';
 import { MatPaginatorIntl } from '@angular/material/paginator';
 import { MatIconRegistry } from '@angular/material/icon';
@@ -14,6 +14,8 @@ import { provideTranslateLoader, provideTranslateService } from '@ngx-translate/
 import { routes } from './app.routes';
 import { MultiTranslateHttpLoader } from './shared/infrastructure/i18n/multi-translate-http-loader';
 import { TranslatedPaginatorIntl } from './shared/presentation/i18n/translated-paginator-intl';
+import { iamInterceptor } from './iam/infrastructure/iam.interceptor';
+import { mockAuthenticationInterceptor } from './iam/infrastructure/mock-authentication.interceptor';
 
 /** Spanish (Peru) data for dates and numbers; English is built in. */
 registerLocaleData(localeEsPe, 'es');
@@ -43,7 +45,11 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes, withComponentInputBinding()),
-    provideHttpClient(withFetch()),
+    provideHttpClient(withFetch(),
+      withInterceptors([
+        iamInterceptor,
+        mockAuthenticationInterceptor
+      ])),
     provideTranslateService({
       loader: provideTranslateLoader(
         () => new MultiTranslateHttpLoader(inject(HttpClient), TRANSLATION_FILES),
