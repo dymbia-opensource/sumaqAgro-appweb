@@ -6,7 +6,7 @@ import {
 import { RecordDailyLaborExpenseCommand } from '../../domain/model/commands/record-daily-labor-expense.command';
 import { RecordFieldFreightExpenseCommand } from '../../domain/model/commands/record-field-freight-expense.command';
 import { RecordInputExpenseCommand } from '../../domain/model/commands/record-input-expense.command';
-import { ExpenseCategory } from '../../domain/model/entities/expense-category';
+import { ExpenseCategory } from '../../domain/model/entities/expense-entry.entity';
 
 /** Any of the three expense commands of the cost ledger. */
 export type ExpenseCommand =

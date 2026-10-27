@@ -1,13 +1,7 @@
 import { fromApiDate, toApiDate } from '../../../shared/infrastructure/api-date';
 import { BaseAssembler } from '../../../shared/infrastructure/base-assembler';
-import { FieldPlot } from '../../domain/model/entities/field-plot.entity';
-import { GeoCoordinate } from '../../domain/model/entities/geo-coordinate';
-import { PlotStatus } from '../../domain/model/entities/plot-status';
-import { SoilBaseline } from '../../domain/model/entities/soil-baseline';
-import { SoilTexture } from '../../domain/model/entities/soil-texture';
-import { FieldPlotResource } from '../responses/field-plot.response';
-import { FieldPlotsResponse } from '../responses/field-plots.response';
-import { SoilBaselineResource } from '../responses/soil-baseline.response';
+import { FieldPlot, GeoCoordinate, PlotStatus, SoilBaseline, SoilTexture } from '../../domain/model/entities/field-plot.entity';
+import { FieldPlotResource, FieldPlotsResponse, SoilBaselineResource } from '../responses/field-plots-response';
 
 /**
  * Maps field plot entities to and from API resources.
@@ -63,7 +57,7 @@ export class FieldPlotAssembler implements BaseAssembler<
   });
 
   /**
-   * Converts a SoilBaselineResource to a SoilBaseline value object.
+   * Converts a SoilBaselineResource to a SoilBaseline.
    * @param resource - The soil analysis as the API sends it.
    */
   private toSoilBaseline = (resource: SoilBaselineResource): SoilBaseline =>
@@ -75,7 +69,7 @@ export class FieldPlotAssembler implements BaseAssembler<
     });
 
   /**
-   * Converts a SoilBaseline value object to a SoilBaselineResource.
+   * Converts a SoilBaseline to a SoilBaselineResource.
    * @param soilBaseline - The soil analysis to convert.
    */
   private toSoilBaselineResource = (soilBaseline: SoilBaseline): SoilBaselineResource => ({

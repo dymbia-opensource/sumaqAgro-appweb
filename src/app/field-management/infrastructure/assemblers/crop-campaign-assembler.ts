@@ -1,10 +1,7 @@
 import { BaseAssembler } from '../../../shared/infrastructure/base-assembler';
 import { fromApiDate, toApiDate } from '../../../shared/infrastructure/api-date';
-import { CampaignStatus } from '../../domain/model/entities/campaign-status';
-import { CropCampaign } from '../../domain/model/entities/crop-campaign.entity';
-import { CropType } from '../../domain/model/entities/crop-type';
-import { CropCampaignResource } from '../responses/crop-campaign.response';
-import { CropCampaignsResponse } from '../responses/crop-campaigns.response';
+import { CampaignStatus, CropCampaign, CropType } from '../../domain/model/entities/crop-campaign.entity';
+import { CropCampaignResource, CropCampaignsResponse } from '../responses/crop-campaigns-response';
 
 /**
  * Maps crop campaign entities to and from API resources.
