@@ -9,7 +9,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslatePipe } from '@ngx-translate/core';
-import { CurrentSessionService } from '../../../../shared/application/current-session.service';
+import { CurrentSessionService } from '../../../../iam/application/current-session.service';
 import { ProfilesStore } from '../../../application/profiles.store';
 import { UpdateFarmerContactCommand } from '../../../domain/model/commands/update-farmer-contact.command';
 

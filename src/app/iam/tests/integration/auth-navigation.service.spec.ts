@@ -8,16 +8,16 @@ import {
   RouterStateSnapshot,
   UrlTree,
 } from '@angular/router';
-import { routes } from '../../app.routes';
-import { CurrentSessionService } from '../../shared/application/current-session.service';
-import { environment } from '../../../environments/environment';
-import { SignInCommand } from '../domain/model/commands/sign-in.command';
-import { SignUpCommand } from '../domain/model/commands/sign-up.command';
-import { UserRole } from '../domain/model/entities/user-role';
-import { iamGuard } from '../infrastructure/iam.guard';
-import { roleGuard } from '../infrastructure/role.guard';
-import { AuthNavigationService } from './auth-navigation.service';
-import { IamStore } from './iam.store';
+import { routes } from '../../../app.routes';
+import { CurrentSessionService } from '../../application/current-session.service';
+import { environment } from '../../../../environments/environment';
+import { SignInCommand } from '../../domain/model/commands/sign-in.command';
+import { SignUpCommand } from '../../domain/model/commands/sign-up.command';
+import { UserRole } from '../../domain/model/entities/user-role';
+import { iamGuard } from '../../infrastructure/iam.guard';
+import { roleGuard } from '../../infrastructure/role.guard';
+import { AuthNavigationService } from '../../infrastructure/auth-navigation.service';
+import { IamStore } from '../../application/iam.store';
 
 describe('Authenticated navigation', () => {
   let store: IamStore;

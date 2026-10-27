@@ -1,6 +1,6 @@
 import { inject } from '@angular/core';
 import { CanActivateChildFn, Router } from '@angular/router';
-import { CurrentSessionService } from '../../shared/application/current-session.service';
+import { CurrentSessionService } from '../application/current-session.service';
 import { UserRole } from '../domain/model/entities/user-role';
 import { IamStore } from '../application/iam.store';
 

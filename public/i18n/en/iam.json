@@ -1,5 +1,21 @@
 {
   "iam": {
+    "layout": {
+      "brandCaption": "Connected agricultural management",
+      "footer": "For those growing the future of potatoes and coffee.",
+      "badge": "SumaqAgro · Connect with your land",
+      "eyebrow": "Grow with insight",
+      "title": "Every decision matters. Every harvest, too.",
+      "description": "Your crop health, production costs and harvest quality, together in one place.",
+      "monitor": "Monitor",
+      "manage": "Manage",
+      "certify": "Certify"
+    },
+    "roleDescriptions": {
+      "FARMER": "Manage your plots",
+      "COOPERATIVE_DIRECTOR": "Connect your cooperative",
+      "AGRONOMIST": "Support the grower"
+    },
     "recovery": {
       "forgotLink": "Forgot your password?",
       "backToSignIn": "Back to sign in",
@@ -38,6 +54,7 @@
       }
     },
     "signIn": {
+      "eyebrow": "Your agricultural workspace",
       "title": "Welcome back!",
       "subtitle": "Enter your credentials to access your account.",
       "submit": "Sign in",
@@ -47,6 +64,7 @@
       "register": "Sign up"
     },
     "signUp": {
+      "eyebrow": "Get started with SumaqAgro",
       "title": "Create your account",
       "subtitle": "Start managing your agricultural activity.",
       "roleLabel": "What is your role?",

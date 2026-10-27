@@ -1,6 +1,6 @@
 import { inject, Service } from '@angular/core';
 import { PRIMARY_OUTLET, Router, UrlTree } from '@angular/router';
-import { CurrentSessionService } from '../../shared/application/current-session.service';
+import { CurrentSessionService } from '../application/current-session.service';
 
 const PRIVATE_CONTEXTS = new Set([
   'field-management',
@@ -44,7 +44,7 @@ export class AuthNavigationService {
           (segment) =>
             Object.keys(segment.parameters).length > 0 ||
             /[/\\\u0000-\u0020]/.test(segment.path) ||
-            segment.path === '.' ||
+            segment.path === '../application' ||
             segment.path === '..',
         )
       ) {

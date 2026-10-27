@@ -27,8 +27,8 @@ import {
 } from 'rxjs';
 import { SatelliteObservation } from '../../crop-health/domain/model/entities/satellite-observation.entity';
 import { CropHealthApi } from '../../crop-health/infrastructure/crop-health-api';
-import { CurrentSessionService } from '../../shared/application/current-session.service';
-import { PlotSelectionService } from '../../shared/application/plot-selection.service';
+import { CurrentSessionService } from '../../iam/application/current-session.service';
+import { PlotSelectionService } from './plot-selection.service';
 import { CloseCropCampaignCommand } from '../domain/model/commands/close-crop-campaign.command';
 import { DelineatePlotBoundaryCommand } from '../domain/model/commands/delineate-plot-boundary.command';
 import { ExportCampaignCostReportCommand } from '../domain/model/commands/export-campaign-cost-report.command';

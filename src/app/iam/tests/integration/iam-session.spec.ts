@@ -9,20 +9,20 @@ import {
   RouterStateSnapshot,
   UrlTree,
 } from '@angular/router';
-import { environment } from '../../../environments/environment';
-import { Layout } from '../../shared/presentation/components/layout/layout';
-import { LayoutService } from '../../shared/presentation/components/layout/layout.service';
-import { SignInCommand } from '../domain/model/commands/sign-in.command';
-import { SignUpCommand } from '../domain/model/commands/sign-up.command';
-import { AuthenticatedUser } from '../domain/model/entities/authenticated-user.entity';
-import { iamGuard } from '../infrastructure/iam.guard';
-import { iamInterceptor } from '../infrastructure/iam.interceptor';
+import { environment } from '../../../../environments/environment';
+import { Layout } from '../../../shared/presentation/components/layout/layout';
+import { LayoutService } from '../../../shared/presentation/components/layout/layout.service';
+import { SignInCommand } from '../../domain/model/commands/sign-in.command';
+import { SignUpCommand } from '../../domain/model/commands/sign-up.command';
+import { AuthenticatedUser } from '../../domain/model/entities/authenticated-user.entity';
+import { iamGuard } from '../../infrastructure/iam.guard';
+import { iamInterceptor } from '../../infrastructure/iam.interceptor';
 import {
   MOCK_SESSION_DURATION_MS,
   MOCK_SESSION_STORAGE_KEY,
   MockSessionStorage,
-} from '../infrastructure/mock-session.storage';
-import { IamStore } from './iam.store';
+} from '../../infrastructure/mock-session.storage';
+import { IamStore } from '../../application/iam.store';
 
 describe('IAM simulated session lifecycle', () => {
   let http: HttpTestingController;

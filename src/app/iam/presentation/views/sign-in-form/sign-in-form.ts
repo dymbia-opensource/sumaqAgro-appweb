@@ -9,8 +9,8 @@ import { SignInCommand } from '../../../domain/model/commands/sign-in.command';
 import { AuthLayout } from '../../components/auth-layout/auth-layout';
 import { TranslatePipe } from '@ngx-translate/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { CurrentSessionService } from '../../../../shared/application/current-session.service';
-import { AuthNavigationService } from '../../../application/auth-navigation.service';
+import { CurrentSessionService } from '../../../application/current-session.service';
+import { AuthNavigationService } from '../../../infrastructure/auth-navigation.service';
 
 @Component({
   selector: 'app-sign-in-form',

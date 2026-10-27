@@ -43,6 +43,10 @@ export class IamApi extends BaseApi {
     return this.passwordRecoveryEndpoint.requestReset(command);
   }
 
+  get isPasswordRecoveryPreview(): boolean {
+    return this.passwordRecoveryEndpoint.isPreview;
+  }
+
   resetPassword(command: ResetPasswordCommand): Observable<void> {
     return this.passwordRecoveryEndpoint.reset(command);
   }

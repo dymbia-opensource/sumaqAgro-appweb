@@ -6,11 +6,14 @@ import {
 } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { environment } from '../../../environments/environment';
-import { IamStore } from '../application/iam.store';
-import { SignInCommand } from '../domain/model/commands/sign-in.command';
-import { iamInterceptor } from './iam.interceptor';
-import { MOCK_SESSION_STORAGE_KEY, MockSessionStorage } from './mock-session.storage';
+import { environment } from '../../../../environments/environment';
+import { IamStore } from '../../application/iam.store';
+import { SignInCommand } from '../../domain/model/commands/sign-in.command';
+import { iamInterceptor } from '../../infrastructure/iam.interceptor';
+import {
+  MOCK_SESSION_STORAGE_KEY,
+  MockSessionStorage,
+} from '../../infrastructure/mock-session.storage';
 
 describe('IAM interceptor session rejection', () => {
   let client: HttpClient;

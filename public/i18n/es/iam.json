@@ -1,5 +1,21 @@
 {
   "iam": {
+    "layout": {
+      "brandCaption": "Gestión agrícola conectada",
+      "footer": "Para quienes cultivan el futuro de la papa y el café.",
+      "badge": "SumaqAgro · Conecta con tu campo",
+      "eyebrow": "Cultiva con información",
+      "title": "Cada decisión cuenta. Cada cosecha también.",
+      "description": "El estado de tus cultivos, tus costos y la calidad de tu cosecha, en un mismo lugar.",
+      "monitor": "Monitorea",
+      "manage": "Gestiona",
+      "certify": "Certifica"
+    },
+    "roleDescriptions": {
+      "FARMER": "Gestiona tus parcelas",
+      "COOPERATIVE_DIRECTOR": "Conecta tu cooperativa",
+      "AGRONOMIST": "Acompaña al productor"
+    },
     "recovery": {
       "forgotLink": "¿Olvidaste tu contraseña?",
       "backToSignIn": "Volver a iniciar sesión",
@@ -38,6 +54,7 @@
       }
     },
     "signIn": {
+      "eyebrow": "Tu espacio agrícola",
       "title": "¡Bienvenido de nuevo!",
       "subtitle": "Ingresa tus credenciales para acceder a tu cuenta.",
       "submit": "Iniciar sesión",
@@ -47,6 +64,7 @@
       "register": "Regístrate"
     },
     "signUp": {
+      "eyebrow": "Comienza con SumaqAgro",
       "title": "Crea tu cuenta",
       "subtitle": "Comienza a gestionar tu actividad agrícola.",
       "roleLabel": "¿Cuál es tu rol?",

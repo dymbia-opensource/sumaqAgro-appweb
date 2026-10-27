@@ -1,5 +1,6 @@
 <app-auth-layout>
   <header class="form-header">
+    <span class="form-eyebrow">{{ 'iam.signIn.eyebrow' | translate }}</span>
     <h1>{{ 'iam.signIn.title' | translate }}</h1>
     <p>{{ 'iam.signIn.subtitle' | translate }}</p>
   </header>
@@ -7,6 +8,7 @@
   <form [formGroup]="form" (ngSubmit)="submit()" [attr.aria-busy]="store.isLoading()" novalidate>
     <mat-form-field appearance="outline">
       <mat-label>{{ 'iam.fields.email' | translate }}</mat-label>
+      <mat-icon matPrefix class="field-icon" aria-hidden="true">alternate_email</mat-icon>
 
       <input
         matInput
@@ -26,6 +28,7 @@
 
     <mat-form-field appearance="outline">
       <mat-label>{{ 'iam.fields.password' | translate }}</mat-label>
+      <mat-icon matPrefix class="field-icon" aria-hidden="true">lock_outline</mat-icon>
 
       <input
         matInput
@@ -70,7 +73,13 @@
     }
 
     <button mat-flat-button class="submit-button" type="submit" [disabled]="store.isLoading()">
+      @if (store.isLoading()) {
+        <span class="button-spinner" aria-hidden="true"></span>
+      }
       {{ (store.isLoading() ? 'iam.signIn.pending' : 'iam.signIn.submit') | translate }}
+      @if (!store.isLoading()) {
+        <mat-icon iconPositionEnd aria-hidden="true">arrow_forward</mat-icon>
+      }
     </button>
   </form>
   <p class="auth-link">

@@ -39,7 +39,7 @@ function matchingPasswords(control: AbstractControl): ValidationErrors | null {
   ],
   providers: [PasswordRecoveryStore],
   templateUrl: './reset-password-form.html',
-  styleUrl: '../password-recovery.css',
+  styleUrl: './reset-password-form.css',
 })
 export class ResetPasswordForm {
   protected readonly store = inject(PasswordRecoveryStore);

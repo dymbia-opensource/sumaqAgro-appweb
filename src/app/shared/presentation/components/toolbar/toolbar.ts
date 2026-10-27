@@ -12,7 +12,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { LayoutService } from '../layout/layout.service';
-import { CurrentSessionService } from '../../../application/current-session.service';
+import { CurrentSessionService } from '../../../../iam/application/current-session.service';
 
 /**
  * Top bar of the shell: menu button (on phones), search, connection status,

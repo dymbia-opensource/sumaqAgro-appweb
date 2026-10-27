@@ -1,7 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { computed, DestroyRef, inject, Service, signal } from '@angular/core';
-import { delay, finalize, Observable, of, Subscription } from 'rxjs';
-import { environment } from '../../../environments/environment';
+import { finalize, Observable, Subscription } from 'rxjs';
 import { RequestPasswordResetCommand } from '../domain/model/commands/request-password-reset.command';
 import { ResetPasswordCommand } from '../domain/model/commands/reset-password.command';
 import { IamApi } from '../infrastructure/iam-api';
@@ -17,7 +16,7 @@ export class PasswordRecoveryStore {
   private readonly errorSignal = signal<PasswordRecoveryError | null>(null);
   private request?: Subscription;
 
-  readonly isPreview = !environment.production && environment.useMockAuthentication;
+  readonly isPreview = this.api.isPasswordRecoveryPreview;
   readonly isLoading = computed(() => this.state() === 'pending');
   readonly completed = computed(() => this.state() === 'completed');
   readonly error = this.errorSignal.asReadonly();
@@ -28,18 +27,12 @@ export class PasswordRecoveryStore {
 
   requestReset(command: RequestPasswordResetCommand): void {
     if (this.isLoading() || this.completed()) return;
-    this.execute(
-      this.isPreview ? of(undefined).pipe(delay(300)) : this.api.requestPasswordReset(command),
-      false,
-    );
+    this.execute(this.api.requestPasswordReset(command), false);
   }
 
   resetPassword(command: ResetPasswordCommand): void {
     if (this.isLoading() || this.completed()) return;
-    this.execute(
-      this.isPreview ? of(undefined).pipe(delay(300)) : this.api.resetPassword(command),
-      true,
-    );
+    this.execute(this.api.resetPassword(command), true);
   }
 
   clear(): void {

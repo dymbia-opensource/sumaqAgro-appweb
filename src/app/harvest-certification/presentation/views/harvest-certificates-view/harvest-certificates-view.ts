@@ -5,7 +5,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { TranslatePipe } from '@ngx-translate/core';
-import { CurrentSessionService } from '../../../../shared/application/current-session.service';
+import { CurrentSessionService } from '../../../../iam/application/current-session.service';
 import { HarvestCertificationStore } from '../../../application/harvest-certification.store';
 import {
   HarvestBatch,

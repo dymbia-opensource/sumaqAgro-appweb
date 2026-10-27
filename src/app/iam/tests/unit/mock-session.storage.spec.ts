@@ -1,10 +1,10 @@
 import { TestBed } from '@angular/core/testing';
-import { AuthenticatedUser } from '../domain/model/entities/authenticated-user.entity';
+import { AuthenticatedUser } from '../../domain/model/entities/authenticated-user.entity';
 import {
   MOCK_SESSION_DURATION_MS,
   MOCK_SESSION_STORAGE_KEY,
   MockSessionStorage,
-} from './mock-session.storage';
+} from '../../infrastructure/mock-session.storage';
 
 describe('MockSessionStorage', () => {
   let storage: MockSessionStorage;

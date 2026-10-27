@@ -1,20 +1,23 @@
 import { HttpErrorResponse, provideHttpClient, withInterceptors } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { environment } from '../../../environments/environment';
-import { IamStore } from '../application/iam.store';
-import { RequestPasswordResetCommand } from '../domain/model/commands/request-password-reset.command';
-import { ResetPasswordCommand } from '../domain/model/commands/reset-password.command';
-import { SignInCommand } from '../domain/model/commands/sign-in.command';
-import { IamApi } from './iam-api';
-import { iamInterceptor } from './iam.interceptor';
+import { environment } from '../../../../environments/environment';
+import { IamStore } from '../../application/iam.store';
+import { RequestPasswordResetCommand } from '../../domain/model/commands/request-password-reset.command';
+import { ResetPasswordCommand } from '../../domain/model/commands/reset-password.command';
+import { SignInCommand } from '../../domain/model/commands/sign-in.command';
+import { IamApi } from '../../infrastructure/iam-api';
+import { iamInterceptor } from '../../infrastructure/iam.interceptor';
 
 describe('Password recovery API integration', () => {
+  const originalMockAuthentication = environment.useMockAuthentication;
   let api: IamApi;
   let http: HttpTestingController;
   const recoveryUrl = `${environment.platformProviderApiBaseUrl}${environment.platformProviderPasswordRecoveryEndpointPath}`;
 
   beforeEach(() => {
+    // These tests exercise HTTP contracts rather than the development preview adapter.
+    environment.useMockAuthentication = false;
     TestBed.configureTestingModule({
       providers: [
         provideHttpClient(withInterceptors([iamInterceptor])),
@@ -25,7 +28,10 @@ describe('Password recovery API integration', () => {
     http = TestBed.inject(HttpTestingController);
   });
 
-  afterEach(() => http.verify());
+  afterEach(() => {
+    http.verify();
+    environment.useMockAuthentication = originalMockAuthentication;
+  });
 
   it('accepts an empty successful response without requiring account information', () => {
     const completed = vi.fn();

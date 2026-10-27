@@ -22,7 +22,7 @@ import { AuthLayout } from '../../components/auth-layout/auth-layout';
   ],
   providers: [PasswordRecoveryStore],
   templateUrl: './forgot-password-form.html',
-  styleUrl: '../password-recovery.css',
+  styleUrl: './forgot-password-form.css',
 })
 export class ForgotPasswordForm {
   protected readonly store = inject(PasswordRecoveryStore);

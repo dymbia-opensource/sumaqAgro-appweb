@@ -7,8 +7,8 @@ import { provideTranslateService } from '@ngx-translate/core';
 import { environment } from '../../../../environments/environment';
 import { PasswordRecoveryStore } from '../../application/password-recovery.store';
 import { iamRoutes } from '../../iam.routes';
-import { ForgotPasswordForm } from './forgot-password-form/forgot-password-form';
-import { ResetPasswordForm } from './reset-password-form/reset-password-form';
+import { ForgotPasswordForm } from '../../presentation/views/forgot-password-form/forgot-password-form';
+import { ResetPasswordForm } from '../../presentation/views/reset-password-form/reset-password-form';
 
 describe('Password recovery views', () => {
   const originalProduction = environment.production;
