@@ -1,7 +1,6 @@
 import { Routes } from '@angular/router';
 
-const layout = () =>
-  import('./shared/presentation/components/layout/layout').then((m) => m.Layout);
+const layout = () => import('./shared/presentation/components/layout/layout').then((m) => m.Layout);
 
 const pageNotFound = () =>
   import('./shared/presentation/views/page-not-found/page-not-found').then((m) => m.PageNotFound);
@@ -25,9 +24,9 @@ const harvestCertificationRoutes = () =>
   );
 
 const publicTraceabilityView = () =>
-  import(
-    './harvest-certification/presentation/views/public-traceability-view/public-traceability-view'
-  ).then((m) => m.PublicTraceabilityView);
+  import('./harvest-certification/presentation/views/public-traceability-view/public-traceability-view').then(
+    (m) => m.PublicTraceabilityView,
+  );
 
 const baseTitle = 'SumaqAgro';
 
@@ -42,6 +41,7 @@ const baseTitle = 'SumaqAgro';
  */
 export const routes: Routes = [
   // Pages without the shell
+  { path: 'iam', loadChildren: () => import('./iam/iam.routes').then((m) => m.iamRoutes), },
   { path: 'demo-access', loadComponent: demoAccessView, title: `${baseTitle} - Demo access` },
   {
     path: 'verify/:token',

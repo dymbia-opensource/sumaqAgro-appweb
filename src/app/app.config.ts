@@ -30,6 +30,7 @@ const TRANSLATION_FILES = [
   'crop-health',
   'profiles',
   'harvest-certification',
+  'iam',
 ];
 
 /**

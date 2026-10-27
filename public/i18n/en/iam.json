@@ -1,0 +1,30 @@
+{
+  "iam": {
+    "signIn": {
+      "title": "Welcome back!",
+      "subtitle": "Enter your credentials to access your account.",
+      "submit": "Sign in",
+      "pending": "Signing in…",
+      "success": "You have signed in successfully."
+    },
+    "fields": {
+      "email": "Email address",
+      "password": "Password"
+    },
+    "actions": {
+      "showPassword": "Show password",
+      "hidePassword": "Hide password"
+    },
+    "validation": {
+      "required": "This field is required.",
+      "email": "Enter a valid email address."
+    },
+    "errors": {
+      "INVALID_CREDENTIALS": "The email or password is incorrect.",
+      "REGISTRATION_CONFLICT": "The account could not be created with those details.",
+      "ACCESS_DENIED": "You do not have permission to perform this action.",
+      "CONNECTION_ERROR": "We could not connect. Check your connection and try again.",
+      "UNEXPECTED_ERROR": "Something went wrong. Please try again."
+    }
+  }
+}

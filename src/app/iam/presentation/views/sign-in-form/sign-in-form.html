@@ -1,0 +1,88 @@
+<app-auth-layout>
+  <header class="form-header">
+    <h1>{{ 'iam.signIn.title' | translate }}</h1>
+    <p>{{ 'iam.signIn.subtitle' | translate }}</p>
+  </header>
+
+  <form
+    [formGroup]="form"
+    (ngSubmit)="submit()"
+    [attr.aria-busy]="store.isLoading()"
+    novalidate
+  >
+    <mat-form-field appearance="outline">
+      <mat-label>{{ 'iam.fields.email' | translate }}</mat-label>
+
+      <input
+        matInput
+        type="email"
+        formControlName="email"
+        autocomplete="username"
+        autocapitalize="none"
+        spellcheck="false"
+      />
+
+      @if (form.controls.email.hasError('required')) {
+        <mat-error>{{ 'iam.validation.required' | translate }}</mat-error>
+      } @else if (form.controls.email.hasError('email')) {
+        <mat-error>{{ 'iam.validation.email' | translate }}</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>{{ 'iam.fields.password' | translate }}</mat-label>
+
+      <input
+        matInput
+        [type]="hidePassword() ? 'password' : 'text'"
+        formControlName="password"
+        autocomplete="current-password"
+      />
+
+      <button
+        mat-icon-button
+        matSuffix
+        type="button"
+        (click)="togglePassword()"
+        [attr.aria-label]="
+          (hidePassword()
+            ? 'iam.actions.showPassword'
+            : 'iam.actions.hidePassword') | translate
+        "
+      >
+        <mat-icon>
+          {{ hidePassword() ? 'visibility' : 'visibility_off' }}
+        </mat-icon>
+      </button>
+
+      @if (form.controls.password.hasError('required')) {
+        <mat-error>{{ 'iam.validation.required' | translate }}</mat-error>
+      }
+    </mat-form-field>
+
+    @if (store.error(); as error) {
+      <p class="feedback feedback-error" role="alert">
+        {{ ('iam.errors.' + error) | translate }}
+      </p>
+    }
+
+    @if (store.isSignedIn()) {
+      <p class="feedback feedback-success" role="status">
+        {{ 'iam.signIn.success' | translate }}
+      </p>
+    }
+
+    <button
+      mat-flat-button
+      class="submit-button"
+      type="submit"
+      [disabled]="store.isLoading()"
+    >
+      {{
+        (store.isLoading()
+          ? 'iam.signIn.pending'
+          : 'iam.signIn.submit') | translate
+      }}
+    </button>
+  </form>
+</app-auth-layout>

@@ -1,0 +1,30 @@
+{
+  "iam": {
+    "signIn": {
+      "title": "¡Bienvenido de nuevo!",
+      "subtitle": "Ingresa tus credenciales para acceder a tu cuenta.",
+      "submit": "Iniciar sesión",
+      "pending": "Ingresando…",
+      "success": "Sesión iniciada correctamente."
+    },
+    "fields": {
+      "email": "Correo electrónico",
+      "password": "Contraseña"
+    },
+    "actions": {
+      "showPassword": "Mostrar contraseña",
+      "hidePassword": "Ocultar contraseña"
+    },
+    "validation": {
+      "required": "Este campo es obligatorio.",
+      "email": "Ingresa un correo electrónico válido."
+    },
+    "errors": {
+      "INVALID_CREDENTIALS": "El correo o la contraseña son incorrectos.",
+      "REGISTRATION_CONFLICT": "No se pudo crear la cuenta con esos datos.",
+      "ACCESS_DENIED": "No tienes permiso para realizar esta operación.",
+      "CONNECTION_ERROR": "No pudimos conectarnos. Revisa tu conexión e inténtalo nuevamente.",
+      "UNEXPECTED_ERROR": "Ocurrió un error. Inténtalo nuevamente."
+    }
+  }
+}
