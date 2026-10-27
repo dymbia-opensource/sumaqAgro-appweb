@@ -31,7 +31,6 @@ import { PlotSelectionService } from '../../shared/application/plot-selection.se
 import { CloseCropCampaignCommand } from '../domain/model/commands/close-crop-campaign.command';
 import { DelineatePlotBoundaryCommand } from '../domain/model/commands/delineate-plot-boundary.command';
 import { ExportCampaignCostReportCommand } from '../domain/model/commands/export-campaign-cost-report.command';
-import { LinkPlotPolygonCommand } from '../domain/model/commands/link-plot-polygon.command';
 import { OpenCampaignLedgerCommand } from '../domain/model/commands/open-campaign-ledger.command';
 import { RecordActualYieldCommand } from '../domain/model/commands/record-actual-yield.command';
 import { RecordDailyLaborExpenseCommand } from '../domain/model/commands/record-daily-labor-expense.command';
@@ -524,18 +523,6 @@ export class FieldManagementStore {
         },
         error: (error) => this.fail(error, 'field-management.errors.save-polygon'),
       });
-  };
-
-  /**
-   * Links (again) the polygon of a plot to AgroMonitoring.
-   * @param command - Plot and polygon identifier in AgroMonitoring.
-   */
-  linkPlotPolygon = (command: LinkPlotPolygonCommand): void => {
-    this.savePlot(
-      command.plotId,
-      (plot) => plot.linkPolygon(command.agroMonitoringPolygonId),
-      'field-management.errors.save-polygon',
-    );
   };
 
   /**
