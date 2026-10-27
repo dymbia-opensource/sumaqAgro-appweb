@@ -1,4 +1,4 @@
-import { UserRole } from '../entities/use-role';
+import { UserRole } from '../entities/user-role';
 
 /**
  * Captures the information required to register an account.

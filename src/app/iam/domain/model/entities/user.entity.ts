@@ -1,5 +1,5 @@
 import { BaseEntity } from '../../../../shared/domain/model/base-entity';
-import { UserRole } from './use-role';
+import { UserRole } from './user-role';
 
 /**
  * Represents a registered account in the IAM context.
