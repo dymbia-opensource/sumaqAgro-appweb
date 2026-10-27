@@ -1,5 +1,6 @@
-import { HttpInterceptorFn } from '@angular/common/http';
+import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
+import { catchError, throwError } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { IamStore } from '../application/iam.store';
 
@@ -12,7 +13,7 @@ const publicAuthenticationUrls = new Set([
 ]);
 
 /**
- * Adds bearer credentials to requests targeting the platform API.
+ * Adds platform bearer credentials and invalidates the originating session on HTTP 401.
  */
 export const iamInterceptor: HttpInterceptorFn = (request, next) => {
   const requestUrl = request.url.split(/[?#]/, 1)[0];
@@ -26,6 +27,7 @@ export const iamInterceptor: HttpInterceptorFn = (request, next) => {
   const store = inject(IamStore);
   store.checkSessionExpiration();
   const token = store.currentToken();
+  const participant = store.currentUser();
 
   if (!token || request.headers.has('Authorization')) {
     return next(request);
@@ -36,6 +38,20 @@ export const iamInterceptor: HttpInterceptorFn = (request, next) => {
       setHeaders: {
         Authorization: `Bearer ${token}`,
       },
+    }),
+  ).pipe(
+    catchError((error: unknown) => {
+      // A late response must not sign out a newer session, even if its token is identical.
+      if (
+        error instanceof HttpErrorResponse &&
+        error.status === 401 &&
+        participant !== null &&
+        store.currentUser() === participant
+      ) {
+        store.signOut();
+      }
+
+      return throwError(() => error);
     }),
   );
 };
