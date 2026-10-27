@@ -1,0 +1,117 @@
+<app-auth-layout>
+  <header class="form-header">
+    <h1>{{ 'iam.signUp.title' | translate }}</h1>
+    <p>{{ 'iam.signUp.subtitle' | translate }}</p>
+  </header>
+
+  @if (store.registrationCompleted()) {
+    <div class="success-panel" role="status">
+      <mat-icon>check_circle</mat-icon>
+      <h2>{{ 'iam.signUp.successTitle' | translate }}</h2>
+      <p>{{ 'iam.signUp.successMessage' | translate }}</p>
+    </div>
+
+    <a mat-flat-button class="submit-button" routerLink="/iam/sign-in">
+      {{ 'iam.signIn.submit' | translate }}
+    </a>
+  } @else {
+    <form
+      [formGroup]="form"
+      (ngSubmit)="submit()"
+      [attr.aria-busy]="store.isLoading()"
+      novalidate
+    >
+      <fieldset class="role-fieldset">
+        <legend>{{ 'iam.signUp.roleLabel' | translate }}</legend>
+
+        <mat-radio-group formControlName="role">
+          @for (role of roles; track role) {
+            <mat-radio-button [value]="role">
+              {{ ('iam.roles.' + role) | translate }}
+            </mat-radio-button>
+          }
+        </mat-radio-group>
+      </fieldset>
+
+      <mat-form-field appearance="outline">
+        <mat-label>{{ 'iam.fields.email' | translate }}</mat-label>
+
+        <input
+          matInput
+          type="email"
+          formControlName="email"
+          autocomplete="username"
+          autocapitalize="none"
+          spellcheck="false"
+        />
+
+        @if (form.controls.email.hasError('required')) {
+          <mat-error>{{ 'iam.validation.required' | translate }}</mat-error>
+        } @else if (form.controls.email.hasError('email')) {
+          <mat-error>{{ 'iam.validation.email' | translate }}</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>{{ 'iam.fields.password' | translate }}</mat-label>
+
+        <input
+          matInput
+          [type]="hidePassword() ? 'password' : 'text'"
+          formControlName="password"
+          autocomplete="new-password"
+        />
+
+        <button
+          mat-icon-button
+          matSuffix
+          type="button"
+          (click)="togglePassword()"
+          [attr.aria-label]="
+            (hidePassword()
+              ? 'iam.actions.showPassword'
+              : 'iam.actions.hidePassword') | translate
+          "
+        >
+          <mat-icon>
+            {{ hidePassword() ? 'visibility' : 'visibility_off' }}
+          </mat-icon>
+        </button>
+
+        <mat-hint>{{ 'iam.signUp.passwordHint' | translate }}</mat-hint>
+
+        @if (form.controls.password.hasError('required')) {
+          <mat-error>{{ 'iam.validation.required' | translate }}</mat-error>
+        } @else if (form.controls.password.hasError('minlength')) {
+          <mat-error>{{ 'iam.validation.passwordLength' | translate }}</mat-error>
+        }
+      </mat-form-field>
+
+      @if (store.error(); as error) {
+        <p class="feedback-error" role="alert">
+          {{ ('iam.errors.' + error) | translate }}
+        </p>
+      }
+
+      <button
+        mat-flat-button
+        class="submit-button"
+        type="submit"
+        [disabled]="store.isLoading()"
+      >
+        {{
+          (store.isLoading()
+            ? 'iam.signUp.pending'
+            : 'iam.signUp.submit') | translate
+        }}
+      </button>
+    </form>
+
+    <p class="auth-link">
+      {{ 'iam.signUp.hasAccount' | translate }}
+      <a routerLink="/iam/sign-in">
+        {{ 'iam.signIn.submit' | translate }}
+      </a>
+    </p>
+  }
+</app-auth-layout>

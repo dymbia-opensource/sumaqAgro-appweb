@@ -9,7 +9,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { catchError, map, of, startWith, switchMap } from 'rxjs';
 import { SatelliteObservation } from '../../../../crop-health/domain/model/entities/satellite-observation.entity';
 import { CropHealthApi } from '../../../../crop-health/infrastructure/crop-health-api';
-import { DemoSessionService } from '../../../../shared/application/demo-session.service';
+import { CurrentSessionService } from '../../../../shared/application/current-session.service';
 import { Breadcrumb, PageHeader } from '../../../../shared/presentation/components/page-header/page-header';
 import { MessageCard } from '../../../../shared/presentation/components/message-card/message-card';
 import { FieldManagementStore } from '../../../application/field-management.store';
@@ -47,7 +47,7 @@ const EMPTY_VEGETATION: VegetationState = { observations: [], loading: false, er
 })
 export class MyPlotDashboardView {
   private readonly store = inject(FieldManagementStore);
-  private readonly demoSession = inject(DemoSessionService);
+  private readonly session = inject(CurrentSessionService);
   private readonly cropHealthApi = inject(CropHealthApi);
 
   // Store state
@@ -88,7 +88,7 @@ export class MyPlotDashboardView {
 
   // UI state
   protected readonly breadcrumbs: Breadcrumb[] = [{ label: 'option.my-plot' }];
-  readonly userName = computed(() => this.demoSession.activeUser()?.displayName ?? '');
+  readonly userName = computed(() => this.session.activeUser()?.displayName ?? '');
 
   /** Greeting by time of day: morning, afternoon or evening. */
   readonly greetingKey = computed(() => {
@@ -103,7 +103,9 @@ export class MyPlotDashboardView {
     const plot = this.plot();
     if (!plot) return '';
     const variety = this.campaign()?.seedVariety;
-    const area = new Intl.NumberFormat('en-US', { maximumFractionDigits: 2 }).format(plot.areaHectares);
+    const area = new Intl.NumberFormat('en-US', { maximumFractionDigits: 2 }).format(
+      plot.areaHectares,
+    );
     return `${plot.name}${variety ? ` – ${variety}` : ''} (${area} Ha)`;
   });
 

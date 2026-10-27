@@ -1,17 +1,33 @@
 import { computed, inject, Service, signal } from '@angular/core';
-import { DemoSessionService } from './demo-session.service';
+import { CurrentSessionService } from './current-session.service';
 
-/** Shares plot selection between Field Management and Crop Health for each demo user. */
+/**
+ * Shares plot selection between contexts for the authenticated account.
+ */
 @Service()
 export class PlotSelectionService {
-  private readonly session = inject(DemoSessionService);
-  private readonly selections = signal<Record<number, number | null>>({});
+  private readonly session = inject(CurrentSessionService);
+
+  private readonly selection = signal<{
+    participant: object;
+    plotId: number | null;
+  } | null>(null);
+
   readonly selectedPlotId = computed(() => {
-    const id = this.session.activeUser()?.id;
-    return id === undefined ? null : this.selections()[id] ?? null;
+    const user = this.session.activeUser();
+    const selection = this.selection();
+
+    return user && selection?.participant === user ? selection.plotId : null;
   });
+
   select(plotId: number | null): void {
     const user = this.session.activeUser();
-    if (user) this.selections.update(items => ({ ...items, [user.id]: plotId }));
+
+    if (!user) return;
+
+    this.selection.set({
+      participant: user,
+      plotId,
+    });
   }
 }

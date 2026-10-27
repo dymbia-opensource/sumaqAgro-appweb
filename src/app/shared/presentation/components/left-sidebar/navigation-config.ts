@@ -12,7 +12,7 @@ export interface NavigationSection {
 }
 
 /** Experiences currently supported by the web application. */
-import { UserExperience } from '../../../domain/model/demo-user';
+import { UserRole } from '../../../../iam/domain/model/entities/user-role';
 
 /** Navigation for an independent farmer. */
 export const farmerNavigationSections: NavigationSection[] = [
@@ -102,8 +102,8 @@ export const agronomistNavigationSections: NavigationSection[] = [
   },
 ];
 
-/** Returns only navigation options supported by the selected demo role. */
-export function navigationFor(experience: UserExperience): NavigationSection[] {
+/** Returns navigation options supported by the session's active role. */
+export function navigationFor(experience: UserRole): NavigationSection[] {
   if (experience === 'AGRONOMIST') return agronomistNavigationSections;
   return experience === 'COOPERATIVE_DIRECTOR'
     ? cooperativeDirectorNavigationSections

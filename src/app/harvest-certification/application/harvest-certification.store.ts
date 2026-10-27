@@ -2,15 +2,14 @@ import { computed, DestroyRef, effect, inject, Service, signal, untracked } from
 import { forkJoin, map, Observable, of, Subscription, switchMap } from 'rxjs';
 import { CooperativeMember } from '../../profiles/domain/model/entities/cooperative-member.entity';
 import { ProfilesApi } from '../../profiles/infrastructure/profiles-api';
-import { DemoSessionService } from '../../shared/application/demo-session.service';
-import { DemoUser } from '../../shared/domain/model/demo-user';
+import { CurrentSessionService, SessionParticipant } from '../../shared/application/current-session.service';
 import { RegisterHarvestBatchCommand } from '../domain/model/commands/register-harvest-batch.command';
 import { IssueQualityCertificateCommand } from '../domain/model/commands/issue-quality-certificate.command';
 import { HarvestBatch } from '../domain/model/entities/harvest-batch.entity';
 import { QualityCertificate } from '../domain/model/entities/quality-certificate.entity';
 import { HarvestCertificationApi } from '../infrastructure/harvest-certification-api';
 
-/** Membership scope, separate from the account used to enter the demo. */
+/** Membership scope, separate from the authenticated account. */
 interface CertificationScope {
   cooperativeId: number | null;
   members: CooperativeMember[];
@@ -19,19 +18,19 @@ interface CertificationScope {
 /**
  * Coordinates certificates using explicit Profiles relationships.
  * @remarks
- * Demo checks prevent accidental cross-participant UI actions. The production
+ * Session checks prevent accidental cross-participant UI actions. The production
  * backend must authorize resources and derive the issuer from authenticated identity.
  */
 @Service()
 export class HarvestCertificationStore {
   private readonly api = inject(HarvestCertificationApi);
   private readonly profiles = inject(ProfilesApi);
-  private readonly session = inject(DemoSessionService);
+  private readonly session = inject(CurrentSessionService);
   private readonly batchesSignal = signal<HarvestBatch[]>([]);
   private readonly certificatesSignal = signal<QualityCertificate[]>([]);
   private readonly membersSignal = signal<CooperativeMember[]>([]);
   private readonly cooperativeSignal = signal<number | null>(null);
-  private readonly participantSignal = signal<DemoUser | null>(null);
+  private readonly participantSignal = signal<SessionParticipant | null>(null);
   private readonly readySignal = signal(false);
   private readonly loadingSignal = signal(false);
   private readonly errorSignal = signal<string | null>(null);
@@ -260,7 +259,7 @@ export class HarvestCertificationStore {
   }
 
   /** Resolves farmer membership or the director's institutional scope. */
-  private resolveScope(user: DemoUser): Observable<CertificationScope> {
+  private resolveScope(user: SessionParticipant): Observable<CertificationScope> {
     if (user.experience === 'FARMER') {
       return this.profiles.getMembershipsByUser(user.id).pipe(
         map((members) => ({

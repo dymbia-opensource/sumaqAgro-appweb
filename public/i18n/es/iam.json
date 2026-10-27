@@ -1,0 +1,49 @@
+{
+  "iam": {
+    "signIn": {
+      "title": "¡Bienvenido de nuevo!",
+      "subtitle": "Ingresa tus credenciales para acceder a tu cuenta.",
+      "submit": "Iniciar sesión",
+      "pending": "Ingresando…",
+      "success": "Sesión iniciada correctamente.",
+      "noAccount": "¿No tienes una cuenta?",
+      "register": "Regístrate"
+    },
+    "signUp": {
+      "title": "Crea tu cuenta",
+      "subtitle": "Comienza a gestionar tu actividad agrícola.",
+      "roleLabel": "¿Cuál es tu rol?",
+      "passwordHint": "Utiliza al menos 8 caracteres.",
+      "submit": "Crear cuenta",
+      "pending": "Creando cuenta…",
+      "hasAccount": "¿Ya tienes una cuenta?",
+      "successTitle": "Tu cuenta está lista",
+      "successMessage": "Ahora puedes iniciar sesión con tu correo y contraseña."
+    },
+    "roles": {
+      "FARMER": "Agricultor",
+      "COOPERATIVE_DIRECTOR": "Directivo de cooperativa",
+      "AGRONOMIST": "Asesor agrónomo"
+    },
+    "fields": {
+      "email": "Correo electrónico",
+      "password": "Contraseña"
+    },
+    "actions": {
+      "showPassword": "Mostrar contraseña",
+      "hidePassword": "Ocultar contraseña"
+    },
+    "validation": {
+      "required": "Este campo es obligatorio.",
+      "email": "Ingresa un correo electrónico válido.",
+      "passwordLength": "La contraseña debe tener al menos 8 caracteres."
+    },
+    "errors": {
+      "INVALID_CREDENTIALS": "El correo o la contraseña son incorrectos.",
+      "REGISTRATION_CONFLICT": "No se pudo crear la cuenta con esos datos.",
+      "ACCESS_DENIED": "No tienes permiso para realizar esta operación.",
+      "CONNECTION_ERROR": "No pudimos conectarnos. Revisa tu conexión e inténtalo nuevamente.",
+      "UNEXPECTED_ERROR": "Ocurrió un error. Inténtalo nuevamente."
+    }
+  }
+}

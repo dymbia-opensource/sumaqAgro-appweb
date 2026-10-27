@@ -1,0 +1,9 @@
+/**
+ * Provisional response returned after successful authentication.
+ */
+export interface SignInResponse {
+  readonly id: number | string;
+  readonly email: string;
+  readonly roles: readonly string[];
+  readonly token: string;
+}

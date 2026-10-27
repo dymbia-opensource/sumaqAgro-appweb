@@ -5,7 +5,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { TranslatePipe } from '@ngx-translate/core';
-import { DemoSessionService } from '../../../../shared/application/demo-session.service';
+import { CurrentSessionService } from '../../../../shared/application/current-session.service';
 import { HarvestCertificationStore } from '../../../application/harvest-certification.store';
 import {
   HarvestBatch,
@@ -37,12 +37,12 @@ import { HarvestGradingSheetView } from '../harvest-grading-sheet-view/harvest-g
  * Presents scoped certificates and a director-only evaluation workflow.
  * @remarks
  * Profiles resolves the account's membership. The view never equates account and
- * member IDs; issuing identity comes from the store's resolved demo participant.
+ * member IDs; issuing identity comes from the store's resolved session participant.
  */
 export class HarvestCertificatesView {
   readonly store = inject(HarvestCertificationStore);
-  private readonly demoSession = inject(DemoSessionService);
-  readonly isFarmer = computed(() => this.demoSession.activeUser()?.experience === 'FARMER');
+  private readonly session = inject(CurrentSessionService);
+  readonly isFarmer = computed(() => this.session.activeUser()?.experience === 'FARMER');
   readonly farmerCertificates = computed(() => {
     return this.store.activeCertificates().flatMap((certificate) => {
       const batch = this.store
@@ -137,7 +137,7 @@ export class HarvestCertificatesView {
       if (this.store.error()) this.busy.set(false);
     });
     effect(() => {
-      this.demoSession.activeUser();
+      this.session.activeUser();
       this.store.cooperativeId();
       untracked(() => {
         this.close();
@@ -238,7 +238,7 @@ export class HarvestCertificatesView {
   /** Valida el formulario y prepara el lote y su huella para la vista previa. */
   async preview(): Promise<void> {
     if (!this.store.canIssue() || this.store.loading()) return;
-    const participant = this.demoSession.activeUser();
+    const participant = this.session.activeUser();
     const cooperativeId = this.store.cooperativeId();
     this.formError.set('');
     const member = this.members().find((item) => item.id === this.form.memberId);
@@ -331,7 +331,7 @@ export class HarvestCertificatesView {
     );
     // Hashing is asynchronous; discard the draft if its participant changed.
     if (
-      participant !== this.demoSession.activeUser() ||
+      participant !== this.session.activeUser() ||
       cooperativeId !== this.store.cooperativeId() ||
       !this.store.canIssue()
     )

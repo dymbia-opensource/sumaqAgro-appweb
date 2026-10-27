@@ -3,7 +3,7 @@ import { effect, inject, Injectable, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { fromEvent, map, merge } from 'rxjs';
-import { DemoSessionService } from '../../../application/demo-session.service';
+import {IamStore} from '../../../../iam/application/iam.store';
 
 /**
  * State shared by the parts of the app shell: the side menu and the top bar.
@@ -15,7 +15,7 @@ import { DemoSessionService } from '../../../application/demo-session.service';
 @Injectable({ providedIn: 'root' })
 export class LayoutService {
   private readonly router = inject(Router);
-  private readonly demoSession = inject(DemoSessionService);
+  private readonly iamStore = inject(IamStore);
 
   /** `true` on phones and small tablets. */
   readonly isHandset = toSignal(
@@ -64,10 +64,13 @@ export class LayoutService {
     }
   }
 
-  /** Signs the user out. It will call the IAM store once IAM is implemented. */
+  /** Clears the IAM session and returns to sign-in. */
   signOut(): void {
+    if (this.iamStore.isLoading()) return;
+
     this.closeSidebarOnHandset();
-    this.demoSession.clearSession();
-    this.router.navigate(['/demo-access']).then();
+    this.iamStore.signOut();
+
+    void this.router.navigate(['/iam/sign-in']);
   }
 }

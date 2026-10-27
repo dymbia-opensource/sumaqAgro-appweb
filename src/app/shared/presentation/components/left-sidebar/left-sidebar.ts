@@ -6,10 +6,10 @@ import { MatListModule } from '@angular/material/list';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
-import { DemoSessionService } from '../../../application/demo-session.service';
 import { LanguageSwitcher } from '../language-switcher/language-switcher';
 import { LayoutService } from '../layout/layout.service';
 import { navigationFor } from './navigation-config';
+import { CurrentSessionService } from '../../../application/current-session.service';
 
 /**
  * Side menu of the shell: brand, options of the user's role, offline status,
@@ -33,11 +33,12 @@ import { navigationFor } from './navigation-config';
 })
 export class LeftSidebar {
   protected readonly layout = inject(LayoutService);
-  private readonly demoSession = inject(DemoSessionService);
+  private readonly session = inject(CurrentSessionService);
 
-  /** Side menu generated from the selected user's experience. */
+  /** Navigation generated from the current participant's primary role. */
   readonly sections = computed(() => {
-    const user = this.demoSession.activeUser();
+    const user = this.session.activeUser();
+
     return user ? navigationFor(user.experience) : [];
   });
 }

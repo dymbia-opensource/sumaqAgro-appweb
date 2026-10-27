@@ -9,7 +9,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslatePipe } from '@ngx-translate/core';
-import { DemoSessionService } from '../../../../shared/application/demo-session.service';
+import { CurrentSessionService } from '../../../../shared/application/current-session.service';
 import { ProfilesStore } from '../../../application/profiles.store';
 import { UpdateFarmerContactCommand } from '../../../domain/model/commands/update-farmer-contact.command';
 
@@ -34,7 +34,7 @@ import { UpdateFarmerContactCommand } from '../../../domain/model/commands/updat
 export class FarmerSettingsView {
   private readonly store = inject(ProfilesStore);
   private readonly snackBar = inject(MatSnackBar);
-  private readonly demoSession = inject(DemoSessionService);
+  private readonly session = inject(CurrentSessionService);
 
   readonly profile = this.store.profile;
   readonly loading = this.store.loading;
@@ -47,7 +47,7 @@ export class FarmerSettingsView {
   });
 
   constructor() {
-    const userId = this.demoSession.activeUser()?.id;
+    const userId = this.session.activeUser()?.id;
     if (userId !== undefined) {
       this.store.loadFarmerProfile(userId);
     }
