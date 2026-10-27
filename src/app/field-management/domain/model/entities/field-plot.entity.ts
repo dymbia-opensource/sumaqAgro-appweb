@@ -1,17 +1,107 @@
-import { RecordSoilBaselineCommand } from '../commands/record-soil-baseline.command';
-import { RegisterFieldPlotCommand } from '../commands/register-field-plot.command';
 import { BaseEntity } from '../../../../shared/domain/model/base-entity';
-import { GeoCoordinate } from './geo-coordinate';
-import { PlotStatus } from './plot-status';
-import { SoilBaseline } from './soil-baseline';
+
+/** Monitoring status of a field plot. */
+export enum PlotStatus {
+  /** The plot was registered but its GPS polygon is not drawn yet. */
+  WITHOUT_POLYGON = 'WITHOUT_POLYGON',
+  /** The polygon is linked to AgroMonitoring and the plot is monitored by satellite. */
+  ACTIVE_MONITORING = 'ACTIVE_MONITORING',
+}
+
+/** Texture of the soil, according to the initial soil analysis. */
+export enum SoilTexture {
+  SANDY = 'SANDY',
+  LOAMY = 'LOAMY',
+  CLAY = 'CLAY',
+  SILTY = 'SILTY',
+  SANDY_LOAM = 'SANDY_LOAM',
+  CLAY_LOAM = 'CLAY_LOAM',
+}
+
+/** One vertex of the GPS polygon of a plot. */
+export class GeoCoordinate {
+  private _latitude: number;
+  private _longitude: number;
+
+  constructor(latitude: number, longitude: number) {
+    this._latitude = latitude;
+    this._longitude = longitude;
+  }
+
+  get latitude(): number {
+    return this._latitude;
+  }
+
+  set latitude(value: number) {
+    this._latitude = value;
+  }
+
+  get longitude(): number {
+    return this._longitude;
+  }
+
+  set longitude(value: number) {
+    this._longitude = value;
+  }
+}
+
+/** Initial soil analysis of a plot. */
+export class SoilBaseline {
+  private _ph: number;
+  private _texture: SoilTexture;
+  private _organicMatterPercentage: number;
+  private _recordedAt: Date;
+
+  constructor(props: {
+    ph: number;
+    texture: SoilTexture;
+    organicMatterPercentage: number;
+    recordedAt: Date;
+  }) {
+    this._ph = props.ph;
+    this._texture = props.texture;
+    this._organicMatterPercentage = props.organicMatterPercentage;
+    this._recordedAt = props.recordedAt;
+  }
+
+  get ph(): number {
+    return this._ph;
+  }
+
+  set ph(value: number) {
+    this._ph = value;
+  }
+
+  get texture(): SoilTexture {
+    return this._texture;
+  }
+
+  set texture(value: SoilTexture) {
+    this._texture = value;
+  }
+
+  get organicMatterPercentage(): number {
+    return this._organicMatterPercentage;
+  }
+
+  set organicMatterPercentage(value: number) {
+    this._organicMatterPercentage = value;
+  }
+
+  get recordedAt(): Date {
+    return this._recordedAt;
+  }
+
+  set recordedAt(value: Date) {
+    this._recordedAt = value;
+  }
+}
 
 /**
  * Field plot of a producer, with its GPS polygon and its soil analysis.
  *
  * @remarks
- * Aggregate root of the `FieldPlot` aggregate of the EventStorming. Its
- * commands are `RegisterFieldPlot`, `DelineatePlotBoundary`, `LinkPlotPolygon`
- * and `RecordSoilBaseline`.
+ * Root of the `FieldPlot` aggregate. It only holds the data of the plot.
  */
 export class FieldPlot extends BaseEntity {
   private _ownerUserId: number;
@@ -45,36 +135,12 @@ export class FieldPlot extends BaseEntity {
     this._soilBaseline = props.soilBaseline ?? null;
   }
 
-  /**
-   * Registers a new plot "without polygon" (US-28).
-   * @param command - Owner, name, region and declared area of the plot.
-   * @returns The new plot, with the `FieldPlotRegistered` event.
-   * @throws Error when the name or the region is empty, or the area is negative.
-   */
-  static register(command: RegisterFieldPlotCommand): FieldPlot {
-    const name = command.name.trim();
-    const region = command.region.trim();
-    if (!name) {
-      throw new Error('The plot name is required.');
-    }
-    if (!region) {
-      throw new Error('The plot region is required.');
-    }
-    if (command.declaredAreaHectares < 0) {
-      throw new Error('The declared area cannot be negative.');
-    }
-    const plot = new FieldPlot({
-      id: 0,
-      ownerUserId: command.ownerUserId,
-      name,
-      region,
-      areaHectares: command.declaredAreaHectares,
-    });
-    return plot;
-  }
-
   get ownerUserId(): number {
     return this._ownerUserId;
+  }
+
+  set ownerUserId(value: number) {
+    this._ownerUserId = value;
   }
 
   get name(): string {
@@ -89,21 +155,41 @@ export class FieldPlot extends BaseEntity {
     return this._region;
   }
 
+  set region(value: string) {
+    this._region = value;
+  }
+
   get status(): PlotStatus {
     return this._status;
   }
 
+  set status(value: PlotStatus) {
+    this._status = value;
+  }
+
   /** Vertices of the GPS polygon, in order. */
   get boundary(): GeoCoordinate[] {
-    return [...this._boundary];
+    return this._boundary;
+  }
+
+  set boundary(value: GeoCoordinate[]) {
+    this._boundary = value;
   }
 
   get areaHectares(): number {
     return this._areaHectares;
   }
 
+  set areaHectares(value: number) {
+    this._areaHectares = value;
+  }
+
   get agroMonitoringPolygonId(): string | null {
     return this._agroMonitoringPolygonId;
+  }
+
+  set agroMonitoringPolygonId(value: string | null) {
+    this._agroMonitoringPolygonId = value;
   }
 
   /** Initial soil analysis, or `null` if it was not recorded. */
@@ -111,130 +197,17 @@ export class FieldPlot extends BaseEntity {
     return this._soilBaseline;
   }
 
-  /** `true` when the polygon has at least three vertices. */
-  hasPolygon(): boolean {
-    return this._boundary.length >= 3;
-  }
-
-  /** `true` when the plot is linked to AgroMonitoring and monitored by satellite. */
-  isMonitored(): boolean {
-    return this._status === PlotStatus.ACTIVE_MONITORING;
+  set soilBaseline(value: SoilBaseline | null) {
+    this._soilBaseline = value;
   }
 
   /**
-   * Sets the GPS polygon of the plot and calculates its area (US-29).
-   * @param coordinates - Vertices of the polygon, in order.
-   * @throws Error when the polygon has less than three vertices or its sides cross.
-   */
-  delineateBoundary(coordinates: GeoCoordinate[]): void {
-    if (coordinates.length < FieldPlot.MINIMUM_VERTICES) {
-      throw new Error('The polygon needs at least three vertices.');
-    }
-    if (!FieldPlot.isSimplePolygon(coordinates)) {
-      throw new Error('The sides of the polygon cannot cross each other.');
-    }
-    this._boundary = [...coordinates];
-    this._areaHectares = FieldPlot.calculateAreaHectares(coordinates);
-  }
-
-  /**
-   * Records the initial soil analysis; a new analysis replaces the previous one.
-   * @param command - pH, texture, organic matter and date of the analysis.
-   * @throws Error when a value of the analysis is out of range.
-   */
-  recordSoilBaseline(command: RecordSoilBaselineCommand): void {
-    this._soilBaseline = new SoilBaseline({
-      ph: command.ph,
-      texture: command.texture,
-      organicMatterPercentage: command.organicMatterPercentage,
-      recordedAt: command.recordedAt,
-    });
-  }
-
-  /** Copy of the plot without its pending events, to change it before the API confirms. */
-  clone(): FieldPlot {
-    return new FieldPlot({
-      id: this.id as number,
-      ownerUserId: this._ownerUserId,
-      name: this._name,
-      region: this._region,
-      status: this._status,
-      boundary: this.boundary,
-      areaHectares: this._areaHectares,
-      agroMonitoringPolygonId: this._agroMonitoringPolygonId,
-      soilBaseline: this._soilBaseline,
-    });
-  }
-
-  /** Minimum number of vertices of a polygon. */
-  static readonly MINIMUM_VERTICES = 3;
-
-  /**
-   * Area of a GPS polygon in hectares, with the shoelace formula.
+   * `true` when the polygon has at least three vertices.
    *
    * @remarks
-   * The coordinates are projected to meters around the center of the polygon,
-   * which is precise enough for the size of a farm plot.
-   *
-   * @param coordinates - Vertices of the polygon, in order.
+   * Crop Health reads it to know if the plot can be monitored by satellite.
    */
-  static calculateAreaHectares(coordinates: GeoCoordinate[]): number {
-    if (coordinates.length < FieldPlot.MINIMUM_VERTICES) return 0;
-    const meanLatitude =
-      coordinates.reduce((sum, vertex) => sum + vertex.latitude, 0) / coordinates.length;
-    const metersPerDegreeLatitude = 110_540;
-    const metersPerDegreeLongitude = 111_320 * Math.cos((meanLatitude * Math.PI) / 180);
-    const points = coordinates.map((vertex) => ({
-      x: vertex.longitude * metersPerDegreeLongitude,
-      y: vertex.latitude * metersPerDegreeLatitude,
-    }));
-    const doubleArea = points.reduce((sum, point, index) => {
-      const next = points[(index + 1) % points.length];
-      return sum + point.x * next.y - next.x * point.y;
-    }, 0);
-    return Math.abs(doubleArea) / 2 / 10_000;
-  }
-
-  /**
-   * Tells whether the sides of a polygon do not cross each other (US-29).
-   * @param coordinates - Vertices of the polygon, in order.
-   */
-  static isSimplePolygon(coordinates: GeoCoordinate[]): boolean {
-    const total = coordinates.length;
-    for (let i = 0; i < total; i++) {
-      for (let j = i + 1; j < total; j++) {
-        const adjacent = j === i + 1 || (i === 0 && j === total - 1);
-        if (
-          !adjacent &&
-          FieldPlot.segmentsCross(
-            coordinates[i],
-            coordinates[(i + 1) % total],
-            coordinates[j],
-            coordinates[(j + 1) % total],
-          )
-        ) {
-          return false;
-        }
-      }
-    }
-    return true;
-  }
-
-  /** `true` when the segment a-b crosses the segment c-d. */
-  private static segmentsCross(
-    a: GeoCoordinate,
-    b: GeoCoordinate,
-    c: GeoCoordinate,
-    d: GeoCoordinate,
-  ): boolean {
-    const orientation = (p: GeoCoordinate, q: GeoCoordinate, r: GeoCoordinate) =>
-      Math.sign(
-        (q.longitude - p.longitude) * (r.latitude - p.latitude) -
-          (q.latitude - p.latitude) * (r.longitude - p.longitude),
-      );
-    return (
-      orientation(a, b, c) * orientation(a, b, d) < 0 &&
-      orientation(c, d, a) * orientation(c, d, b) < 0
-    );
+  hasPolygon(): boolean {
+    return this._boundary.length >= 3;
   }
 }

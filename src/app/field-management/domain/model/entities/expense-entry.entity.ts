@@ -1,6 +1,15 @@
 import { BaseEntity } from '../../../../shared/domain/model/base-entity';
 import { Money } from '../../../../shared/domain/model/money';
-import { ExpenseCategory } from './expense-category';
+
+/** Categories of the field expenses recorded in the cost ledger. */
+export enum ExpenseCategory {
+  /** Seeds, fertilizers and other inputs. */
+  INPUTS = 'INPUTS',
+  /** Daily wages of the field workers. */
+  LABOR = 'LABOR',
+  /** Transport of inputs or harvest. */
+  FREIGHT = 'FREIGHT',
+}
 
 /**
  * One expense of the cost ledger: inputs, daily labor or freight.
@@ -27,9 +36,6 @@ export class ExpenseEntry extends BaseEntity {
     clientSyncId?: string;
   }) {
     super({ id: props.id });
-    if (props.quantity <= 0) {
-      throw new Error('The quantity must be greater than zero.');
-    }
     this._ledgerId = props.ledgerId;
     this._category = props.category;
     this._description = props.description;
@@ -44,28 +50,56 @@ export class ExpenseEntry extends BaseEntity {
     return this._ledgerId;
   }
 
+  set ledgerId(value: number) {
+    this._ledgerId = value;
+  }
+
   get category(): ExpenseCategory {
     return this._category;
+  }
+
+  set category(value: ExpenseCategory) {
+    this._category = value;
   }
 
   get description(): string {
     return this._description;
   }
 
+  set description(value: string) {
+    this._description = value;
+  }
+
   get quantity(): number {
     return this._quantity;
+  }
+
+  set quantity(value: number) {
+    this._quantity = value;
   }
 
   get unitPrice(): Money {
     return this._unitPrice;
   }
 
+  set unitPrice(value: Money) {
+    this._unitPrice = value;
+  }
+
   get expenseDate(): Date {
     return this._expenseDate;
   }
 
+  set expenseDate(value: Date) {
+    this._expenseDate = value;
+  }
+
   get notes(): string {
     return this._notes;
+  }
+
+  set notes(value: string) {
+    this._notes = value;
   }
 
   /** Code generated on the device when the expense was recorded offline. */
@@ -73,8 +107,7 @@ export class ExpenseEntry extends BaseEntity {
     return this._clientSyncId;
   }
 
-  /** Total of the expense: quantity × unit price. */
-  total(): Money {
-    return this._unitPrice.multiply(this._quantity);
+  set clientSyncId(value: string) {
+    this._clientSyncId = value;
   }
 }
