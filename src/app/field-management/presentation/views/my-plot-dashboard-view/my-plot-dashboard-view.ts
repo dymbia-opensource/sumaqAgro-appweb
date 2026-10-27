@@ -6,14 +6,10 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
-<<<<<<< HEAD
 import { CurrentSessionService } from '../../../../iam/application/current-session.service';
-=======
 import { catchError, map, of, startWith, switchMap } from 'rxjs';
 import { SatelliteObservation } from '../../../../crop-health/domain/model/entities/satellite-observation.entity';
 import { CropHealthApi } from '../../../../crop-health/infrastructure/crop-health-api';
-import { CurrentSessionService } from '../../../../shared/application/current-session.service';
->>>>>>> develop
 import { Breadcrumb, PageHeader } from '../../../../shared/presentation/components/page-header/page-header';
 import { MessageCard } from '../../../../shared/presentation/components/message-card/message-card';
 import { FieldManagementStore } from '../../../application/field-management.store';

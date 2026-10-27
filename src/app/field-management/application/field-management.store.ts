@@ -23,17 +23,10 @@ import {
   throwError,
   toArray,
 } from 'rxjs';
-<<<<<<< HEAD
-import { SatelliteObservation } from '../../crop-health/domain/model/entities/satellite-observation.entity';
-import { CropHealthApi } from '../../crop-health/infrastructure/crop-health-api';
 import { CurrentSessionService } from '../../iam/application/current-session.service';
 import { PlotSelectionService } from './plot-selection.service';
-=======
 import { OfflineSyncService } from '../../shared/infrastructure/offline/offline-sync.service';
 import { PendingOperationType } from '../../shared/infrastructure/offline/pending-operation';
-import { CurrentSessionService } from '../../shared/application/current-session.service';
-import { PlotSelectionService } from '../../shared/application/plot-selection.service';
->>>>>>> develop
 import { CloseCropCampaignCommand } from '../domain/model/commands/close-crop-campaign.command';
 import { DelineatePlotBoundaryCommand } from '../domain/model/commands/delineate-plot-boundary.command';
 import { ExportCampaignCostReportCommand } from '../domain/model/commands/export-campaign-cost-report.command';
