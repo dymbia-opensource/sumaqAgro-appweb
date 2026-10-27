@@ -1,11 +1,6 @@
 import { RecordSoilBaselineCommand } from '../commands/record-soil-baseline.command';
 import { RegisterFieldPlotCommand } from '../commands/register-field-plot.command';
-import { FieldPlotRegisteredEvent } from '../events/field-plot-registered.event';
-import { PlotAreaCalculatedEvent } from '../events/plot-area-calculated.event';
-import { PlotBoundaryDelineatedEvent } from '../events/plot-boundary-delineated.event';
-import { PlotPolygonLinkedEvent } from '../events/plot-polygon-linked.event';
-import { SoilBaselineRecordedEvent } from '../events/soil-baseline-recorded.event';
-import { AggregateRoot } from './aggregate-root';
+import { BaseEntity } from '../../../../shared/domain/model/base-entity';
 import { GeoCoordinate } from './geo-coordinate';
 import { PlotStatus } from './plot-status';
 import { SoilBaseline } from './soil-baseline';
@@ -18,7 +13,7 @@ import { SoilBaseline } from './soil-baseline';
  * commands are `RegisterFieldPlot`, `DelineatePlotBoundary`, `LinkPlotPolygon`
  * and `RecordSoilBaseline`.
  */
-export class FieldPlot extends AggregateRoot {
+export class FieldPlot extends BaseEntity {
   private _ownerUserId: number;
   private _name: string;
   private _region: string;
@@ -75,9 +70,6 @@ export class FieldPlot extends AggregateRoot {
       region,
       areaHectares: command.declaredAreaHectares,
     });
-    plot.raise(
-      new FieldPlotRegisteredEvent({ plotId: 0, ownerUserId: command.ownerUserId, name }),
-    );
     return plot;
   }
 
@@ -143,10 +135,6 @@ export class FieldPlot extends AggregateRoot {
     }
     this._boundary = [...coordinates];
     this._areaHectares = FieldPlot.calculateAreaHectares(coordinates);
-    this.raise(new PlotBoundaryDelineatedEvent({ plotId: this.id as number, boundary: this.boundary }));
-    this.raise(
-      new PlotAreaCalculatedEvent({ plotId: this.id as number, areaHectares: this._areaHectares }),
-    );
   }
 
   /**
@@ -168,9 +156,6 @@ export class FieldPlot extends AggregateRoot {
     }
     this._agroMonitoringPolygonId = agroMonitoringPolygonId;
     this._status = PlotStatus.ACTIVE_MONITORING;
-    this.raise(
-      new PlotPolygonLinkedEvent({ plotId: this.id as number, agroMonitoringPolygonId }),
-    );
   }
 
   /**
@@ -185,9 +170,6 @@ export class FieldPlot extends AggregateRoot {
       organicMatterPercentage: command.organicMatterPercentage,
       recordedAt: command.recordedAt,
     });
-    this.raise(
-      new SoilBaselineRecordedEvent({ plotId: this.id as number, soilBaseline: this._soilBaseline }),
-    );
   }
 
   /** Copy of the plot without its pending events, to change it before the API confirms. */

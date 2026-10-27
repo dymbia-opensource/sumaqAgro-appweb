@@ -3,16 +3,7 @@ import { OpenCampaignLedgerCommand } from '../commands/open-campaign-ledger.comm
 import { RecordDailyLaborExpenseCommand } from '../commands/record-daily-labor-expense.command';
 import { RecordFieldFreightExpenseCommand } from '../commands/record-field-freight-expense.command';
 import { RecordInputExpenseCommand } from '../commands/record-input-expense.command';
-import { ActualYieldRecordedEvent } from '../events/actual-yield-recorded.event';
-import { BreakevenPriceCalculatedEvent } from '../events/breakeven-price-calculated.event';
-import { CampaignCostReportExportedEvent } from '../events/campaign-cost-report-exported.event';
-import { CampaignLedgerOpenedEvent } from '../events/campaign-ledger-opened.event';
-import { DailyLaborExpenseRecordedEvent } from '../events/daily-labor-expense-recorded.event';
-import { ExpectedYieldSetEvent } from '../events/expected-yield-set.event';
-import { FieldFreightExpenseRecordedEvent } from '../events/field-freight-expense-recorded.event';
-import { InputExpenseRecordedEvent } from '../events/input-expense-recorded.event';
-import { TotalInvestmentCalculatedEvent } from '../events/total-investment-calculated.event';
-import { AggregateRoot } from './aggregate-root';
+import { BaseEntity } from '../../../../shared/domain/model/base-entity';
 import { CropType } from './crop-type';
 import { ExpenseCategory } from './expense-category';
 import { ExpenseEntry } from './expense-entry.entity';
@@ -28,7 +19,7 @@ import { YieldUnit } from './yield-unit';
  * After every expense or a new expected yield it recalculates that price
  * (policy P9).
  */
-export class CampaignLedger extends AggregateRoot {
+export class CampaignLedger extends BaseEntity {
   private _campaignId: number;
   private _entries: ExpenseEntry[];
   private _expectedYield: number;
@@ -68,7 +59,6 @@ export class CampaignLedger extends AggregateRoot {
       campaignId: command.campaignId,
       yieldUnit: command.yieldUnit,
     });
-    ledger.raise(new CampaignLedgerOpenedEvent({ ledgerId: 0, campaignId: command.campaignId }));
     return ledger;
   }
 
@@ -200,10 +190,6 @@ export class CampaignLedger extends AggregateRoot {
       command.clientSyncId,
     );
     if (!entry) return;
-    this.raise(
-      new InputExpenseRecordedEvent({ ledgerId: this.ledgerId, expenseId: entry.id as number, total: entry.total() }),
-    );
-    this.recalculateBreakevenPrice();
   }
 
   /** Wages of a field task (US-38): workers × days, paid at the daily wage. */
@@ -217,10 +203,6 @@ export class CampaignLedger extends AggregateRoot {
       command.clientSyncId,
     );
     if (!entry) return;
-    this.raise(
-      new DailyLaborExpenseRecordedEvent({ ledgerId: this.ledgerId, expenseId: entry.id as number, total: entry.total() }),
-    );
-    this.recalculateBreakevenPrice();
   }
 
   /** Transport of inputs or harvest (US-39): one trip at the given cost. */
@@ -234,10 +216,6 @@ export class CampaignLedger extends AggregateRoot {
       command.clientSyncId,
     );
     if (!entry) return;
-    this.raise(
-      new FieldFreightExpenseRecordedEvent({ ledgerId: this.ledgerId, expenseId: entry.id as number, total: entry.total() }),
-    );
-    this.recalculateBreakevenPrice();
   }
 
   /**
@@ -252,8 +230,6 @@ export class CampaignLedger extends AggregateRoot {
     }
     this._expectedYield = expectedYield;
     this._yieldUnit = unit;
-    this.raise(new ExpectedYieldSetEvent({ ledgerId: this.ledgerId, expectedYield, unit }));
-    this.recalculateBreakevenPrice();
   }
 
   /**
@@ -270,35 +246,11 @@ export class CampaignLedger extends AggregateRoot {
       throw new Error('The actual yield must use the unit of the ledger.');
     }
     this._actualYield = actualYield;
-    this.raise(new ActualYieldRecordedEvent({ ledgerId: this.ledgerId, actualYield, unit }));
-    this.recalculateBreakevenPrice();
-  }
-
-  /**
-   * Calculates again the total investment and the breakeven price (policy P9).
-   * @returns The new breakeven price.
-   */
-  recalculateBreakevenPrice(): Money {
-    const totalInvestment = this.totalInvestment();
-    const breakevenPrice = this.breakevenPrice();
-    this.raise(new TotalInvestmentCalculatedEvent({ ledgerId: this.ledgerId, totalInvestment }));
-    this.raise(new BreakevenPriceCalculatedEvent({ ledgerId: this.ledgerId, breakevenPrice }));
-    return breakevenPrice;
   }
 
   /** Closes the ledger when its campaign is closed; it stops accepting expenses. */
   freeze(): void {
     this._frozen = true;
-  }
-
-  /**
-   * Records that the cost report of the campaign was exported.
-   * The file itself is built by the infrastructure layer.
-   */
-  exportCostReport(): void {
-    this.raise(
-      new CampaignCostReportExportedEvent({ ledgerId: this.ledgerId, campaignId: this._campaignId }),
-    );
   }
 
   /** Copy of the ledger without its pending events, to change it before the API confirms. */

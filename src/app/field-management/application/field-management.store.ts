@@ -20,7 +20,6 @@ import {
   of,
   retry,
   startWith,
-  Subject,
   Subscription,
   switchMap,
   throwError,
@@ -34,7 +33,6 @@ import { DelineatePlotBoundaryCommand } from '../domain/model/commands/delineate
 import { ExportCampaignCostReportCommand } from '../domain/model/commands/export-campaign-cost-report.command';
 import { LinkPlotPolygonCommand } from '../domain/model/commands/link-plot-polygon.command';
 import { OpenCampaignLedgerCommand } from '../domain/model/commands/open-campaign-ledger.command';
-import { RecalculateBreakevenPriceCommand } from '../domain/model/commands/recalculate-breakeven-price.command';
 import { RecordActualYieldCommand } from '../domain/model/commands/record-actual-yield.command';
 import { RecordDailyLaborExpenseCommand } from '../domain/model/commands/record-daily-labor-expense.command';
 import { RecordInputExpenseCommand } from '../domain/model/commands/record-input-expense.command';
@@ -48,7 +46,6 @@ import { StartCropCampaignCommand } from '../domain/model/commands/start-crop-ca
 import { CampaignLedger } from '../domain/model/entities/campaign-ledger.entity';
 import { CropCampaign } from '../domain/model/entities/crop-campaign.entity';
 import { FieldPlot } from '../domain/model/entities/field-plot.entity';
-import { FieldManagementEvent } from '../domain/model/events/field-management.event';
 import { CampaignSummary } from '../domain/model/read-models/campaign-summary';
 import { FieldManagementApi } from '../infrastructure/field-management-api';
 import { NetworkStatus } from '../infrastructure/offline/network-status';
@@ -123,7 +120,6 @@ export class FieldManagementStore {
   private readonly loadingSignal = signal<boolean>(false);
   private readonly errorSignal = signal<string | null>(null);
   private readonly syncingSignal = signal(false);
-  private readonly domainEventsSubject = new Subject<FieldManagementEvent>();
   private plotsLoad?: Subscription;
   private plotMutation?: Subscription;
   private plotRevision = 0;
@@ -146,14 +142,6 @@ export class FieldManagementStore {
 
   /** i18n key of the last error, or `null`. */
   readonly error = this.errorSignal.asReadonly();
-
-  /**
-   * Domain events confirmed by the API, for the policies of other contexts
-   * (for example, Crop Health schedules the satellite monitoring with
-   * `SowingDateRecorded`, policy P4).
-   */
-  readonly domainEvents$: Observable<FieldManagementEvent> =
-    this.domainEventsSubject.asObservable();
 
   /** `true` while the device has connection. */
   readonly online = this.network.online;
@@ -428,7 +416,6 @@ export class FieldManagementStore {
       return;
     }
     const revision = this.plotRevision;
-    const events = plot.pullDomainEvents();
     let created = false;
     let quotaChecked = false;
     let creationStarted = false;
@@ -471,7 +458,7 @@ export class FieldManagementStore {
         ),
       )
       .subscribe({
-        next: ({ createdPlot, campaign, ledger, events: campaignEvents }) => {
+        next: ({ createdPlot, campaign, ledger }) => {
           if (!this.isPlotParticipant(ownerUserId, revision)) return;
           this.campaignsByPlotSignal.update((campaigns) =>
             new Map(campaigns).set(createdPlot.id as number, [campaign]),
@@ -479,7 +466,6 @@ export class FieldManagementStore {
           this.setLedger(campaign.id as number, ledger);
           this.plotMutationBusy.set(false);
           this.loadingSignal.set(false);
-          this.publish([...events, ...campaignEvents]);
           this.selectPlot(createdPlot.id as number);
           onRegistered?.(createdPlot);
         },
@@ -527,20 +513,13 @@ export class FieldManagementStore {
       .pipe(
         map((agroMonitoringPolygonId) => {
           plot.linkPolygon(agroMonitoringPolygonId);
-          return plot.pullDomainEvents();
         }),
-        switchMap((events) =>
-          this.fieldManagementApi.updateBoundary(plot).pipe(
-            retry(2),
-            map((updated) => ({ updated, events })),
-          ),
-        ),
+        switchMap(() => this.fieldManagementApi.updateBoundary(plot).pipe(retry(2))),
       )
       .subscribe({
-        next: ({ updated, events }) => {
+        next: (updated) => {
           this.replacePlot(updated);
           this.loadingSignal.set(false);
-          this.publish(events);
           onDelineated?.(updated);
         },
         error: (error) => this.fail(error, 'field-management.errors.save-polygon'),
@@ -657,13 +636,12 @@ export class FieldManagementStore {
       setup,
       this.campaignsByPlotSignal().get(plotId) ?? [],
     ).subscribe({
-      next: ({ campaign, ledger, events }) => {
+      next: ({ campaign, ledger }) => {
         this.campaignsByPlotSignal.update((campaigns) =>
           new Map(campaigns).set(plotId, [...(campaigns.get(plotId) ?? []), campaign]),
         );
         this.setLedger(campaign.id as number, ledger);
         this.loadingSignal.set(false);
-        this.publish(events);
         onStarted?.(campaign);
       },
       error: (error) => this.fail(error, 'field-management.errors.start-campaign'),
@@ -696,7 +674,6 @@ export class FieldManagementStore {
       this.fail(error, 'field-management.errors.close-campaign');
       return;
     }
-    const events = [...campaign.pullDomainEvents(), ...(ledger?.pullDomainEvents() ?? [])];
     this.startLoading();
     this.fieldManagementApi
       .updateCampaign(campaign)
@@ -714,7 +691,6 @@ export class FieldManagementStore {
           this.replaceCampaign(savedCampaign);
           if (savedLedger) this.setLedger(savedCampaign.id as number, savedLedger);
           this.loadingSignal.set(false);
-          this.publish(events);
           onClosed?.();
         },
         error: (error) => this.fail(error, 'field-management.errors.close-campaign'),
@@ -768,18 +744,6 @@ export class FieldManagementStore {
   };
 
   /**
-   * Calculates again the total investment and the breakeven price of a ledger
-   * and publishes the result. Nothing is saved: the price is derived from the
-   * expenses and the yield.
-   */
-  recalculateBreakevenPrice = (command: RecalculateBreakevenPriceCommand): void => {
-    const ledger = this.findLedger(command.ledgerId)?.clone();
-    if (!ledger) return;
-    ledger.recalculateBreakevenPrice();
-    this.publish(ledger.pullDomainEvents());
-  };
-
-  /**
    * Builds the cost report of a campaign and downloads it.
    * @param command - Campaign of the report.
    */
@@ -791,12 +755,9 @@ export class FieldManagementStore {
       this.errorSignal.set('field-management.errors.export-report');
       return;
     }
-    ledger.exportCostReport();
-    const events = ledger.pullDomainEvents();
     this.fieldManagementApi.exportCostReport(plot, campaign, ledger).subscribe({
       next: (file) => {
         this.fileDownloader.save(file);
-        this.publish(events);
       },
       error: (error) => this.fail(error, 'field-management.errors.export-report'),
     });
@@ -819,10 +780,9 @@ export class FieldManagementStore {
             switchMap((saved) => {
               const ledger = saved.clone();
               commands.forEach((command) => FieldManagementStore.applyExpense(ledger, command));
-              const events = ledger.pullDomainEvents();
               return this.fieldManagementApi
                 .updateLedger(ledger)
-                .pipe(map((updated) => ({ updated, events, commands })));
+                .pipe(map((updated) => ({ updated, commands })));
             }),
             // A ledger that fails (for example, it was deleted) does not stop the others.
             catchError((error) => {
@@ -837,7 +797,6 @@ export class FieldManagementStore {
           if (!result) return;
           this.offlineQueue.remove(result.commands.map((command) => command.clientSyncId));
           this.setLedger(result.updated.campaignId, result.updated);
-          this.publish(result.events);
         },
         complete: () => this.syncingSignal.set(false),
       });
@@ -859,7 +818,6 @@ export class FieldManagementStore {
   ): Observable<{
     campaign: CropCampaign;
     ledger: CampaignLedger;
-    events: FieldManagementEvent[];
   }> {
     let campaign: CropCampaign;
     try {
@@ -873,7 +831,6 @@ export class FieldManagementStore {
     } catch (error) {
       return throwError(() => error);
     }
-    const campaignEvents = campaign.pullDomainEvents();
     return this.fieldManagementApi.createCampaign(campaign).pipe(
       switchMap((created) => {
         // Policy P8: Whenever CropCampaignStarted Then OpenCampaignLedger.
@@ -890,13 +847,8 @@ export class FieldManagementStore {
         } catch (error) {
           return throwError(() => error);
         }
-        const ledgerEvents = ledger.pullDomainEvents();
         return this.fieldManagementApi.createLedger(ledger).pipe(
-          map((createdLedger) => ({
-            campaign: created,
-            ledger: createdLedger,
-            events: [...campaignEvents, ...ledgerEvents],
-          })),
+          map((createdLedger) => ({ campaign: created, ledger: createdLedger })),
         );
       }),
     );
@@ -921,7 +873,6 @@ export class FieldManagementStore {
       this.fail(error, errorKey);
       return;
     }
-    const events = plot.pullDomainEvents();
     this.startLoading();
     this.fieldManagementApi
       .updatePlot(plot)
@@ -930,7 +881,6 @@ export class FieldManagementStore {
         next: (saved) => {
           this.replacePlot(saved);
           this.loadingSignal.set(false);
-          this.publish(events);
           onSaved?.();
         },
         error: (error) => this.fail(error, errorKey),
@@ -958,7 +908,6 @@ export class FieldManagementStore {
       this.fail(error, errorKey);
       return;
     }
-    const events = ledger.pullDomainEvents();
     this.startLoading();
     this.fieldManagementApi
       .updateLedger(ledger)
@@ -967,7 +916,6 @@ export class FieldManagementStore {
         next: (saved) => {
           this.setLedger(saved.campaignId, saved);
           this.loadingSignal.set(false);
-          this.publish(events);
           onSaved?.();
         },
         error: (error) => {
@@ -992,17 +940,10 @@ export class FieldManagementStore {
       this.fail(error, 'field-management.errors.record-expense');
       return;
     }
-    // The events are published when the expense reaches the API.
-    ledger.pullDomainEvents();
     this.offlineQueue.enqueue(command);
     this.setLedger(ledger.campaignId, ledger);
     this.errorSignal.set(null);
     onRecorded?.();
-  }
-
-  /** Sends each confirmed domain event to the subscribers. */
-  private publish(events: FieldManagementEvent[]): void {
-    events.forEach((event) => this.domainEventsSubject.next(event));
   }
 
   private findPlot(plotId: number): FieldPlot | undefined {

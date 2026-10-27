@@ -1,10 +1,5 @@
 import { StartCropCampaignCommand } from '../commands/start-crop-campaign.command';
-import { CropCampaignClosedEvent } from '../events/crop-campaign-closed.event';
-import { CropCampaignStartedEvent } from '../events/crop-campaign-started.event';
-import { CropTypeSelectedEvent } from '../events/crop-type-selected.event';
-import { SeedVarietySpecifiedEvent } from '../events/seed-variety-specified.event';
-import { SowingDateRecordedEvent } from '../events/sowing-date-recorded.event';
-import { AggregateRoot } from './aggregate-root';
+import { BaseEntity } from '../../../../shared/domain/model/base-entity';
 import { CampaignStatus } from './campaign-status';
 import { CropType } from './crop-type';
 
@@ -16,7 +11,7 @@ import { CropType } from './crop-type';
  * commands are `StartCropCampaign`, `SelectCropType`, `SpecifySeedVariety`,
  * `RecordSowingDate` and `CloseCropCampaign`.
  */
-export class CropCampaign extends AggregateRoot {
+export class CropCampaign extends BaseEntity {
   private _plotId: number;
   private _season: string;
   private _cropType: CropType;
@@ -72,7 +67,6 @@ export class CropCampaign extends AggregateRoot {
       cropType: CropType.ANDEAN_POTATO,
       seedVariety: '',
     });
-    campaign.raise(new CropCampaignStartedEvent({ campaignId: 0, plotId: command.plotId, season }));
     return campaign;
   }
 
@@ -128,7 +122,6 @@ export class CropCampaign extends AggregateRoot {
   selectCropType(cropType: CropType): void {
     this.ensureActive();
     this._cropType = cropType;
-    this.raise(new CropTypeSelectedEvent({ campaignId: this.id as number, cropType }));
   }
 
   /**
@@ -145,9 +138,6 @@ export class CropCampaign extends AggregateRoot {
     }
     this._seedVariety = name;
     this._customSeedVariety = custom;
-    this.raise(
-      new SeedVarietySpecifiedEvent({ campaignId: this.id as number, varietyName: name, custom }),
-    );
   }
 
   /**
@@ -162,13 +152,6 @@ export class CropCampaign extends AggregateRoot {
       throw new Error('The sowing date is not valid.');
     }
     this._sowingDate = sowingDate;
-    this.raise(
-      new SowingDateRecordedEvent({
-        campaignId: this.id as number,
-        plotId: this._plotId,
-        sowingDate,
-      }),
-    );
   }
 
   /**
@@ -179,7 +162,6 @@ export class CropCampaign extends AggregateRoot {
   close(): void {
     this.ensureActive();
     this._status = CampaignStatus.FINISHED;
-    this.raise(new CropCampaignClosedEvent({ campaignId: this.id as number, plotId: this._plotId }));
   }
 
   /** Copy of the campaign without its pending events, to change it before the API confirms. */
