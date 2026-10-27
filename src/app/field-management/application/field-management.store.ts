@@ -22,6 +22,8 @@ import {
   switchMap,
   throwError,
 } from 'rxjs';
+import { OfflineSyncService } from '../../shared/infrastructure/offline/offline-sync.service';
+import { PendingOperationType } from '../../shared/infrastructure/offline/pending-operation';
 import { DemoSessionService } from '../../shared/application/demo-session.service';
 import { PlotSelectionService } from '../../shared/application/plot-selection.service';
 import { CloseCropCampaignCommand } from '../domain/model/commands/close-crop-campaign.command';
@@ -43,11 +45,11 @@ import { CropCampaign } from '../domain/model/entities/crop-campaign.entity';
 import { FieldPlot } from '../domain/model/entities/field-plot.entity';
 import { CampaignSummary } from '../domain/model/read-models/campaign-summary';
 import { FieldManagementApi } from '../infrastructure/field-management-api';
-import { NetworkStatus } from '../infrastructure/offline/network-status';
 import {
   ExpenseCommand,
-  OfflineExpenseQueue,
-} from '../infrastructure/offline/offline-expense-queue';
+  PendingExpenseAssembler,
+  PendingExpensePayload,
+} from '../infrastructure/assemblers/pending-expense.assembler';
 import { FileDownloader } from '../infrastructure/reports/file-downloader';
 
 /**
@@ -94,8 +96,8 @@ export class FieldManagementStore {
   private readonly fieldManagementApi = inject(FieldManagementApi);
   private readonly demoSession = inject(DemoSessionService);
   private readonly plotSelection = inject(PlotSelectionService);
-  private readonly network = inject(NetworkStatus);
-  private readonly offlineQueue = inject(OfflineExpenseQueue);
+  private readonly offlineSync = inject(OfflineSyncService);
+  private readonly pendingExpenses = new PendingExpenseAssembler();
   private readonly fileDownloader = inject(FileDownloader);
 
   private readonly plotsSignal = signal<FieldPlot[]>([]);
@@ -129,10 +131,10 @@ export class FieldManagementStore {
   readonly error = this.errorSignal.asReadonly();
 
   /** `true` while the device has connection. */
-  readonly online = this.network.online;
+  readonly online = this.offlineSync.isOnline;
 
   /** Expenses recorded offline that are waiting to be synchronized. */
-  readonly pendingExpenseCount = this.offlineQueue.size;
+  readonly pendingExpenseCount = this.offlineSync.pendingCountOf(PendingOperationType.FIELD_EXPENSE);
 
   /** `true` while the offline expenses are being synchronized. */
   readonly syncing = this.syncingSignal.asReadonly();
@@ -232,7 +234,7 @@ export class FieldManagementStore {
       untracked(() => (userId === null ? this.clearState() : this.loadMyPlots(userId)));
     });
     effect(() => {
-      if (this.network.online() && this.offlineQueue.size() > 0) {
+      if (this.offlineSync.isOnline() && this.pendingExpenseCount() > 0) {
         untracked(() => this.syncPendingExpenses());
       }
     });
@@ -667,7 +669,7 @@ export class FieldManagementStore {
    * it is synchronized when the connection comes back.
    */
   recordExpense = (command: RecordExpenseCommand, onRecorded?: () => void): void => {
-    if (!this.network.online()) {
+    if (!this.offlineSync.isOnline()) {
       this.recordOffline(command, onRecorded);
       return;
     }
@@ -728,14 +730,17 @@ export class FieldManagementStore {
    * The ledger ignores the expenses that were already saved.
    */
   syncPendingExpenses = (): void => {
-    if (this.syncingSignal() || !this.network.online()) return;
-    const ledgerIds = this.offlineQueue.pendingLedgerIds();
+    if (this.syncingSignal() || !this.offlineSync.isOnline()) return;
+    const pending = this.offlineSync.pendingOf<PendingExpensePayload>(PendingOperationType.FIELD_EXPENSE);
+    const ledgerIds = [...new Set(pending.map((operation) => operation.payload.ledgerId))];
     if (ledgerIds.length === 0) return;
     this.syncingSignal.set(true);
     from(ledgerIds)
       .pipe(
         concatMap((ledgerId) => {
-          const commands = this.offlineQueue.pendingOf(ledgerId);
+          const commands = pending
+            .filter((operation) => operation.payload.ledgerId === ledgerId)
+            .map(this.pendingExpenses.toCommand);
           return this.fieldManagementApi.getLedgerById(ledgerId).pipe(
             switchMap((saved) => {
               const ledger = saved.clone();
@@ -755,7 +760,7 @@ export class FieldManagementStore {
       .subscribe({
         next: (result) => {
           if (!result) return;
-          this.offlineQueue.remove(result.commands.map((command) => command.clientSyncId));
+          this.offlineSync.remove(result.commands.map((command) => command.clientSyncId));
           this.setLedger(result.updated.campaignId, result.updated);
         },
         complete: () => this.syncingSignal.set(false),
@@ -879,7 +884,7 @@ export class FieldManagementStore {
           onSaved?.();
         },
         error: (error) => {
-          if (onOffline && !this.network.online()) {
+          if (onOffline && !this.offlineSync.isOnline()) {
             this.loadingSignal.set(false);
             onOffline();
             return;
@@ -900,7 +905,7 @@ export class FieldManagementStore {
       this.fail(error, 'field-management.errors.record-expense');
       return;
     }
-    this.offlineQueue.enqueue(command);
+    this.offlineSync.enqueue(this.pendingExpenses.toOperation(command));
     this.setLedger(ledger.campaignId, ledger);
     this.errorSignal.set(null);
     onRecorded?.();
