@@ -10,6 +10,7 @@ const publicAuthenticationUrls = new Set([
   `${apiBaseUrl}${environment.platformProviderSignInEndpointPath}`,
   `${apiBaseUrl}${environment.platformProviderSignUpEndpointPath}`,
   `${apiBaseUrl}${environment.platformProviderPasswordRecoveryEndpointPath}`,
+  `${apiBaseUrl}${environment.platformProviderPasswordRecoveryEndpointPath}/reset`,
 ]);
 
 /**
