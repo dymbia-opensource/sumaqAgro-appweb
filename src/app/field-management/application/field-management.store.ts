@@ -8,7 +8,6 @@ import {
   signal,
   untracked,
 } from '@angular/core';
-import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import {
   catchError,
   tap,
@@ -19,13 +18,10 @@ import {
   Observable,
   of,
   retry,
-  startWith,
   Subscription,
   switchMap,
   throwError,
 } from 'rxjs';
-import { SatelliteObservation } from '../../crop-health/domain/model/entities/satellite-observation.entity';
-import { CropHealthApi } from '../../crop-health/infrastructure/crop-health-api';
 import { DemoSessionService } from '../../shared/application/demo-session.service';
 import { PlotSelectionService } from '../../shared/application/plot-selection.service';
 import { CloseCropCampaignCommand } from '../domain/model/commands/close-crop-campaign.command';
@@ -82,15 +78,6 @@ export interface CropCampaignSetup {
   expectedYield?: SetExpectedYieldCommand;
 }
 
-/** Satellite observations of the selected plot and the state of their request. */
-interface VegetationState {
-  observations: SatelliteObservation[];
-  loading: boolean;
-  error: boolean;
-}
-
-const EMPTY_VEGETATION: VegetationState = { observations: [], loading: false, error: false };
-
 /**
  * Holds the Field Management state and coordinates its application behavior.
  *
@@ -106,7 +93,6 @@ const EMPTY_VEGETATION: VegetationState = { observations: [], loading: false, er
 export class FieldManagementStore {
   private readonly fieldManagementApi = inject(FieldManagementApi);
   private readonly demoSession = inject(DemoSessionService);
-  private readonly cropHealthApi = inject(CropHealthApi);
   private readonly plotSelection = inject(PlotSelectionService);
   private readonly network = inject(NetworkStatus);
   private readonly offlineQueue = inject(OfflineExpenseQueue);
@@ -233,19 +219,6 @@ export class FieldManagementStore {
         CampaignSummary.of(campaign, ledgers.get(campaign.id as number) ?? null, plot.areaHectares),
       );
   });
-
-  // NDVI of the selected plot: the observations belong to Crop Health and
-  // are read through its API facade, reloading when the selected plot changes.
-  private readonly vegetation = toSignal(
-    toObservable(this.selectedPlot).pipe(switchMap((plot) => this.loadObservationsOf(plot))),
-    { initialValue: EMPTY_VEGETATION },
-  );
-
-  /** Satellite observations of the selected plot, oldest first. */
-  readonly observations = computed(() => this.vegetation().observations);
-  readonly latestObservation = computed(() => this.observations().at(-1));
-  readonly observationsLoading = computed(() => this.vegetation().loading);
-  readonly observationsError = computed(() => this.vegetation().error);
 
   /**
    * Creates an instance of FieldManagementStore. It loads the plots of the
@@ -970,21 +943,6 @@ export class FieldManagementStore {
   }
 
   /** A plot without polygon has no satellite observations yet. */
-  private loadObservationsOf(plot: FieldPlot | undefined): Observable<VegetationState> {
-    if (!plot?.hasPolygon()) return of(EMPTY_VEGETATION);
-    return this.cropHealthApi.getObservationsByPlot(plot.id as number).pipe(
-      map((observations) => ({
-        observations: observations
-          .filter((item) => item.plotId === plot.id && item.stressAreaHectares <= plot.areaHectares)
-          .sort((a, b) => Date.parse(a.date) - Date.parse(b.date)),
-        loading: false,
-        error: false,
-      })),
-      startWith({ ...EMPTY_VEGETATION, loading: true }),
-      catchError(() => of({ ...EMPTY_VEGETATION, error: true })),
-    );
-  }
-
   /** Forgets the plots of the previous user (after signing out). */
   private clearState(): void {
     this.plotRevision++;
