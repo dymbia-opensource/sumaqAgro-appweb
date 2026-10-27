@@ -12,7 +12,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { LayoutService } from '../layout/layout.service';
-import {IamStore} from '../../../../iam/application/iam.store';
+import { CurrentSessionService } from '../../../application/current-session.service';
 
 /**
  * Top bar of the shell: menu button (on phones), search, connection status,
@@ -39,10 +39,10 @@ import {IamStore} from '../../../../iam/application/iam.store';
 })
 export class Toolbar {
   protected readonly layout = inject(LayoutService);
-  private readonly iamStore = inject(IamStore);
+  private readonly session = inject(CurrentSessionService);
 
-  /** Account email shown until the profile provides a display name. */
-  readonly userName = computed(() => this.iamStore.currentUser()?.email ?? '');
+  /** Display name provided by the current session projection. */
+  readonly userName = computed(() => this.session.activeUser()?.displayName ?? '');
   /** Pending notifications. Connected to the agroclimatic alerts later. */
   readonly notificationCount = signal(0);
 }

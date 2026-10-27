@@ -27,7 +27,7 @@ import {
 } from 'rxjs';
 import { SatelliteObservation } from '../../crop-health/domain/model/entities/satellite-observation.entity';
 import { CropHealthApi } from '../../crop-health/infrastructure/crop-health-api';
-import { DemoSessionService } from '../../shared/application/demo-session.service';
+import { CurrentSessionService } from '../../shared/application/current-session.service';
 import { PlotSelectionService } from '../../shared/application/plot-selection.service';
 import { CloseCropCampaignCommand } from '../domain/model/commands/close-crop-campaign.command';
 import { DelineatePlotBoundaryCommand } from '../domain/model/commands/delineate-plot-boundary.command';
@@ -109,7 +109,7 @@ const EMPTY_VEGETATION: VegetationState = { observations: [], loading: false, er
 @Injectable({ providedIn: 'root' })
 export class FieldManagementStore {
   private readonly fieldManagementApi = inject(FieldManagementApi);
-  private readonly demoSession = inject(DemoSessionService);
+  private readonly session = inject(CurrentSessionService);
   private readonly cropHealthApi = inject(CropHealthApi);
   private readonly plotSelection = inject(PlotSelectionService);
   private readonly network = inject(NetworkStatus);
@@ -164,16 +164,12 @@ export class FieldManagementStore {
   /** `true` while the offline expenses are being synchronized. */
   readonly syncing = this.syncingSignal.asReadonly();
 
-  /**
-   * Producer signed in: the owner of the plots and of the new plots, or `null`.
-   * It is the user chosen in the demo access until IAM is implemented; then it
-   * comes from IamStore.
-   */
-  readonly currentUserId = computed(() =>
-    this.demoSession.activeUser()?.experience === 'FARMER'
-      ? this.demoSession.activeUser()!.id
-      : null,
-  );
+  /** Authenticated producer who owns the plots. */
+  readonly currentUserId = computed(() => {
+    const user = this.session.activeUser();
+
+    return user?.experience === 'FARMER' ? user.id : null;
+  });
 
   /** Number of plots of the producer. */
   readonly plotCount = computed(() => this.plots().length);

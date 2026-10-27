@@ -9,7 +9,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { LanguageSwitcher } from '../language-switcher/language-switcher';
 import { LayoutService } from '../layout/layout.service';
 import { navigationFor } from './navigation-config';
-import {IamStore} from '../../../../iam/application/iam.store';
+import { CurrentSessionService } from '../../../application/current-session.service';
 
 /**
  * Side menu of the shell: brand, options of the user's role, offline status,
@@ -33,19 +33,12 @@ import {IamStore} from '../../../../iam/application/iam.store';
 })
 export class LeftSidebar {
   protected readonly layout = inject(LayoutService);
-  private readonly iamStore = inject(IamStore);
+  private readonly session = inject(CurrentSessionService);
 
-  /** Navigation generated from the authenticated account's roles. */
+  /** Navigation generated from the current participant's primary role. */
   readonly sections = computed(() => {
-    const user = this.iamStore.currentUser();
+    const user = this.session.activeUser();
 
-    if (!user) return [];
-
-    const role =
-      user.roles.find((candidate) => candidate === 'COOPERATIVE_DIRECTOR') ??
-      user.roles.find((candidate) => candidate === 'AGRONOMIST') ??
-      user.roles.find((candidate) => candidate === 'FARMER');
-
-    return role ? navigationFor(role) : [];
+    return user ? navigationFor(user.experience) : [];
   });
 }
