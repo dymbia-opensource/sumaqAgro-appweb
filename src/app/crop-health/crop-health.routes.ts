@@ -1,4 +1,5 @@
-import { cropHealthGuard } from './application/crop-health.guard';
+import { iamGuard } from '../iam/infrastructure/iam.guard';
+import { roleGuard } from '../iam/infrastructure/role.guard';
 import { Routes } from '@angular/router';
 
 const cropHealthView = () =>
@@ -38,8 +39,8 @@ const prescriptionForm = () =>
 export const cropHealthRoutes: Routes = [
   {
     path: '',
-    canActivate: [cropHealthGuard],
-    canActivateChild: [cropHealthGuard],
+    canActivate: [iamGuard],
+    canActivateChild: [roleGuard],
     children: [
       {
         path: 'assigned-plots',

@@ -1,15 +1,10 @@
 import { Routes } from '@angular/router';
+import { iamGuard } from './iam/infrastructure/iam.guard';
 
-const layout = () =>
-  import('./shared/presentation/components/layout/layout').then((m) => m.Layout);
+const layout = () => import('./shared/presentation/components/layout/layout').then((m) => m.Layout);
 
 const pageNotFound = () =>
   import('./shared/presentation/views/page-not-found/page-not-found').then((m) => m.PageNotFound);
-
-const demoAccessView = () =>
-  import('./shared/presentation/views/demo-access-view/demo-access-view').then(
-    (m) => m.DemoAccessView,
-  );
 
 const fieldManagementRoutes = () =>
   import('./field-management/field-management.routes').then((m) => m.fieldManagementRoutes);
@@ -25,9 +20,9 @@ const harvestCertificationRoutes = () =>
   );
 
 const publicTraceabilityView = () =>
-  import(
-    './harvest-certification/presentation/views/public-traceability-view/public-traceability-view'
-  ).then((m) => m.PublicTraceabilityView);
+  import('./harvest-certification/presentation/views/public-traceability-view/public-traceability-view').then(
+    (m) => m.PublicTraceabilityView,
+  );
 
 const baseTitle = 'SumaqAgro';
 
@@ -36,24 +31,25 @@ const baseTitle = 'SumaqAgro';
  *
  * @remarks
  * The private pages are children of the shell (`Layout`: side menu and top
- * bar). The demo access and the public QR verification are shown without it.
- * When IAM is implemented, the shell route gets `canActivate: [iamGuard]`
- * and the demo access is replaced by the IAM routes.
+ * bar) and require authentication on entry and child navigation. IAM views and
+ * public QR verification are shown without the shell.
  */
 export const routes: Routes = [
   // Pages without the shell
-  { path: 'demo-access', loadComponent: demoAccessView, title: `${baseTitle} - Demo access` },
+  { path: 'iam', loadChildren: () => import('./iam/iam.routes').then((m) => m.iamRoutes) },
   {
     path: 'verify/:token',
     loadComponent: publicTraceabilityView,
     title: `Verificar certificado | ${baseTitle}`,
   },
-  { path: '', redirectTo: '/demo-access', pathMatch: 'full' },
+  { path: '', redirectTo: '/iam/sign-in', pathMatch: 'full' },
 
   // Pages inside the shell
   {
     path: '',
     loadComponent: layout,
+    canActivate: [iamGuard],
+    canActivateChild: [iamGuard],
     children: [
       { path: 'field-management', loadChildren: fieldManagementRoutes },
       { path: 'crop-health', loadChildren: cropHealthRoutes },

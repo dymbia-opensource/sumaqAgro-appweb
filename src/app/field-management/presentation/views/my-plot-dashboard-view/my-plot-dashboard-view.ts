@@ -5,7 +5,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
-import { DemoSessionService } from '../../../../shared/application/demo-session.service';
+import { CurrentSessionService } from '../../../../shared/application/current-session.service';
 import { Breadcrumb, PageHeader } from '../../../../shared/presentation/components/page-header/page-header';
 import { MessageCard } from '../../../../shared/presentation/components/message-card/message-card';
 import { FieldManagementStore } from '../../../application/field-management.store';
@@ -34,7 +34,7 @@ import { NdviChartCard } from '../../components/ndvi-chart-card/ndvi-chart-card'
 })
 export class MyPlotDashboardView {
   private readonly store = inject(FieldManagementStore);
-  private readonly demoSession = inject(DemoSessionService);
+  private readonly session = inject(CurrentSessionService);
 
   // Store state
   readonly loading = this.store.loading;
@@ -50,7 +50,7 @@ export class MyPlotDashboardView {
 
   // UI state
   protected readonly breadcrumbs: Breadcrumb[] = [{ label: 'option.my-plot' }];
-  readonly userName = computed(() => this.demoSession.activeUser()?.displayName ?? '');
+  readonly userName = computed(() => this.session.activeUser()?.displayName ?? '');
 
   /** Greeting by time of day: morning, afternoon or evening. */
   readonly greetingKey = computed(() => {
@@ -65,7 +65,9 @@ export class MyPlotDashboardView {
     const plot = this.plot();
     if (!plot) return '';
     const variety = this.campaign()?.seedVariety;
-    const area = new Intl.NumberFormat('en-US', { maximumFractionDigits: 2 }).format(plot.areaHectares);
+    const area = new Intl.NumberFormat('en-US', { maximumFractionDigits: 2 }).format(
+      plot.areaHectares,
+    );
     return `${plot.name}${variety ? ` – ${variety}` : ''} (${area} Ha)`;
   });
 

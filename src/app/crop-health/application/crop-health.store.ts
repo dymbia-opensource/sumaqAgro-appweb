@@ -19,9 +19,8 @@ import {
   tap,
   throwError,
 } from 'rxjs';
-import { DemoSessionService } from '../../shared/application/demo-session.service';
+import { CurrentSessionService, SessionParticipant } from '../../shared/application/current-session.service';
 import { PlotSelectionService } from '../../shared/application/plot-selection.service';
-import { DemoUser } from '../../shared/domain/model/demo-user';
 import { FieldManagementApi } from '../../field-management/infrastructure/field-management-api';
 import { FieldManagementStore } from '../../field-management/application/field-management.store';
 import { FieldPlot } from '../../field-management/domain/model/entities/field-plot.entity';
@@ -39,7 +38,7 @@ import { SatelliteObservation } from '../domain/model/entities/satellite-observa
 import { TechnicalPrescription } from '../domain/model/entities/technical-prescription.entity';
 import { requireDate, todayInLima } from '../domain/model/validation';
 
-/** Coordinates scoped data and demo permissions. Production authorization belongs to the API. */
+/** Coordinates scoped data and participant permissions. Production authorization belongs to the API. */
 @Service()
 export class CropHealthStore {
   private readonly api = inject(CropHealthApi);
@@ -59,7 +58,7 @@ export class CropHealthStore {
   private readonly profiles = inject(ProfilesApi);
   private readonly fields = inject(FieldManagementApi);
   private readonly fieldStore = inject(FieldManagementStore);
-  private readonly session = inject(DemoSessionService);
+  private readonly session = inject(CurrentSessionService);
   private readonly selection = inject(PlotSelectionService);
   private readonly requests = new Map<string, Subscription>();
   private readonly busy = signal<Record<string, boolean>>({});
@@ -199,7 +198,7 @@ export class CropHealthStore {
     });
   }
 
-  private loadScope(user: DemoUser | null): void {
+  private loadScope(user: SessionParticipant | null): void {
     this.reset();
     if (!user) return;
     this.scopeUser.set(user.id);
@@ -300,9 +299,10 @@ export class CropHealthStore {
     );
   }
 
-  /** Uses an explicit demo account name; unknown producers remain identifiable by account ID. */
+  /** Uses the current account's display name; other producers remain identifiable by account ID. */
   producerName(userId: number): string {
-    return this.session.users.find((user) => user.id === userId)?.displayName ?? `#${userId}`;
+    const user = this.session.activeUser();
+    return user?.id === userId ? user.displayName : `#${userId}`;
   }
 
   private cooperativeScope(cooperativeId: number, advisor: TechnicalAdvisor | null) {
@@ -816,7 +816,7 @@ export class CropHealthStore {
   advisorName(id: number): string {
     return (
       this.advisors().find((item) => item.userId === id)?.name ??
-      this.session.users.find((user) => user.id === id)?.displayName ??
+      (this.session.activeUser()?.id === id ? this.session.activeUser()?.displayName : undefined) ??
       '#' + id
     );
   }
