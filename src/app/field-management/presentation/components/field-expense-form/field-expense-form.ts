@@ -8,7 +8,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Money } from '../../../../shared/domain/model/money';
-import { ExpenseCategory } from '../../../domain/model/entities/expense-category';
+import { ExpenseCategory } from '../../../domain/model/entities/expense-entry.entity';
 
 /** Field tasks paid with daily wages (US-38). */
 const LABOR_ACTIVITIES = ['SOWING', 'WEEDING', 'HILLING', 'SPRAYING', 'HARVEST'];

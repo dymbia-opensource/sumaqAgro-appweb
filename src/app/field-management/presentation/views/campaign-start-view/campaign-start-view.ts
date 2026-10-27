@@ -12,7 +12,7 @@ import { SelectCropTypeCommand } from '../../../domain/model/commands/select-cro
 import { SetExpectedYieldCommand } from '../../../domain/model/commands/set-expected-yield.command';
 import { SpecifySeedVarietyCommand } from '../../../domain/model/commands/specify-seed-variety.command';
 import { StartCropCampaignCommand } from '../../../domain/model/commands/start-crop-campaign.command';
-import { CropType } from '../../../domain/model/entities/crop-type';
+import { CropType } from '../../../domain/model/entities/crop-campaign.entity';
 import { CampaignForm, CampaignFormData } from '../../components/campaign-form/campaign-form';
 
 const CAMPAIGNS_ROUTE = '/field-management/campaigns';

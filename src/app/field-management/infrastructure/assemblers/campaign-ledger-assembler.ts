@@ -1,13 +1,9 @@
 import { Money } from '../../../shared/domain/model/money';
 import { fromApiDate, toApiDate } from '../../../shared/infrastructure/api-date';
 import { BaseAssembler } from '../../../shared/infrastructure/base-assembler';
-import { CampaignLedger } from '../../domain/model/entities/campaign-ledger.entity';
-import { ExpenseCategory } from '../../domain/model/entities/expense-category';
-import { ExpenseEntry } from '../../domain/model/entities/expense-entry.entity';
-import { YieldUnit } from '../../domain/model/entities/yield-unit';
-import { CampaignLedgerResource } from '../responses/campaign-ledger.response';
-import { CampaignLedgersResponse } from '../responses/campaign-ledgers.response';
-import { ExpenseEntryResource } from '../responses/expense-entry.response';
+import { CampaignLedger, YieldUnit } from '../../domain/model/entities/campaign-ledger.entity';
+import { ExpenseCategory, ExpenseEntry } from '../../domain/model/entities/expense-entry.entity';
+import { CampaignLedgerResource, CampaignLedgersResponse, ExpenseEntryResource } from '../responses/campaign-ledgers-response';
 
 /**
  * Maps cost ledger entities (and their expenses) to and from API resources.
@@ -52,7 +48,7 @@ export class CampaignLedgerAssembler implements BaseAssembler<
     expectedYield: entity.expectedYield,
     actualYield: entity.actualYield,
     yieldUnit: entity.yieldUnit,
-    frozen: entity.isFrozen(),
+    frozen: entity.frozen,
     entries: entity.entries.map((entry) => this.toExpenseResource(entry)),
   });
 

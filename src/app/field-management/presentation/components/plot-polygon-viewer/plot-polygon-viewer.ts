@@ -10,7 +10,7 @@ import {
 import { MatCardModule } from '@angular/material/card';
 import { TranslatePipe } from '@ngx-translate/core';
 import * as L from 'leaflet';
-import { GeoCoordinate } from '../../../domain/model/entities/geo-coordinate';
+import { GeoCoordinate } from '../../../domain/model/entities/field-plot.entity';
 
 /** Center used when the plot has no polygon yet (Valle del Mantaro, Junín). */
 const DEFAULT_CENTER: L.LatLngExpression = [-12.0725, -75.2121];

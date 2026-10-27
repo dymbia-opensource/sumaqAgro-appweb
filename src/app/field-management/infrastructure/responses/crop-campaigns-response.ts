@@ -1,4 +1,4 @@
-import { BaseResource } from '../../../shared/infrastructure/base-response';
+import { BaseResource, BaseResponse } from '../../../shared/infrastructure/base-response';
 
 /**
  * Resource representation of a crop campaign.
@@ -20,4 +20,12 @@ export interface CropCampaignResource extends BaseResource {
   sowingDate: string | null;
   /** Status (`IN_PROGRESS` or `FINISHED`). */
   status: string;
+}
+
+/**
+ * Response envelope for crop campaign collection queries.
+ */
+export interface CropCampaignsResponse extends BaseResponse {
+  /** Crop campaign resources included in the response. */
+  campaigns: CropCampaignResource[];
 }

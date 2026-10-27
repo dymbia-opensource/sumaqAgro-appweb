@@ -1,4 +1,5 @@
 import { Component, computed, inject, input, OnInit, output } from '@angular/core';
+import { FieldManagementStore } from '../../../application/field-management.store';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
@@ -9,11 +10,25 @@ import { MatInputModule } from '@angular/material/input';
 import { MatRadioModule } from '@angular/material/radio';
 import { TranslatePipe } from '@ngx-translate/core';
 import { startWith } from 'rxjs';
-import { CampaignLedger } from '../../../domain/model/entities/campaign-ledger.entity';
-import { CropCampaign } from '../../../domain/model/entities/crop-campaign.entity';
-import { CropType } from '../../../domain/model/entities/crop-type';
-import { YieldUnit } from '../../../domain/model/entities/yield-unit';
-import { SeedVarietyCatalog } from '../../../domain/model/read-models/seed-variety-catalog';
+import { CampaignLedger, YieldUnit } from '../../../domain/model/entities/campaign-ledger.entity';
+import { CropCampaign, CropType } from '../../../domain/model/entities/crop-campaign.entity';
+
+/** Seed varieties suggested for each crop (US-34). */
+export const SEED_VARIETIES: Record<CropType, readonly string[]> = {
+  [CropType.ANDEAN_POTATO]: ['Papa Canchán', 'Papa Yungay', 'Papa Perricholi', 'Papa Única'],
+  [CropType.SPECIALTY_COFFEE]: ['Typica', 'Caturra', 'Bourbon', 'Geisha', 'Catimor'],
+};
+
+/** Varieties of a crop whose name contains a text, ignoring upper case. */
+export function searchSeedVarieties(cropType: CropType, text: string): string[] {
+  const query = text.trim().toLowerCase();
+  return SEED_VARIETIES[cropType].filter((variety) => variety.toLowerCase().includes(query));
+}
+
+/** `true` when the variety typed by the producer is not in the catalog of the crop. */
+export function isCustomSeedVariety(cropType: CropType, varietyName: string): boolean {
+  return !SEED_VARIETIES[cropType].includes(varietyName.trim());
+}
 
 /** Data typed by the producer to start a campaign. */
 export interface CampaignFormData {
@@ -47,6 +62,8 @@ export interface CampaignFormData {
   styleUrl: './campaign-form.css',
 })
 export class CampaignForm implements OnInit {
+  protected readonly store = inject(FieldManagementStore);
+
   private fb = inject(FormBuilder).nonNullable;
 
   protected readonly cropTypes = Object.values(CropType);
@@ -87,16 +104,16 @@ export class CampaignForm implements OnInit {
 
   /** Varieties of the selected crop that match what the producer typed (US-34). */
   protected readonly varieties = computed(() =>
-    SeedVarietyCatalog.search(this.cropType(), this.varietyText()),
+    searchSeedVarieties(this.cropType(), this.varietyText()),
   );
 
   /** Unit of the expected yield: sacks for potato, quintals for coffee. */
-  protected readonly yieldUnit = computed(() => CampaignLedger.yieldUnitOf(this.cropType()));
+  protected readonly yieldUnit = computed(() => this.store.yieldUnitOf(this.cropType()));
 
   /** Season of the sowing date, e.g. `2026-II`. */
   protected readonly season = computed(() => {
     const date = CampaignForm.toDate(this.sowingDateText());
-    return date ? CropCampaign.seasonOf(date) : '';
+    return date ? this.store.seasonOf(date) : '';
   });
 
   ngOnInit(): void {
@@ -113,9 +130,9 @@ export class CampaignForm implements OnInit {
     this.submitted.emit({
       cropType: value.cropType,
       seedVariety: value.seedVariety,
-      customVariety: SeedVarietyCatalog.isCustom(value.cropType, value.seedVariety),
+      customVariety: isCustomSeedVariety(value.cropType, value.seedVariety),
       sowingDate,
-      season: CropCampaign.seasonOf(sowingDate),
+      season: this.store.seasonOf(sowingDate),
       expectedYield: value.expectedYield,
       yieldUnit: this.yieldUnit(),
     });

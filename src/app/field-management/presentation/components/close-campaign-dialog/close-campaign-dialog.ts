@@ -6,7 +6,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { TranslatePipe } from '@ngx-translate/core';
-import { YieldUnit } from '../../../domain/model/entities/yield-unit';
+import { YieldUnit } from '../../../domain/model/entities/campaign-ledger.entity';
 
 /** Data shown in the dialog. */
 export interface CloseCampaignDialogData {

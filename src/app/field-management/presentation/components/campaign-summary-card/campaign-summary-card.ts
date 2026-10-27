@@ -6,7 +6,73 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { TranslatePipe } from '@ngx-translate/core';
-import { CampaignSummary } from '../../../domain/model/read-models/campaign-summary';
+import { Money } from '../../../../shared/domain/model/money';
+import { FieldManagementStore } from '../../../application/field-management.store';
+import { CampaignLedger, YieldUnit } from '../../../domain/model/entities/campaign-ledger.entity';
+import { CropCampaign, CampaignStatus, CropType } from '../../../domain/model/entities/crop-campaign.entity';
+
+/** One campaign of a plot with the main figures of its cost ledger (`CampaignSummary`). */
+export interface CampaignSummary {
+  campaignId: number;
+  plotId: number;
+  season: string;
+  cropType: CropType;
+  seedVariety: string;
+  sowingDate: Date | null;
+  status: CampaignStatus;
+  /** `true` while the campaign is in progress. */
+  isActive: boolean;
+  /** `null` when the campaign has no cost ledger yet. */
+  ledgerId: number | null;
+  totalInvestment: Money;
+  breakevenPrice: Money;
+  expectedYield: number;
+  actualYield: number | null;
+  yieldUnit: YieldUnit;
+  expenseCount: number;
+  costPerHectare: Money;
+  /** Actual yield compared with the expected one, in % (100 = as expected), or `null`. */
+  yieldAchievement: number | null;
+}
+
+/**
+ * Builds the summary of a campaign.
+ * @param store - Field Management store, which calculates the figures.
+ * @param campaign - The campaign.
+ * @param ledger - Its cost ledger, if it has one.
+ * @param areaHectares - Area of the plot, for the cost per hectare.
+ */
+export function campaignSummaryOf(
+  store: FieldManagementStore,
+  campaign: CropCampaign,
+  ledger: CampaignLedger | null,
+  areaHectares: number,
+): CampaignSummary {
+  const expectedYield = ledger?.expectedYield ?? 0;
+  const actualYield = ledger?.actualYield ?? null;
+  return {
+    campaignId: campaign.id as number,
+    plotId: campaign.plotId,
+    season: campaign.season,
+    cropType: campaign.cropType,
+    seedVariety: campaign.seedVariety,
+    sowingDate: campaign.sowingDate,
+    status: campaign.status,
+    isActive: store.isActive(campaign),
+    ledgerId: ledger ? (ledger.id as number) : null,
+    totalInvestment: ledger ? store.totalInvestment(ledger) : new Money(0),
+    breakevenPrice: ledger ? store.breakevenPrice(ledger) : new Money(0),
+    expectedYield,
+    actualYield,
+    yieldUnit: ledger?.yieldUnit ?? store.yieldUnitOf(campaign.cropType),
+    expenseCount: ledger?.entries.length ?? 0,
+    costPerHectare: ledger
+      ? store.costPerHectare(ledger, areaHectares)
+      : new Money(0),
+    yieldAchievement:
+      actualYield === null || expectedYield <= 0 ? null : (actualYield / expectedYield) * 100,
+  };
+}
 
 /** Card of one campaign of the plot: crop, sowing, investment and yield (`CampaignSummary`). */
 @Component({

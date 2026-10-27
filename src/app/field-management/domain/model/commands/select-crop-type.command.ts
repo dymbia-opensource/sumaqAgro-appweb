@@ -1,4 +1,4 @@
-import { CropType } from '../entities/crop-type';
+import { CropType } from '../entities/crop-campaign.entity';
 
 /**
  * Chooses the crop of a campaign.

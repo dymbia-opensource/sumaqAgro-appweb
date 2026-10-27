@@ -5,8 +5,8 @@ import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
-import { CropType } from '../../../domain/model/entities/crop-type';
-import { SoilBaseline } from '../../../domain/model/entities/soil-baseline';
+import { CropType } from '../../../domain/model/entities/crop-campaign.entity';
+import { SoilBaseline } from '../../../domain/model/entities/field-plot.entity';
 
 /** Initial soil analysis of the plot, with the advice the domain gives for its crop. */
 @Component({
@@ -24,4 +24,20 @@ export class SoilBaselineCard {
 
   /** Route of the soil analysis form. */
   readonly recordLink = input.required<string | unknown[]>();
+
+  /** Lowest pH each crop tolerates before the soil needs lime. */
+  private static readonly MINIMUM_PH: Record<CropType, number> = {
+    [CropType.ANDEAN_POTATO]: 5.5,
+    [CropType.SPECIALTY_COFFEE]: 5.0,
+  };
+
+  /** `true` when the soil is too acid for the crop and needs lime before sowing. */
+  protected needsLiming(soil: SoilBaseline, cropType: CropType): boolean {
+    return soil.ph < SoilBaselineCard.MINIMUM_PH[cropType];
+  }
+
+  /** `true` when the soil has less than 2 % of organic matter and needs compost. */
+  protected isLowInOrganicMatter(soil: SoilBaseline): boolean {
+    return soil.organicMatterPercentage < 2;
+  }
 }

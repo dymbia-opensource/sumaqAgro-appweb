@@ -10,7 +10,7 @@ import { Breadcrumb, PageHeader } from '../../../../shared/presentation/componen
 import { MessageCard } from '../../../../shared/presentation/components/message-card/message-card';
 import { FieldManagementStore } from '../../../application/field-management.store';
 import { SetExpectedYieldCommand } from '../../../domain/model/commands/set-expected-yield.command';
-import { ExpenseCategory } from '../../../domain/model/entities/expense-category';
+import { ExpenseCategory } from '../../../domain/model/entities/expense-entry.entity';
 import { BreakevenPanel } from '../../components/breakeven-panel/breakeven-panel';
 import { ExpenseCategoryFilter } from '../../components/expense-category-filter/expense-category-filter';
 import { ExpenseList } from '../../components/expense-list/expense-list';
@@ -75,7 +75,7 @@ export class CampaignFinancesView {
   readonly categoryFilter = signal<ExpenseCategory | null>(null);
 
   /** `ExpenseHistory` read model: expenses of the chosen category, the most recent first. */
-  readonly expenseHistory = computed(() => this.ledger()?.entriesOf(this.categoryFilter()) ?? []);
+  readonly expenseHistory = computed(() => (this.ledger() ? this.store.expenseHistory(this.ledger()!, this.categoryFilter()) : []));
 
   /** Values of the subtitle, e.g. "Pampa Alta | Season 2026-I". */
   readonly subtitleParams = computed(() => ({
