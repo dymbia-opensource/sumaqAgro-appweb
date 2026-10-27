@@ -6,7 +6,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { TranslatePipe } from '@ngx-translate/core';
-import { DemoSessionService } from '../../../../shared/application/demo-session.service';
+import { CurrentSessionService } from '../../../../shared/application/current-session.service';
 import { FarmerAdvisoryStore } from '../../../application/farmer-advisory.store';
 
 /** Farmer-controlled demo responsibility selector, shared by plot detail and advisory inbox. */
@@ -53,7 +53,7 @@ import { FarmerAdvisoryStore } from '../../../application/farmer-advisory.store'
 export class FarmerAdvisoryPanel {
   readonly plotId = input.required<number>();
   readonly store = inject(FarmerAdvisoryStore);
-  private readonly session = inject(DemoSessionService);
+  private readonly session = inject(CurrentSessionService);
   readonly advisor = computed(() => this.store.advisorFor(this.plotId()));
   readonly assignment = computed(() => this.store.assignmentFor(this.plotId()));
   readonly selected = signal<number | null>(null);

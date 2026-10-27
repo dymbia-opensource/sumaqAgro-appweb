@@ -12,7 +12,7 @@ import { ChartConfiguration } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
 import { environment } from '../../../../../environments/environment';
 import { ProfilesStore } from '../../../application/profiles.store';
-import { DemoSessionService } from '../../../../shared/application/demo-session.service';
+import { CurrentSessionService } from '../../../../shared/application/current-session.service';
 
 /** Landing view for the cooperative director experience. */
 @Component({
@@ -23,7 +23,7 @@ import { DemoSessionService } from '../../../../shared/application/demo-session.
 })
 export class CooperativeDashboardView {
   private readonly store = inject(ProfilesStore);
-  private readonly demoSession = inject(DemoSessionService);
+  private readonly session = inject(CurrentSessionService);
   readonly dashboard = this.store.dashboard;
   readonly loading = this.store.loading;
   readonly error = this.store.error;
@@ -35,7 +35,7 @@ export class CooperativeDashboardView {
   readonly ndviChartOptions: ChartConfiguration<'line'>['options'] = { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { min: 0, max: 0.8, ticks: { stepSize: 0.2 } } } };
 
   constructor() {
-    const activeUser = this.demoSession.activeUser();
+    const activeUser = this.session.activeUser();
 
     if (activeUser?.experience === 'COOPERATIVE_DIRECTOR') {
       this.store.loadCooperativeDashboard(activeUser.id);

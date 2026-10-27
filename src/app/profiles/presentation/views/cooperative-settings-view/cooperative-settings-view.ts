@@ -7,7 +7,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { DemoSessionService } from '../../../../shared/application/demo-session.service';
+import { CurrentSessionService } from '../../../../shared/application/current-session.service';
 import { ProfilesStore } from '../../../application/profiles.store';
 import { InviteTechnicalAdvisorCommand } from '../../../domain/model/commands/invite-technical-advisor.command';
 import { ReassignTechnicalAdvisorCommand } from '../../../domain/model/commands/reassign-technical-advisor.command';
@@ -37,7 +37,7 @@ export type SettingsTab = 'cooperative' | 'technical-team' | 'subscription';
 export class CooperativeSettingsView {
   private readonly store = inject(ProfilesStore);
   private readonly dialog = inject(MatDialog);
-  private readonly demoSession = inject(DemoSessionService);
+  private readonly session = inject(CurrentSessionService);
 
   readonly activeTab = signal<SettingsTab>('technical-team');
   readonly cooperative = this.store.cooperative;
@@ -57,7 +57,7 @@ export class CooperativeSettingsView {
   });
 
   constructor() {
-    const activeUser = this.demoSession.activeUser();
+    const activeUser = this.session.activeUser();
 
     if (activeUser?.experience === 'COOPERATIVE_DIRECTOR') {
       this.store.loadInstitutionalDashboard(activeUser.id);
