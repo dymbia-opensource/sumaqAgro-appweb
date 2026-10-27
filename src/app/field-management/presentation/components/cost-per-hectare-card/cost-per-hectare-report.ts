@@ -1,7 +1,7 @@
-import { Money } from '../../../shared/domain/model/money';
-import { CampaignLedger } from '../../domain/model/entities/campaign-ledger.entity';
-import { ExpenseCategory } from '../../domain/model/entities/expense-category';
-import { YieldUnit } from '../../domain/model/entities/yield-unit';
+import { Money } from '../../../../shared/domain/model/money';
+import { CampaignLedger } from '../../../domain/model/entities/campaign-ledger.entity';
+import { ExpenseCategory } from '../../../domain/model/entities/expense-category';
+import { YieldUnit } from '../../../domain/model/entities/yield-unit';
 
 /** One row of the report: the cost of a category, in total and per hectare. */
 export interface CostPerHectareRow {

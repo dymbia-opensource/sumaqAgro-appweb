@@ -43,7 +43,6 @@ import { StartCropCampaignCommand } from '../domain/model/commands/start-crop-ca
 import { CampaignLedger } from '../domain/model/entities/campaign-ledger.entity';
 import { CropCampaign } from '../domain/model/entities/crop-campaign.entity';
 import { FieldPlot } from '../domain/model/entities/field-plot.entity';
-import { CampaignSummary } from './view-models/campaign-summary';
 import { FieldManagementApi } from '../infrastructure/field-management-api';
 import {
   ExpenseCommand,
@@ -210,17 +209,8 @@ export class FieldManagementStore {
     return campaign ? (this.ledgersByCampaignSignal().get(campaign.id as number) ?? null) : null;
   });
 
-  /** `CampaignSummary` read model of every campaign of the selected plot, the most recent first. */
-  readonly campaignSummaries = computed(() => {
-    const plot = this.selectedPlot();
-    if (!plot) return [];
-    const ledgers = this.ledgersByCampaignSignal();
-    return [...this.campaigns()]
-      .sort((a, b) => (b.id as number) - (a.id as number))
-      .map((campaign) =>
-        CampaignSummary.of(campaign, ledgers.get(campaign.id as number) ?? null, plot.areaHectares),
-      );
-  });
+  /** Cost ledger of each campaign of the producer, by campaign identifier. */
+  readonly ledgersByCampaign = this.ledgersByCampaignSignal.asReadonly();
 
   /**
    * Creates an instance of FieldManagementStore. It loads the plots of the

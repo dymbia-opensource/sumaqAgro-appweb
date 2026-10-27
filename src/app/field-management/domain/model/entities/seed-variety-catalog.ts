@@ -1,4 +1,4 @@
-import { CropType } from '../../domain/model/entities/crop-type';
+import { CropType } from './crop-type';
 
 /**
  * `SeedVarietyCatalog` read model: seed varieties suggested for each crop (US-34).

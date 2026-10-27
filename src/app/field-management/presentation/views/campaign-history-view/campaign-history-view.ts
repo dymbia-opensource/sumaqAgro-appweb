@@ -12,7 +12,7 @@ import { FieldManagementStore } from '../../../application/field-management.stor
 import { CloseCropCampaignCommand } from '../../../domain/model/commands/close-crop-campaign.command';
 import { ExportCampaignCostReportCommand } from '../../../domain/model/commands/export-campaign-cost-report.command';
 import { RecordActualYieldCommand } from '../../../domain/model/commands/record-actual-yield.command';
-import { CampaignSummary } from '../../../application/view-models/campaign-summary';
+import { CampaignSummary } from '../../components/campaign-summary-card/campaign-summary';
 import { CampaignSummaryCard } from '../../components/campaign-summary-card/campaign-summary-card';
 import {
   CloseCampaignDialog,
@@ -48,7 +48,19 @@ export class CampaignHistoryView {
   readonly loading = this.store.loading;
   readonly error = this.store.error;
   readonly plot = this.store.selectedPlot;
-  readonly summaries = this.store.campaignSummaries;
+  readonly campaigns = this.store.campaigns;
+
+  /** `CampaignSummary` of every campaign of the selected plot, the most recent first. */
+  readonly summaries = computed(() => {
+    const plot = this.plot();
+    if (!plot) return [];
+    const ledgers = this.store.ledgersByCampaign();
+    return [...this.campaigns()]
+      .sort((a, b) => (b.id as number) - (a.id as number))
+      .map((campaign) =>
+        CampaignSummary.of(campaign, ledgers.get(campaign.id as number) ?? null, plot.areaHectares),
+      );
+  });
   readonly hasCampaignInProgress = this.store.hasCampaignInProgress;
 
   // UI state

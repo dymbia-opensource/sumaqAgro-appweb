@@ -5,7 +5,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { TranslatePipe } from '@ngx-translate/core';
 import { CampaignLedger } from '../../../domain/model/entities/campaign-ledger.entity';
-import { CostPerHectareReport } from '../../../application/view-models/cost-per-hectare-report';
+import { CostPerHectareReport } from './cost-per-hectare-report';
 import { EXPENSE_CATEGORY_ICONS } from '../ledger-summary-cards/ledger-summary-cards';
 
 /** `CostPerHectareReport` read model: cost of each category per hectare of the plot. */

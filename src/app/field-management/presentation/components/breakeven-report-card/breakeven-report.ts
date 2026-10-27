@@ -1,6 +1,6 @@
-import { Money } from '../../../shared/domain/model/money';
-import { CampaignLedger } from '../../domain/model/entities/campaign-ledger.entity';
-import { YieldUnit } from '../../domain/model/entities/yield-unit';
+import { Money } from '../../../../shared/domain/model/money';
+import { CampaignLedger } from '../../../domain/model/entities/campaign-ledger.entity';
+import { YieldUnit } from '../../../domain/model/entities/yield-unit';
 
 /**
  * `BreakevenReport` read model: the breakeven price of a campaign with the
