@@ -1,5 +1,5 @@
 import { computed, inject, Service, signal } from '@angular/core';
-import { CurrentSessionService } from './current-session.service';
+import { CurrentSessionService } from '../../iam/application/current-session.service';
 
 /**
  * Shares plot selection between contexts for the authenticated account.

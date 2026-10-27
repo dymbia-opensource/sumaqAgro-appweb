@@ -19,8 +19,8 @@ import {
   tap,
   throwError,
 } from 'rxjs';
-import { CurrentSessionService, SessionParticipant } from '../../shared/application/current-session.service';
-import { PlotSelectionService } from '../../shared/application/plot-selection.service';
+import { CurrentSessionService, SessionParticipant } from '../../iam/application/current-session.service';
+import { PlotSelectionService } from '../../field-management/application/plot-selection.service';
 import { FieldManagementApi } from '../../field-management/infrastructure/field-management-api';
 import { FieldManagementStore } from '../../field-management/application/field-management.store';
 import { FieldPlot } from '../../field-management/domain/model/entities/field-plot.entity';

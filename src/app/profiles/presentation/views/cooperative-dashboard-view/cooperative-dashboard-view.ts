@@ -12,7 +12,7 @@ import { ChartConfiguration } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
 import { environment } from '../../../../../environments/environment';
 import { ProfilesStore } from '../../../application/profiles.store';
-import { CurrentSessionService } from '../../../../shared/application/current-session.service';
+import { CurrentSessionService } from '../../../../iam/application/current-session.service';
 
 /** Landing view for the cooperative director experience. */
 @Component({

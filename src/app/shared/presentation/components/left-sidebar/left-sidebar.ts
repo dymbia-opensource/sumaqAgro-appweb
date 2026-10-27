@@ -9,7 +9,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { LanguageSwitcher } from '../language-switcher/language-switcher';
 import { LayoutService } from '../layout/layout.service';
 import { navigationFor } from './navigation-config';
-import { CurrentSessionService } from '../../../application/current-session.service';
+import { CurrentSessionService } from '../../../../iam/application/current-session.service';
 
 /**
  * Side menu of the shell: brand, options of the user's role, offline status,

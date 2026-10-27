@@ -9,8 +9,12 @@ import { SignInCommand } from '../../../domain/model/commands/sign-in.command';
 import { AuthLayout } from '../../components/auth-layout/auth-layout';
 import { TranslatePipe } from '@ngx-translate/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { CurrentSessionService } from '../../../../shared/application/current-session.service';
-import { AuthNavigationService } from '../../../application/auth-navigation.service';
+import { CurrentSessionService } from '../../../application/current-session.service';
+import { AuthNavigationService } from '../../../infrastructure/auth-navigation.service';
+import {
+  DevelopmentDemoAccount,
+  getDevelopmentDemoAccounts,
+} from '../../../infrastructure/development-demo-accounts';
 
 @Component({
   selector: 'app-sign-in-form',
@@ -31,6 +35,7 @@ import { AuthNavigationService } from '../../../application/auth-navigation.serv
 export class SignInForm {
   protected readonly store = inject(IamStore);
   protected readonly hidePassword = signal(true);
+  protected readonly demoAccounts = getDevelopmentDemoAccounts();
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
   private readonly session = inject(CurrentSessionService);
@@ -62,6 +67,15 @@ export class SignInForm {
 
   protected togglePassword(): void {
     this.hidePassword.update((hidden) => !hidden);
+  }
+
+  protected fillDemoAccount(account: DevelopmentDemoAccount): void {
+    if (this.store.isLoading()) return;
+    this.store.clearFeedback();
+    this.form.setValue({ email: account.email, password: account.password });
+    this.form.markAsPristine();
+    this.form.markAsUntouched();
+    this.hidePassword.set(true);
   }
 
   protected submit(): void {

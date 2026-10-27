@@ -1,7 +1,7 @@
 import { computed, DestroyRef, effect, inject, Injectable, signal, untracked } from '@angular/core';
 import { forkJoin, Subscription, switchMap } from 'rxjs';
 import { FieldManagementStore } from '../../field-management/application/field-management.store';
-import { CurrentSessionService, SessionParticipant } from '../../shared/application/current-session.service';
+import { CurrentSessionService, SessionParticipant } from '../../iam/application/current-session.service';
 import { PlotAdvisorAssignment } from '../domain/model/entities/plot-advisor-assignment';
 import { TechnicalAdvisor } from '../domain/model/entities/technical-advisor.entity';
 import { ProfilesApi } from '../infrastructure/profiles-api';

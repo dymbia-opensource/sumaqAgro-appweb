@@ -1,17 +1,14 @@
 <app-auth-layout>
   <header class="form-header">
+    <span class="form-eyebrow">{{ 'iam.signIn.eyebrow' | translate }}</span>
     <h1>{{ 'iam.signIn.title' | translate }}</h1>
     <p>{{ 'iam.signIn.subtitle' | translate }}</p>
   </header>
 
-  <form
-    [formGroup]="form"
-    (ngSubmit)="submit()"
-    [attr.aria-busy]="store.isLoading()"
-    novalidate
-  >
+  <form [formGroup]="form" (ngSubmit)="submit()" [attr.aria-busy]="store.isLoading()" novalidate>
     <mat-form-field appearance="outline">
       <mat-label>{{ 'iam.fields.email' | translate }}</mat-label>
+      <mat-icon matPrefix class="field-icon" aria-hidden="true">alternate_email</mat-icon>
 
       <input
         matInput
@@ -31,6 +28,7 @@
 
     <mat-form-field appearance="outline">
       <mat-label>{{ 'iam.fields.password' | translate }}</mat-label>
+      <mat-icon matPrefix class="field-icon" aria-hidden="true">lock_outline</mat-icon>
 
       <input
         matInput
@@ -45,9 +43,7 @@
         type="button"
         (click)="togglePassword()"
         [attr.aria-label]="
-          (hidePassword()
-            ? 'iam.actions.showPassword'
-            : 'iam.actions.hidePassword') | translate
+          (hidePassword() ? 'iam.actions.showPassword' : 'iam.actions.hidePassword') | translate
         "
       >
         <mat-icon>
@@ -60,9 +56,13 @@
       }
     </mat-form-field>
 
+    <a class="forgot-password-link" routerLink="/iam/forgot-password">
+      {{ 'iam.recovery.forgotLink' | translate }}
+    </a>
+
     @if (store.error(); as error) {
       <p class="feedback feedback-error" role="alert">
-        {{ ('iam.errors.' + error) | translate }}
+        {{ 'iam.errors.' + error | translate }}
       </p>
     }
 
@@ -72,17 +72,14 @@
       </p>
     }
 
-    <button
-      mat-flat-button
-      class="submit-button"
-      type="submit"
-      [disabled]="store.isLoading()"
-    >
-      {{
-        (store.isLoading()
-          ? 'iam.signIn.pending'
-          : 'iam.signIn.submit') | translate
-      }}
+    <button mat-flat-button class="submit-button" type="submit" [disabled]="store.isLoading()">
+      @if (store.isLoading()) {
+        <span class="button-spinner" aria-hidden="true"></span>
+      }
+      {{ (store.isLoading() ? 'iam.signIn.pending' : 'iam.signIn.submit') | translate }}
+      @if (!store.isLoading()) {
+        <mat-icon iconPositionEnd aria-hidden="true">arrow_forward</mat-icon>
+      }
     </button>
   </form>
   <p class="auth-link">
@@ -91,4 +88,25 @@
       {{ 'iam.signIn.register' | translate }}
     </a>
   </p>
+  @if (demoAccounts.length) {
+    <details class="demo-accounts">
+      <summary>{{ 'iam.demoAccounts.title' | translate }}</summary>
+      <p>{{ 'iam.demoAccounts.description' | translate }}</p>
+      <div class="demo-account-list">
+        @for (account of demoAccounts; track account.id) {
+          <button
+            mat-stroked-button
+            type="button"
+            class="demo-account"
+            [disabled]="store.isLoading()"
+            (click)="fillDemoAccount(account)"
+          >
+            <span class="demo-account-role">{{ 'iam.roles.' + account.role | translate }}</span>
+            <span class="demo-account-email">{{ account.email }}</span>
+          </button>
+        }
+      </div>
+      <p class="demo-account-hint">{{ 'iam.demoAccounts.hint' | translate }}</p>
+    </details>
+  }
 </app-auth-layout>

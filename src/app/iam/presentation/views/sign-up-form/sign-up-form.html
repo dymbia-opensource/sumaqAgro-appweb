@@ -1,5 +1,6 @@
 <app-auth-layout>
   <header class="form-header">
+    <span class="form-eyebrow">{{ 'iam.signUp.eyebrow' | translate }}</span>
     <h1>{{ 'iam.signUp.title' | translate }}</h1>
     <p>{{ 'iam.signUp.subtitle' | translate }}</p>
   </header>
@@ -15,19 +16,27 @@
       {{ 'iam.signIn.submit' | translate }}
     </a>
   } @else {
-    <form
-      [formGroup]="form"
-      (ngSubmit)="submit()"
-      [attr.aria-busy]="store.isLoading()"
-      novalidate
-    >
+    <form [formGroup]="form" (ngSubmit)="submit()" [attr.aria-busy]="store.isLoading()" novalidate>
       <fieldset class="role-fieldset">
-        <legend>{{ 'iam.signUp.roleLabel' | translate }}</legend>
+        <legend id="role-label">{{ 'iam.signUp.roleLabel' | translate }}</legend>
 
-        <mat-radio-group formControlName="role">
+        <mat-radio-group formControlName="role" aria-labelledby="role-label">
           @for (role of roles; track role) {
-            <mat-radio-button [value]="role">
-              {{ ('iam.roles.' + role) | translate }}
+            <mat-radio-button
+              [value]="role"
+              [class.role-selected]="form.controls.role.value === role"
+            >
+              <span class="role-option">
+                <mat-icon aria-hidden="true">{{
+                  role === 'FARMER'
+                    ? 'agriculture'
+                    : role === 'COOPERATIVE_DIRECTOR'
+                      ? 'groups'
+                      : 'eco'
+                }}</mat-icon>
+                <strong>{{ 'iam.roles.' + role | translate }}</strong>
+                <span>{{ 'iam.roleDescriptions.' + role | translate }}</span>
+              </span>
             </mat-radio-button>
           }
         </mat-radio-group>
@@ -35,6 +44,7 @@
 
       <mat-form-field appearance="outline">
         <mat-label>{{ 'iam.fields.email' | translate }}</mat-label>
+        <mat-icon matPrefix class="field-icon" aria-hidden="true">alternate_email</mat-icon>
 
         <input
           matInput
@@ -54,6 +64,7 @@
 
       <mat-form-field appearance="outline">
         <mat-label>{{ 'iam.fields.password' | translate }}</mat-label>
+        <mat-icon matPrefix class="field-icon" aria-hidden="true">lock_outline</mat-icon>
 
         <input
           matInput
@@ -68,9 +79,7 @@
           type="button"
           (click)="togglePassword()"
           [attr.aria-label]="
-            (hidePassword()
-              ? 'iam.actions.showPassword'
-              : 'iam.actions.hidePassword') | translate
+            (hidePassword() ? 'iam.actions.showPassword' : 'iam.actions.hidePassword') | translate
           "
         >
           <mat-icon>
@@ -89,21 +98,18 @@
 
       @if (store.error(); as error) {
         <p class="feedback-error" role="alert">
-          {{ ('iam.errors.' + error) | translate }}
+          {{ 'iam.errors.' + error | translate }}
         </p>
       }
 
-      <button
-        mat-flat-button
-        class="submit-button"
-        type="submit"
-        [disabled]="store.isLoading()"
-      >
-        {{
-          (store.isLoading()
-            ? 'iam.signUp.pending'
-            : 'iam.signUp.submit') | translate
-        }}
+      <button mat-flat-button class="submit-button" type="submit" [disabled]="store.isLoading()">
+        @if (store.isLoading()) {
+          <span class="button-spinner" aria-hidden="true"></span>
+        }
+        {{ (store.isLoading() ? 'iam.signUp.pending' : 'iam.signUp.submit') | translate }}
+        @if (!store.isLoading()) {
+          <mat-icon iconPositionEnd aria-hidden="true">arrow_forward</mat-icon>
+        }
       </button>
     </form>
 

@@ -2,7 +2,7 @@ import { computed, DestroyRef, effect, inject, Service, signal, untracked } from
 import { forkJoin, map, Observable, of, Subscription, switchMap } from 'rxjs';
 import { CooperativeMember } from '../../profiles/domain/model/entities/cooperative-member.entity';
 import { ProfilesApi } from '../../profiles/infrastructure/profiles-api';
-import { CurrentSessionService, SessionParticipant } from '../../shared/application/current-session.service';
+import { CurrentSessionService, SessionParticipant } from '../../iam/application/current-session.service';
 import { RegisterHarvestBatchCommand } from '../domain/model/commands/register-harvest-batch.command';
 import { IssueQualityCertificateCommand } from '../domain/model/commands/issue-quality-certificate.command';
 import { HarvestBatch } from '../domain/model/entities/harvest-batch.entity';

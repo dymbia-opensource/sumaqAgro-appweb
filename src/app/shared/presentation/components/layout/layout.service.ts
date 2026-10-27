@@ -3,7 +3,7 @@ import { effect, inject, Injectable, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { fromEvent, map, merge } from 'rxjs';
-import {IamStore} from '../../../../iam/application/iam.store';
+import { IamStore } from '../../../../iam/application/iam.store';
 
 /**
  * State shared by the parts of the app shell: the side menu and the top bar.
@@ -66,8 +66,6 @@ export class LayoutService {
 
   /** Clears the IAM session and returns to sign-in. */
   signOut(): void {
-    if (this.iamStore.isLoading()) return;
-
     this.closeSidebarOnHandset();
     this.iamStore.signOut();
 

@@ -1,6 +1,6 @@
 import { computed, inject, Service } from '@angular/core';
-import { IamStore } from '../../iam/application/iam.store';
-import { UserRole } from '../../iam/domain/model/entities/user-role';
+import { IamStore } from './iam.store';
+import { UserRole } from '../domain/model/entities/user-role';
 
 export interface SessionParticipant {
   readonly id: number;

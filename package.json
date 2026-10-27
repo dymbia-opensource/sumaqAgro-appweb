@@ -7,7 +7,8 @@
     "api": "json-server --watch server/db.json --routes server/routes.json --port 3000",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "check:architecture": "node scripts/check-architecture.mjs"
   },
   "private": true,
   "packageManager": "npm@11.19.0",

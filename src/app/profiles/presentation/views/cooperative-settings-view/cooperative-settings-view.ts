@@ -7,7 +7,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { CurrentSessionService } from '../../../../shared/application/current-session.service';
+import { CurrentSessionService } from '../../../../iam/application/current-session.service';
 import { ProfilesStore } from '../../../application/profiles.store';
 import { InviteTechnicalAdvisorCommand } from '../../../domain/model/commands/invite-technical-advisor.command';
 import { ReassignTechnicalAdvisorCommand } from '../../../domain/model/commands/reassign-technical-advisor.command';
