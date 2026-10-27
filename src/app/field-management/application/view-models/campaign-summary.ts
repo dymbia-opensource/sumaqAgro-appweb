@@ -1,9 +1,9 @@
-import { Money } from '../../../../shared/domain/model/money';
-import { CampaignLedger } from '../entities/campaign-ledger.entity';
-import { CampaignStatus } from '../entities/campaign-status';
-import { CropCampaign } from '../entities/crop-campaign.entity';
-import { CropType } from '../entities/crop-type';
-import { YieldUnit } from '../entities/yield-unit';
+import { Money } from '../../../shared/domain/model/money';
+import { CampaignLedger } from '../../domain/model/entities/campaign-ledger.entity';
+import { CampaignStatus } from '../../domain/model/entities/campaign-status';
+import { CropCampaign } from '../../domain/model/entities/crop-campaign.entity';
+import { CropType } from '../../domain/model/entities/crop-type';
+import { YieldUnit } from '../../domain/model/entities/yield-unit';
 
 /**
  * `CampaignSummary` read model: one campaign of a plot with the main figures

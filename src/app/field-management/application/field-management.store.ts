@@ -43,14 +43,14 @@ import { StartCropCampaignCommand } from '../domain/model/commands/start-crop-ca
 import { CampaignLedger } from '../domain/model/entities/campaign-ledger.entity';
 import { CropCampaign } from '../domain/model/entities/crop-campaign.entity';
 import { FieldPlot } from '../domain/model/entities/field-plot.entity';
-import { CampaignSummary } from '../domain/model/read-models/campaign-summary';
+import { CampaignSummary } from './view-models/campaign-summary';
 import { FieldManagementApi } from '../infrastructure/field-management-api';
 import {
   ExpenseCommand,
   PendingExpenseAssembler,
   PendingExpensePayload,
 } from '../infrastructure/assemblers/pending-expense.assembler';
-import { FileDownloader } from '../infrastructure/reports/file-downloader';
+import { FileDownloader } from '../../shared/infrastructure/file-downloader';
 
 /**
  * Plots included in the Seed plan (demo quota until subscriptions are implemented).
@@ -257,13 +257,6 @@ export class FieldManagementStore {
    */
   getCurrentCampaignOf = (plotId: number): Signal<CropCampaign | undefined> =>
     computed(() => FieldManagementStore.currentOf(this.campaignsByPlotSignal().get(plotId) ?? []));
-
-  /**
-   * Selects the campaigns of a plot.
-   * @param plotId - Plot identifier.
-   */
-  getCampaignsOf = (plotId: number): Signal<CropCampaign[]> =>
-    computed(() => this.campaignsByPlotSignal().get(plotId) ?? []);
 
   /**
    * Loads the plots of the producer with their campaigns, and keeps (or selects) the shown plot.
@@ -481,15 +474,9 @@ export class FieldManagementStore {
       return;
     }
     this.startLoading();
-    // Policy P3: Whenever PlotBoundaryDelineated Then LinkPlotPolygon.
     this.fieldManagementApi
-      .registerPolygonInAgroMonitoring(plot)
-      .pipe(
-        map((agroMonitoringPolygonId) => {
-          plot.linkPolygon(agroMonitoringPolygonId);
-        }),
-        switchMap(() => this.fieldManagementApi.updateBoundary(plot).pipe(retry(2))),
-      )
+      .updateBoundary(plot)
+      .pipe(retry(2))
       .subscribe({
         next: (updated) => {
           this.replacePlot(updated);
@@ -711,16 +698,13 @@ export class FieldManagementStore {
    */
   exportCostReport = (command: ExportCampaignCostReportCommand): void => {
     const campaign = this.findCampaign(command.campaignId);
-    const plot = campaign ? this.findPlot(campaign.plotId) : undefined;
-    const ledger = this.ledgersByCampaignSignal().get(command.campaignId)?.clone();
-    if (!campaign || !plot || !ledger) {
+    if (!campaign) {
       this.errorSignal.set('field-management.errors.export-report');
       return;
     }
-    this.fieldManagementApi.exportCostReport(plot, campaign, ledger).subscribe({
-      next: (file) => {
-        this.fileDownloader.save(file);
-      },
+    this.fieldManagementApi.downloadCostReport(command.campaignId).subscribe({
+      next: (content) =>
+        this.fileDownloader.save({ fileName: `cost-report-${campaign.season}.pdf`, content }),
       error: (error) => this.fail(error, 'field-management.errors.export-report'),
     });
   };

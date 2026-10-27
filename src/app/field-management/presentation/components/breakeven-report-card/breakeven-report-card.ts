@@ -8,7 +8,7 @@ import { MatSliderModule } from '@angular/material/slider';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Money } from '../../../../shared/domain/model/money';
 import { CampaignLedger } from '../../../domain/model/entities/campaign-ledger.entity';
-import { BreakevenReport } from '../../../domain/model/read-models/breakeven-report';
+import { BreakevenReport } from '../../../application/view-models/breakeven-report';
 
 /**
  * `BreakevenReport` read model: breakeven price with the expected and the

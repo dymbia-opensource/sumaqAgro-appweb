@@ -12,7 +12,7 @@ import { startWith } from 'rxjs';
 import { CampaignLedger } from '../../../domain/model/entities/campaign-ledger.entity';
 import { CropType } from '../../../domain/model/entities/crop-type';
 import { YieldUnit } from '../../../domain/model/entities/yield-unit';
-import { SeedVarietyCatalog } from '../../../domain/model/read-models/seed-variety-catalog';
+import { SeedVarietyCatalog } from '../../../application/view-models/seed-variety-catalog';
 
 /** Data typed by the producer in the plot registration form. */
 export interface PlotRegistrationData {

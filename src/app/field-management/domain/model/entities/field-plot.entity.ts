@@ -138,27 +138,6 @@ export class FieldPlot extends BaseEntity {
   }
 
   /**
-   * Links the polygon to the satellite monitoring of AgroMonitoring (US-30).
-   *
-   * @remarks
-   * With the RESTful API the backend registers the polygon in AgroMonitoring
-   * (policy P3) and returns its identifier.
-   *
-   * @param agroMonitoringPolygonId - Polygon identifier in AgroMonitoring.
-   * @throws Error when the plot has no polygon.
-   */
-  linkPolygon(agroMonitoringPolygonId: string): void {
-    if (!this.hasPolygon()) {
-      throw new Error('The plot needs a polygon to be monitored.');
-    }
-    if (!agroMonitoringPolygonId.trim()) {
-      throw new Error('The AgroMonitoring polygon identifier is required.');
-    }
-    this._agroMonitoringPolygonId = agroMonitoringPolygonId;
-    this._status = PlotStatus.ACTIVE_MONITORING;
-  }
-
-  /**
    * Records the initial soil analysis; a new analysis replaces the previous one.
    * @param command - pH, texture, organic matter and date of the analysis.
    * @throws Error when a value of the analysis is out of range.

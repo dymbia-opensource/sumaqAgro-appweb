@@ -106,16 +106,6 @@ export class CropCampaign extends BaseEntity {
   }
 
   /**
-   * Days since the sowing date, or `null` if the crop is not sown yet.
-   * @param today - Reference date; today by default.
-   */
-  daysSinceSowing(today: Date = new Date()): number | null {
-    if (!this._sowingDate) return null;
-    const day = 24 * 60 * 60 * 1000;
-    return Math.max(Math.floor((today.getTime() - this._sowingDate.getTime()) / day), 0);
-  }
-
-  /**
    * Sets the crop of the campaign: Andean potato or specialty coffee (US-33).
    * @param cropType - Crop of the campaign.
    */

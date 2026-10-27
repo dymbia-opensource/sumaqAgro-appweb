@@ -6,7 +6,7 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { TranslatePipe } from '@ngx-translate/core';
-import { CampaignSummary } from '../../../domain/model/read-models/campaign-summary';
+import { CampaignSummary } from '../../../application/view-models/campaign-summary';
 
 /** Card of one campaign of the plot: crop, sowing, investment and yield (`CampaignSummary`). */
 @Component({
