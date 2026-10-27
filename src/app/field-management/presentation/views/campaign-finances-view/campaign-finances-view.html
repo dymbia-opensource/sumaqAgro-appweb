@@ -18,7 +18,7 @@
         {{ 'field-management.reports.title' | translate }}
       </a>
     }
-    @if (ledger() && !ledger()!.isFrozen()) {
+    @if (ledger() && !ledger()!.frozen) {
       <button mat-flat-button class="register" [matMenuTriggerFor]="expenseMenu">
         <mat-icon>add</mat-icon>
         {{ 'field-management.finances.register-expense' | translate }}
@@ -47,7 +47,7 @@
 }
 
 @if (ledger(); as ledger) {
-  @if (ledger.isFrozen()) {
+  @if (ledger.frozen) {
     <app-message-card
       icon="lock"
       [message]="'field-management.finances.ledger-closed' | translate"

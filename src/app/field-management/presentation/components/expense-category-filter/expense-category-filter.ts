@@ -2,7 +2,7 @@ import { Component, input, output } from '@angular/core';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
 import { TranslatePipe } from '@ngx-translate/core';
-import { ExpenseCategory } from '../../../domain/model/entities/expense-category';
+import { ExpenseCategory } from '../../../domain/model/entities/expense-entry.entity';
 import { EXPENSE_CATEGORY_ICONS } from '../ledger-summary-cards/ledger-summary-cards';
 
 /** Chips to filter the expense history by category (`ExpenseHistory` read model). */

@@ -10,7 +10,7 @@
   </mat-card-header>
 
   <mat-card-content>
-    @if (data.hasArea()) {
+    @if (data.hasArea) {
       <p class="total">
         {{ data.totalPerHectare.format() }}
         <span>{{ 'field-management.reports.per-hectare' | translate }}</span>

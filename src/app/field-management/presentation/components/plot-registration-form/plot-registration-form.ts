@@ -1,4 +1,5 @@
 import { Component, computed, inject, input, output } from '@angular/core';
+import { FieldManagementStore } from '../../../application/field-management.store';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
@@ -9,10 +10,9 @@ import { MatInputModule } from '@angular/material/input';
 import { MatRadioModule } from '@angular/material/radio';
 import { TranslatePipe } from '@ngx-translate/core';
 import { startWith } from 'rxjs';
-import { CampaignLedger } from '../../../domain/model/entities/campaign-ledger.entity';
-import { CropType } from '../../../domain/model/entities/crop-type';
-import { YieldUnit } from '../../../domain/model/entities/yield-unit';
-import { SeedVarietyCatalog } from '../../../domain/model/entities/seed-variety-catalog';
+import { CampaignLedger, YieldUnit } from '../../../domain/model/entities/campaign-ledger.entity';
+import { CropType } from '../../../domain/model/entities/crop-campaign.entity';
+import { isCustomSeedVariety, searchSeedVarieties } from '../campaign-form/campaign-form';
 
 /** Data typed by the producer in the plot registration form. */
 export interface PlotRegistrationData {
@@ -45,6 +45,8 @@ export interface PlotRegistrationData {
   styleUrl: './plot-registration-form.css',
 })
 export class PlotRegistrationForm {
+  protected readonly store = inject(FieldManagementStore);
+
   private fb = inject(FormBuilder);
 
   protected readonly cropTypes = Object.values(CropType);
@@ -97,11 +99,11 @@ export class PlotRegistrationForm {
 
   /** Varieties of the selected crop that match what the producer typed (US-34). */
   readonly varieties = computed(() =>
-    SeedVarietyCatalog.search(this.cropType(), this.varietyText()),
+    searchSeedVarieties(this.cropType(), this.varietyText()),
   );
 
   /** Unit of the expected yield: sacks for potato, quintals for coffee. */
-  readonly yieldUnit = computed(() => CampaignLedger.yieldUnitOf(this.cropType()));
+  readonly yieldUnit = computed(() => this.store.yieldUnitOf(this.cropType()));
 
   /** Sends the data when the form is valid; otherwise shows the errors. */
   onSubmit() {
@@ -117,7 +119,7 @@ export class PlotRegistrationForm {
       region: value.region,
       cropType: value.cropType,
       seedVariety: value.seedVariety,
-      customVariety: SeedVarietyCatalog.isCustom(value.cropType, value.seedVariety),
+      customVariety: isCustomSeedVariety(value.cropType, value.seedVariety),
       sowingDate: new Date(year, month - 1, day),
       expectedYield: value.expectedYield,
       yieldUnit: this.yieldUnit(),

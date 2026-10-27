@@ -28,7 +28,7 @@
 
       <ul class="advice">
         @if (cropType(); as crop) {
-          @if (soil.needsLiming(crop)) {
+          @if (needsLiming(soil, crop)) {
             <li class="warn">
               <mat-icon aria-hidden="true">warning</mat-icon>
               {{ 'field-management.soil.needs-liming' | translate: { crop: ('field-management.crop-type.' + crop | translate) } }}
@@ -40,7 +40,7 @@
             </li>
           }
         }
-        @if (soil.isLowInOrganicMatter()) {
+        @if (isLowInOrganicMatter(soil)) {
           <li class="warn">
             <mat-icon aria-hidden="true">compost</mat-icon>
             {{ 'field-management.soil.low-organic-matter' | translate }}

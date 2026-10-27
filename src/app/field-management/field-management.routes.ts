@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
 import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
-import { ExpenseCategory } from './domain/model/entities/expense-category';
+import { ExpenseCategory } from './domain/model/entities/expense-entry.entity';
 
 const myPlotDashboardView = () =>
   import('./presentation/views/my-plot-dashboard-view/my-plot-dashboard-view').then(

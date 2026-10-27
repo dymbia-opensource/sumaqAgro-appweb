@@ -1,9 +1,9 @@
 @let item = summary();
 @let unit = 'field-management.yield-unit.' + item.yieldUnit | translate;
 
-<mat-card appearance="outlined" class="summary-card" [class.active]="item.isActive()">
+<mat-card appearance="outlined" class="summary-card" [class.active]="item.isActive">
   <mat-card-header>
-    <mat-icon mat-card-avatar>{{ item.isActive() ? 'agriculture' : 'inventory_2' }}</mat-icon>
+    <mat-icon mat-card-avatar>{{ item.isActive ? 'agriculture' : 'inventory_2' }}</mat-icon>
     <mat-card-title>
       {{ 'field-management.dashboard.campaign' | translate }} {{ item.season }}
     </mat-card-title>
@@ -11,7 +11,7 @@
       {{ 'field-management.crop-type.' + item.cropType | translate }} – {{ item.seedVariety }}
     </mat-card-subtitle>
     <mat-chip-set class="status">
-      <mat-chip [disableRipple]="true" [highlighted]="item.isActive()">
+      <mat-chip [disableRipple]="true" [highlighted]="item.isActive">
         {{ 'field-management.campaign-status.' + item.status | translate }}
       </mat-chip>
     </mat-chip-set>
@@ -46,7 +46,7 @@
         <dd>
           @if (item.actualYield !== null) {
             {{ item.actualYield | number: '1.0-2' }} {{ unit }}
-            @if (item.yieldAchievement(); as achievement) {
+            @if (item.yieldAchievement; as achievement) {
               <span class="achievement">({{ achievement | number: '1.0-0' }}%)</span>
             }
           } @else {
@@ -68,7 +68,7 @@
         {{ 'field-management.reports.export' | translate }}
       </button>
     }
-    @if (item.isActive()) {
+    @if (item.isActive) {
       <button mat-flat-button [disabled]="saving()" (click)="closeCampaign.emit(item)">
         <mat-icon>task_alt</mat-icon>
         {{ 'field-management.campaigns.close' | translate }}

@@ -1,5 +1,6 @@
 import { DecimalPipe } from '@angular/common';
-import { Component, input, output } from '@angular/core';
+import { Component, input, output, inject } from '@angular/core';
+import { FieldManagementStore } from '../../../application/field-management.store';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
@@ -29,6 +30,8 @@ import { FieldPlot } from '../../../domain/model/entities/field-plot.entity';
   styleUrl: './plot-card.css',
 })
 export class PlotCard {
+  protected readonly store = inject(FieldManagementStore);
+
   /** The plot shown in the card. */
   readonly plot = input.required<FieldPlot>();
 

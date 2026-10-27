@@ -9,7 +9,7 @@
   </mat-card-header>
 
   <mat-card-content>
-    @if (data.isCalculable()) {
+    @if (data.calculable) {
       <div class="prices">
         <div class="price-box">
           <span class="label">{{ 'field-management.reports.with-expected-yield' | translate }}</span>
