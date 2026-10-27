@@ -8,6 +8,7 @@ import { IamStore } from '../application/iam.store';
 export const iamGuard: CanActivateFn = (_route, state) => {
   const store = inject(IamStore);
   const router = inject(Router);
+  store.checkSessionExpiration();
 
   if (store.isSignedIn()) {
     return true;

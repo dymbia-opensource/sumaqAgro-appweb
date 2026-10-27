@@ -12,7 +12,7 @@ interface MockAccount {
 }
 
 const accounts = new Map<string, MockAccount>();
-let nextUserId = 1000;
+let nextUserId = Date.now();
 
 const signInUrl =
   `${environment.platformProviderApiBaseUrl}` + `${environment.platformProviderSignInEndpointPath}`;

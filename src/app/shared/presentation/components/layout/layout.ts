@@ -1,6 +1,7 @@
-import { Component, inject } from '@angular/core';
+import { Component, effect, inject, untracked } from '@angular/core';
 import { MatSidenavModule } from '@angular/material/sidenav';
-import { RouterOutlet } from '@angular/router';
+import { Router, RouterOutlet } from '@angular/router';
+import { IamStore } from '../../../../iam/application/iam.store';
 import { LeftSidebar } from '../left-sidebar/left-sidebar';
 import { Toolbar } from '../toolbar/toolbar';
 import { LayoutService } from './layout.service';
@@ -20,4 +21,19 @@ import { LayoutService } from './layout.service';
 })
 export class Layout {
   protected readonly layout = inject(LayoutService);
+  private readonly iamStore = inject(IamStore);
+  private readonly router = inject(Router);
+
+  constructor() {
+    effect(() => {
+      if (this.iamStore.isSignedIn()) return;
+
+      untracked(() => {
+        void this.router.navigate(['/iam/sign-in'], {
+          queryParams: { returnUrl: this.router.url },
+          replaceUrl: true,
+        });
+      });
+    });
+  }
 }

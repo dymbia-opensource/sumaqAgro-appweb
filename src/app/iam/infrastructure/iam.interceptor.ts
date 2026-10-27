@@ -23,7 +23,9 @@ export const iamInterceptor: HttpInterceptorFn = (request, next) => {
     return next(request);
   }
 
-  const token = inject(IamStore).currentToken();
+  const store = inject(IamStore);
+  store.checkSessionExpiration();
+  const token = store.currentToken();
 
   if (!token || request.headers.has('Authorization')) {
     return next(request);
