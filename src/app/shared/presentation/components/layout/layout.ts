@@ -10,7 +10,7 @@ import { LayoutService } from './layout.service';
  *
  * @remarks
  * It is the parent route of every bounded context. The pages without menu
- * (demo access and the public QR verification) are outside of it.
+ * (authentication and public QR verification) are outside of it.
  */
 @Component({
   selector: 'app-layout',
