@@ -2,6 +2,14 @@
   display: block;
 }
 
+.forgot-password-link {
+  align-self: flex-end;
+  color: #23603a;
+  font-size: 14px;
+  font-weight: 600;
+  text-underline-offset: 3px;
+}
+
 .form-header {
   margin-bottom: 32px;
 }

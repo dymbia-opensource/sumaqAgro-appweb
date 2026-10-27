@@ -2,6 +2,22 @@ import { Routes } from '@angular/router';
 
 export const iamRoutes: Routes = [
   {
+    path: 'forgot-password',
+    loadComponent: () =>
+      import('./presentation/views/forgot-password-form/forgot-password-form').then(
+        (m) => m.ForgotPasswordForm,
+      ),
+    title: 'Recuperar acceso | SumaqAgro',
+  },
+  {
+    path: 'reset-password',
+    loadComponent: () =>
+      import('./presentation/views/reset-password-form/reset-password-form').then(
+        (m) => m.ResetPasswordForm,
+      ),
+    title: 'Restablecer contraseña | SumaqAgro',
+  },
+  {
     path: 'sign-in',
     loadComponent: () =>
       import('./presentation/views/sign-in-form/sign-in-form').then((m) => m.SignInForm),
