@@ -88,7 +88,12 @@ export class MyPlotDashboardView {
 
   // UI state
   protected readonly breadcrumbs: Breadcrumb[] = [{ label: 'option.my-plot' }];
-  readonly userName = computed(() => this.session.activeUser()?.displayName ?? '');
+  /** Name for the greeting; for an email, only the part before '@' so it fits on a phone. */
+  readonly userName = computed(() => {
+    const name = this.session.activeUser()?.displayName ?? '';
+    const at = name.indexOf('@');
+    return at > 0 ? name.slice(0, at) : name;
+  });
 
   /** Greeting by time of day: morning, afternoon or evening. */
   readonly greetingKey = computed(() => {
