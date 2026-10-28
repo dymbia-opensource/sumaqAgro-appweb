@@ -7,7 +7,6 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
-import { RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { CropCampaign } from '../../../domain/model/entities/crop-campaign.entity';
 import { FieldPlot } from '../../../domain/model/entities/field-plot.entity';
@@ -17,7 +16,6 @@ import { FieldPlot } from '../../../domain/model/entities/field-plot.entity';
   selector: 'app-plot-card',
   imports: [
     DecimalPipe,
-    RouterLink,
     MatButtonModule,
     MatCardModule,
     MatChipsModule,
@@ -43,6 +41,9 @@ export class PlotCard {
 
   /** The producer wants to see the plot on the dashboard. */
   readonly viewOnDashboard = output<FieldPlot>();
+
+  /** The producer wants to see the satellite monitoring of the plot. */
+  readonly viewMonitoring = output<FieldPlot>();
 
   /** The producer wants to mark the polygon of the plot. */
   readonly delineate = output<FieldPlot>();

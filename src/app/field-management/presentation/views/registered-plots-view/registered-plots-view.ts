@@ -89,6 +89,11 @@ export class RegisteredPlotsView {
     this.router.navigate(['field-management/dashboard']).then();
   }
 
+  onViewMonitoring(plot: FieldPlot) {
+    this.fieldManagementStore.selectPlot(plot.id as number);
+    this.router.navigate(['crop-health/monitoring']).then();
+  }
+
   onDelineate(plot: FieldPlot) {
     this.router.navigate(['field-management/plots', plot.id, 'boundary']).then();
   }

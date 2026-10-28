@@ -24,7 +24,6 @@ import {
   toArray,
 } from 'rxjs';
 import { CurrentSessionService } from '../../iam/application/current-session.service';
-import { PlotSelectionService } from './plot-selection.service';
 import { OfflineSyncService } from '../../shared/infrastructure/offline/offline-sync.service';
 import { PendingOperationType } from '../../shared/infrastructure/offline/pending-operation';
 import { CloseCropCampaignCommand } from '../domain/model/commands/close-crop-campaign.command';
@@ -96,7 +95,6 @@ export interface CropCampaignSetup {
 export class FieldManagementStore {
   private readonly fieldManagementApi = inject(FieldManagementApi);
   private readonly session = inject(CurrentSessionService);
-  private readonly plotSelection = inject(PlotSelectionService);
   private readonly offlineSync = inject(OfflineSyncService);
   private readonly pendingExpenses = new PendingExpenseAssembler();
   private readonly fileDownloader = inject(FileDownloader);
@@ -107,6 +105,7 @@ export class FieldManagementStore {
   private readonly plotsLoadingSignal = signal(false);
   private readonly loadingSignal = signal<boolean>(false);
   private readonly errorSignal = signal<string | null>(null);
+  private readonly selectedPlotIdSignal = signal<number | null>(null);
   private readonly syncingSignal = signal(false);
   private plotsLoad?: Subscription;
   private plotMutation?: Subscription;
@@ -183,14 +182,17 @@ export class FieldManagementStore {
       !this.registrationIncomplete(),
   );
 
+  /** Identifier of the plot shown in Field Management and Crop Health, or `null`. */
+  readonly selectedPlotId = this.selectedPlotIdSignal.asReadonly();
+
   /** Plot shown on the dashboard. */
   readonly selectedPlot = computed(() =>
-    this.plots().find((plot) => plot.id === this.plotSelection.selectedPlotId()),
+    this.plots().find((plot) => plot.id === this.selectedPlotId()),
   );
 
   /** Campaigns of the selected plot. */
   readonly campaigns = computed(
-    () => this.campaignsByPlotSignal().get(this.plotSelection.selectedPlotId() ?? -1) ?? [],
+    () => this.campaignsByPlotSignal().get(this.selectedPlotId() ?? -1) ?? [],
   );
 
   /** Campaign in progress of the selected plot, or the most recent one. */
@@ -289,12 +291,12 @@ export class FieldManagementStore {
             new Map(plots.map((plot, index) => [plot.id as number, campaigns[index]])),
           );
           this.loadingSignal.set(false);
-          const keep = plots.some((plot) => plot.id === this.plotSelection.selectedPlotId());
+          const keep = plots.some((plot) => plot.id === this.selectedPlotId());
           const first = plots[0];
           if (first) {
-            this.selectPlot(keep ? this.plotSelection.selectedPlotId()! : (first.id as number));
+            this.selectPlot(keep ? this.selectedPlotId()! : (first.id as number));
           } else {
-            this.plotSelection.select(null);
+            this.selectedPlotIdSignal.set(null);
           }
         },
         error: (error) => {
@@ -307,13 +309,20 @@ export class FieldManagementStore {
   };
 
   /**
+   * Shares the selected plot with Crop Health, which also shows the plots of
+   * advisors and cooperatives that are not part of the producer's plots.
+   * @param plotId - Plot to show, or `null`.
+   */
+  selectPlotId = (plotId: number | null): void => this.selectedPlotIdSignal.set(plotId);
+
+  /**
    * Selects a plot and loads the cost ledgers of its campaigns.
    * @param plotId - Plot to show.
    */
   selectPlot = (plotId: number): void => {
     if (!this.plots().some((plot) => plot.id === plotId)) return;
     this.ledgersLoad?.unsubscribe();
-    this.plotSelection.select(plotId);
+    this.selectedPlotIdSignal.set(plotId);
     const campaigns = this.campaignsByPlotSignal().get(plotId) ?? [];
     if (campaigns.length === 0) return;
     this.startLoading();
@@ -547,8 +556,8 @@ export class FieldManagementStore {
           });
           this.plotMutationBusy.set(false);
           this.loadingSignal.set(false);
-          if (this.plotSelection.selectedPlotId() === id) {
-            this.plotSelection.select(null);
+          if (this.selectedPlotId() === id) {
+            this.selectedPlotIdSignal.set(null);
             const first = this.plots()[0];
             if (first) this.selectPlot(first.id as number);
           }
@@ -1045,7 +1054,7 @@ export class FieldManagementStore {
     this.plotsSignal.set([]);
     this.campaignsByPlotSignal.set(new Map());
     this.ledgersByCampaignSignal.set(new Map());
-    this.plotSelection.select(null);
+    this.selectedPlotIdSignal.set(null);
     this.errorSignal.set(null);
   }
 
