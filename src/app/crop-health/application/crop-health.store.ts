@@ -20,7 +20,6 @@ import {
   throwError,
 } from 'rxjs';
 import { CurrentSessionService, SessionParticipant } from '../../iam/application/current-session.service';
-import { PlotSelectionService } from '../../field-management/application/plot-selection.service';
 import { FieldManagementApi } from '../../field-management/infrastructure/field-management-api';
 import { FieldManagementStore } from '../../field-management/application/field-management.store';
 import { FieldPlot } from '../../field-management/domain/model/entities/field-plot.entity';
@@ -59,7 +58,6 @@ export class CropHealthStore {
   private readonly fields = inject(FieldManagementApi);
   private readonly fieldStore = inject(FieldManagementStore);
   private readonly session = inject(CurrentSessionService);
-  private readonly selection = inject(PlotSelectionService);
   private readonly requests = new Map<string, Subscription>();
   private readonly busy = signal<Record<string, boolean>>({});
   private readonly errors = signal<Record<string, string | null>>({});
@@ -102,7 +100,7 @@ export class CropHealthStore {
         : this.plotsSignal(),
   );
   readonly selectedPlot = computed(() =>
-    this.plots().find((plot) => plot.id === this.selection.selectedPlotId()),
+    this.plots().find((plot) => plot.id === this.fieldStore.selectedPlotId()),
   );
   readonly observations = computed(() =>
     this.scopeReady()
@@ -239,8 +237,8 @@ export class CropHealthStore {
         this.advisorSignal.set(data.advisor);
         this.ready.set(true);
         const selected =
-          data.plots.find((plot) => plot.id === this.selection.selectedPlotId()) ?? data.plots[0];
-        this.selection.select(selected ? (selected.id as number) : null);
+          data.plots.find((plot) => plot.id === this.fieldStore.selectedPlotId()) ?? data.plots[0];
+        this.fieldStore.selectPlotId(selected ? (selected.id as number) : null);
       },
       'crop-health.errors.load-plots',
     );
@@ -342,7 +340,7 @@ export class CropHealthStore {
     this.alertsSignal.set([]);
     this.setError('observations', null);
     this.setError('alerts', null);
-    this.selection.select(plotId);
+    this.fieldStore.selectPlotId(plotId);
     if (this.canReport()) this.fieldStore.selectPlot(plotId);
   }
 

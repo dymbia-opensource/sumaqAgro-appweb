@@ -26,6 +26,7 @@
       [position]="index + 1"
       [deletionDisabled]="loading() || !plotQuotaReady()"
       (viewOnDashboard)="onSelectPlot($event)"
+      (viewMonitoring)="onViewMonitoring($event)"
       (delineate)="onDelineate($event)"
       (viewDetail)="onViewDetail($event)"
       (recordSoil)="onRecordSoil($event)"

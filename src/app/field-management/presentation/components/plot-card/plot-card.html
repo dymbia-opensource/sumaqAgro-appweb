@@ -65,10 +65,10 @@
 
   <mat-card-actions>
     @if (store.isMonitored(plot())) {
-      <a mat-flat-button class="card-action" routerLink="/crop-health/monitoring">
+      <button mat-flat-button class="card-action" (click)="viewMonitoring.emit(plot())">
         {{ 'field-management.plots.view-monitoring' | translate }}
         <mat-icon iconPositionEnd>arrow_forward</mat-icon>
-      </a>
+      </button>
     } @else {
       <button mat-flat-button class="card-action" (click)="delineate.emit(plot())">
         {{ 'field-management.plots.delineate' | translate }}
