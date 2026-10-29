@@ -67,14 +67,5 @@
     "title": "Page not found",
     "message": "The path {{ path }} does not exist.",
     "go-home": "Go to home"
-  },
-  "paginator": {
-    "items-per-page": "Items per page",
-    "next-page": "Next page",
-    "previous-page": "Previous page",
-    "first-page": "First page",
-    "last-page": "Last page",
-    "range": "{{ start }} – {{ end }} of {{ length }}",
-    "range-empty": "0 of {{ length }}"
   }
 }
