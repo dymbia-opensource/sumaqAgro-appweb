@@ -1,7 +1,9 @@
 <mat-card appearance="outlined" class="chart-card">
   <mat-card-header>
     <mat-icon mat-card-avatar>donut_large</mat-icon>
-    <mat-card-title>{{ 'field-management.dashboard.cost-distribution' | translate }}</mat-card-title>
+    <mat-card-title>{{
+      'field-management.dashboard.cost-distribution' | translate
+    }}</mat-card-title>
     @if (since(); as since) {
       <mat-card-subtitle>
         {{ 'field-management.dashboard.since' | translate }}

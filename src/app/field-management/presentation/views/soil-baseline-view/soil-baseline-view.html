@@ -24,7 +24,10 @@
     </mat-card-content>
   </mat-card>
 } @else if (!plotsLoading()) {
-  <app-message-card icon="search_off" [message]="'field-management.plot-detail.not-found' | translate">
+  <app-message-card
+    icon="search_off"
+    [message]="'field-management.plot-detail.not-found' | translate"
+  >
     <mat-card-actions align="end">
       <a mat-flat-button routerLink="/field-management/plots">
         {{ 'field-management.finances.select-plot' | translate }}

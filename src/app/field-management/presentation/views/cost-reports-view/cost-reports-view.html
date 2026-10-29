@@ -30,7 +30,10 @@
     (actualYieldChange)="onActualYieldChange($event)"
   />
 } @else if (!loading()) {
-  <app-message-card icon="receipt_long" [message]="'field-management.finances.no-ledger' | translate">
+  <app-message-card
+    icon="receipt_long"
+    [message]="'field-management.finances.no-ledger' | translate"
+  >
     <mat-card-actions align="end">
       <a mat-flat-button routerLink="/field-management/plots">
         {{ 'field-management.finances.select-plot' | translate }}

@@ -69,13 +69,7 @@
 
   <mat-form-field>
     <mat-label>{{ 'field-management.plot-form.expected-yield' | translate }}</mat-label>
-    <input
-      matInput
-      type="number"
-      min="1"
-      formControlName="expectedYield"
-      placeholder="280"
-    />
+    <input matInput type="number" min="1" formControlName="expectedYield" placeholder="280" />
     <span matTextSuffix>{{ 'field-management.yield-unit.' + yieldUnit() | translate }}</span>
     @if (form.controls.expectedYield.invalid) {
       <mat-error>{{ 'field-management.plot-form.positive' | translate }}</mat-error>

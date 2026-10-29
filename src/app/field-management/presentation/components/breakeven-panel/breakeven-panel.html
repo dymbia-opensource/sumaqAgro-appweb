@@ -10,7 +10,13 @@
     <form class="yield-form" (ngSubmit)="onSave()">
       <mat-form-field subscriptSizing="dynamic">
         <mat-label>{{ 'field-management.finances.expected-yield' | translate }}</mat-label>
-        <input matInput type="number" min="1" [formControl]="expectedYield" [readonly]="ledger().frozen" />
+        <input
+          matInput
+          type="number"
+          min="1"
+          [formControl]="expectedYield"
+          [readonly]="ledger().frozen"
+        />
         <span matTextSuffix>{{ unit }}</span>
         @if (expectedYield.invalid && expectedYield.touched) {
           <mat-error>{{ 'field-management.expense-form.positive' | translate }}</mat-error>
@@ -26,11 +32,17 @@
     @if (ledger().expectedYield > 0 || ledger().actualYield) {
       <p class="price">{{ ledger().breakevenPrice().format() }}</p>
       <p class="hint">
-        {{ 'field-management.finances.breakeven-hint' | translate: { unit: ('field-management.yield-unit.per-' + ledger().yieldUnit | translate) } }}
+        {{
+          'field-management.finances.breakeven-hint'
+            | translate
+              : { unit: ('field-management.yield-unit.per-' + ledger().yieldUnit | translate) }
+        }}
       </p>
       @if (ledger().actualYield; as actualYield) {
         <p class="hint">
-          {{ 'field-management.finances.actual-yield' | translate: { quantity: actualYield, unit } }}
+          {{
+            'field-management.finances.actual-yield' | translate: { quantity: actualYield, unit }
+          }}
         </p>
       }
       <mat-chip-set>

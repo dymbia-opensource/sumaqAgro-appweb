@@ -4,7 +4,10 @@
     <mat-card-title>{{ 'field-management.soil.title' | translate }}</mat-card-title>
     @if (soilBaseline(); as soil) {
       <mat-card-subtitle>
-        {{ 'field-management.soil.recorded-at' | translate: { date: (soil.recordedAt | date: 'mediumDate') } }}
+        {{
+          'field-management.soil.recorded-at'
+            | translate: { date: (soil.recordedAt | date: 'mediumDate') }
+        }}
       </mat-card-subtitle>
     }
   </mat-card-header>
@@ -31,12 +34,18 @@
           @if (needsLiming(soil, crop)) {
             <li class="warn">
               <mat-icon aria-hidden="true">warning</mat-icon>
-              {{ 'field-management.soil.needs-liming' | translate: { crop: ('field-management.crop-type.' + crop | translate) } }}
+              {{
+                'field-management.soil.needs-liming'
+                  | translate: { crop: ('field-management.crop-type.' + crop | translate) }
+              }}
             </li>
           } @else {
             <li>
               <mat-icon aria-hidden="true">check_circle</mat-icon>
-              {{ 'field-management.soil.ph-ok' | translate: { crop: ('field-management.crop-type.' + crop | translate) } }}
+              {{
+                'field-management.soil.ph-ok'
+                  | translate: { crop: ('field-management.crop-type.' + crop | translate) }
+              }}
             </li>
           }
         }
@@ -55,7 +64,10 @@
   <mat-card-actions align="end">
     <a mat-stroked-button [routerLink]="recordLink()">
       <mat-icon>science</mat-icon>
-      {{ (soilBaseline() ? 'field-management.soil.update' : 'field-management.soil.record') | translate }}
+      {{
+        (soilBaseline() ? 'field-management.soil.update' : 'field-management.soil.record')
+          | translate
+      }}
     </a>
   </mat-card-actions>
 </mat-card>
