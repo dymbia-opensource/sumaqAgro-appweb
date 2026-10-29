@@ -8,10 +8,10 @@
   </mat-card-header>
 
   <mat-card-content>
-    <form class="yield-form" (ngSubmit)="onSave()">
+    <form class="yield-form" [formGroup]="form" (ngSubmit)="onSave()">
       <mat-form-field subscriptSizing="dynamic">
         <mat-label>{{ 'field-management.reports.harvested' | translate }}</mat-label>
-        <input matInput type="number" min="0" [formControl]="actualYield" />
+        <input matInput type="number" min="0" formControlName="actualYield" />
         <span matTextSuffix>{{
           'field-management.yield-unit.' + ledger().yieldUnit | translate
         }}</span>

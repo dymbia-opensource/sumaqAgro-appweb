@@ -7,14 +7,14 @@
   <mat-card-content>
     @let unit = 'field-management.yield-unit.' + ledger().yieldUnit | translate;
 
-    <form class="yield-form" (ngSubmit)="onSave()">
+    <form class="yield-form" [formGroup]="form" (ngSubmit)="onSave()">
       <mat-form-field subscriptSizing="dynamic">
         <mat-label>{{ 'field-management.finances.expected-yield' | translate }}</mat-label>
         <input
           matInput
           type="number"
           min="1"
-          [formControl]="expectedYield"
+          formControlName="expectedYield"
           [readonly]="ledger().frozen"
         />
         <span matTextSuffix>{{ unit }}</span>
