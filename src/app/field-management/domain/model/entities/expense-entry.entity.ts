@@ -1,19 +1,13 @@
 import { BaseEntity } from '../../../../shared/domain/model/base-entity';
 import { Money } from '../../../../shared/domain/model/money';
 
-/** Categories of the field expenses recorded in the cost ledger. */
 export enum ExpenseCategory {
-  /** Seeds, fertilizers and other inputs. */
-  INPUTS = 'INPUTS',
-  /** Daily wages of the field workers. */
-  LABOR = 'LABOR',
-  /** Transport of inputs or harvest. */
+  INPUTS = 'INPUTS', // seeds, fertilizers...
+  LABOR = 'LABOR', // daily wages
   FREIGHT = 'FREIGHT',
 }
 
-/**
- * One expense of the cost ledger: inputs, daily labor or freight.
- */
+/** One expense of the ledger. */
 export class ExpenseEntry extends BaseEntity {
   private _ledgerId: number;
   private _category: ExpenseCategory;
@@ -102,12 +96,17 @@ export class ExpenseEntry extends BaseEntity {
     this._notes = value;
   }
 
-  /** Code generated on the device when the expense was recorded offline. */
+  /** Id created on the device when the expense is saved offline. */
   get clientSyncId(): string {
     return this._clientSyncId;
   }
 
   set clientSyncId(value: string) {
     this._clientSyncId = value;
+  }
+
+  /** quantity * unit price */
+  total(): Money {
+    return this._unitPrice.multiply(this._quantity);
   }
 }

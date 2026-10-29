@@ -1,6 +1,5 @@
 import { DatePipe, DecimalPipe } from '@angular/common';
-import { Component, computed, input, inject } from '@angular/core';
-import { FieldManagementStore } from '../../../application/field-management.store';
+import { Component, computed, input } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
@@ -31,8 +30,6 @@ import { ExpenseCategory } from '../../../domain/model/entities/expense-entry.en
   styleUrl: './campaign-kpi-cards.css',
 })
 export class CampaignKpiCards {
-  protected readonly store = inject(FieldManagementStore);
-
   /** Active campaign of the selected plot. */
   readonly campaign = input<CropCampaign>();
 
@@ -54,7 +51,7 @@ export class CampaignKpiCards {
     if (!ledger) return [];
     return Object.values(ExpenseCategory).map((category) => ({
       label: `field-management.expense-category.${category}`,
-      percentage: this.store.percentageByCategory(ledger, category),
+      percentage: ledger.percentageByCategory(category),
     }));
   });
 }

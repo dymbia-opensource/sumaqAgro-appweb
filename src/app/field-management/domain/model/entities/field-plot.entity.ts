@@ -1,14 +1,10 @@
 import { BaseEntity } from '../../../../shared/domain/model/base-entity';
 
-/** Monitoring status of a field plot. */
 export enum PlotStatus {
-  /** The plot was registered but its GPS polygon is not drawn yet. */
-  WITHOUT_POLYGON = 'WITHOUT_POLYGON',
-  /** The polygon is linked to AgroMonitoring and the plot is monitored by satellite. */
-  ACTIVE_MONITORING = 'ACTIVE_MONITORING',
+  WITHOUT_POLYGON = 'WITHOUT_POLYGON', // polygon not drawn yet
+  ACTIVE_MONITORING = 'ACTIVE_MONITORING', // polygon linked to AgroMonitoring
 }
 
-/** Texture of the soil, according to the initial soil analysis. */
 export enum SoilTexture {
   SANDY = 'SANDY',
   LOAMY = 'LOAMY',
@@ -18,7 +14,7 @@ export enum SoilTexture {
   CLAY_LOAM = 'CLAY_LOAM',
 }
 
-/** One vertex of the GPS polygon of a plot. */
+/** A point of the plot polygon. */
 export class GeoCoordinate {
   private _latitude: number;
   private _longitude: number;
@@ -45,7 +41,7 @@ export class GeoCoordinate {
   }
 }
 
-/** Initial soil analysis of a plot. */
+/** First soil analysis of the plot. */
 export class SoilBaseline {
   private _ph: number;
   private _texture: SoilTexture;
@@ -97,12 +93,7 @@ export class SoilBaseline {
   }
 }
 
-/**
- * Field plot of a producer, with its GPS polygon and its soil analysis.
- *
- * @remarks
- * Root of the `FieldPlot` aggregate. It only holds the data of the plot.
- */
+/** Plot of a producer, with its GPS polygon and soil analysis. */
 export class FieldPlot extends BaseEntity {
   private _ownerUserId: number;
   private _name: string;
@@ -167,7 +158,6 @@ export class FieldPlot extends BaseEntity {
     this._status = value;
   }
 
-  /** Vertices of the GPS polygon, in order. */
   get boundary(): GeoCoordinate[] {
     return this._boundary;
   }
@@ -192,7 +182,7 @@ export class FieldPlot extends BaseEntity {
     this._agroMonitoringPolygonId = value;
   }
 
-  /** Initial soil analysis, or `null` if it was not recorded. */
+  /** null until the soil analysis is recorded. */
   get soilBaseline(): SoilBaseline | null {
     return this._soilBaseline;
   }
@@ -201,13 +191,12 @@ export class FieldPlot extends BaseEntity {
     this._soilBaseline = value;
   }
 
-  /**
-   * `true` when the polygon has at least three vertices.
-   *
-   * @remarks
-   * Crop Health reads it to know if the plot can be monitored by satellite.
-   */
+  /** At least 3 points. Crop Health also uses it. */
   hasPolygon(): boolean {
     return this._boundary.length >= 3;
+  }
+
+  isMonitored(): boolean {
+    return this._status === PlotStatus.ACTIVE_MONITORING;
   }
 }

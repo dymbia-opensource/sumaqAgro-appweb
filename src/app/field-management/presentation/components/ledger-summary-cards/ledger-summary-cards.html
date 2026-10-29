@@ -2,7 +2,7 @@
   <mat-card-content>
     <mat-icon aria-hidden="true">account_balance_wallet</mat-icon>
     <p class="label">{{ 'field-management.finances.total-invested' | translate }}</p>
-    <p class="amount">{{ store.totalInvestment(ledger()).format() }}</p>
+    <p class="amount">{{ ledger().totalInvestment().format() }}</p>
   </mat-card-content>
 </mat-card>
 

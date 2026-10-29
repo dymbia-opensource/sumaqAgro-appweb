@@ -43,7 +43,7 @@ import { Money } from '../../shared/domain/model/money';
 import { CampaignLedger, YieldUnit } from '../domain/model/entities/campaign-ledger.entity';
 import { CampaignStatus, CropCampaign, CropType } from '../domain/model/entities/crop-campaign.entity';
 import { ExpenseCategory, ExpenseEntry } from '../domain/model/entities/expense-entry.entity';
-import { FieldPlot, PlotStatus, SoilBaseline } from '../domain/model/entities/field-plot.entity';
+import { FieldPlot, SoilBaseline } from '../domain/model/entities/field-plot.entity';
 import { FieldManagementApi } from '../infrastructure/field-management-api';
 import {
   ExpenseCommand,
@@ -200,7 +200,7 @@ export class FieldManagementStore {
 
   /** `true` when the selected plot has a campaign in progress. */
   readonly hasCampaignInProgress = computed(() =>
-    this.campaigns().some((campaign) => this.isActive(campaign)),
+    this.campaigns().some((campaign) => campaign.isActive()),
   );
 
   /** Cost ledger of the active campaign of the selected plot, or `null`. */
@@ -766,14 +766,7 @@ export class FieldManagementStore {
       });
   };
 
-  // ---------- Figures ----------
-  // The fake API does not calculate them; the views read them from here.
-
-  /** `true` while the campaign is in progress. */
-  isActive = (campaign: CropCampaign): boolean => campaign.status === CampaignStatus.IN_PROGRESS;
-
-  /** `true` when the plot is monitored by satellite. */
-  isMonitored = (plot: FieldPlot): boolean => plot.status === PlotStatus.ACTIVE_MONITORING;
+  // ---------- Campaign setup ----------
 
   /** Unit of the yield of a crop: sacks for potato and quintals for coffee. */
   yieldUnitOf = (cropType: CropType): YieldUnit =>
@@ -781,57 +774,6 @@ export class FieldManagementStore {
 
   /** Agricultural season of a date: `YYYY-I` from January to June, `YYYY-II` from July. */
   seasonOf = (date: Date): string => `${date.getFullYear()}-${date.getMonth() < 6 ? 'I' : 'II'}`;
-
-  /** Expenses of a ledger, optionally of one category, the most recent first. */
-  expenseHistory = (ledger: CampaignLedger, category?: ExpenseCategory | null): ExpenseEntry[] =>
-    [...ledger.entries]
-      .sort((a, b) => b.expenseDate.getTime() - a.expenseDate.getTime())
-      .filter((entry) => !category || entry.category === category);
-
-  /** Total of one expense: quantity × unit price. */
-  expenseTotal = (entry: ExpenseEntry): Money => entry.unitPrice.multiply(entry.quantity);
-
-  /** Sum of all the expenses of the campaign. */
-  totalInvestment = (ledger: CampaignLedger): Money =>
-    ledger.entries.reduce((sum, entry) => sum.add(this.expenseTotal(entry)), new Money(0, ledger.currency));
-
-  /** Sum of the expenses of one category. */
-  totalByCategory = (ledger: CampaignLedger, category: ExpenseCategory): Money =>
-    ledger.entries
-      .filter((entry) => entry.category === category)
-      .reduce((sum, entry) => sum.add(this.expenseTotal(entry)), new Money(0, ledger.currency));
-
-  /** Share of one category in the total investment, from 0 to 100. */
-  percentageByCategory = (ledger: CampaignLedger, category: ExpenseCategory): number => {
-    const total = this.totalInvestment(ledger).amount;
-    return total === 0 ? 0 : (this.totalByCategory(ledger, category).amount / total) * 100;
-  };
-
-  /** Yield used by the breakeven price: the actual one if known, otherwise the expected one. */
-  referenceYield = (ledger: CampaignLedger): number => ledger.actualYield ?? ledger.expectedYield;
-
-  /** Minimum price per unit to recover the investment: total investment ÷ yield. */
-  breakevenPrice = (ledger: CampaignLedger): Money => {
-    const yieldQuantity = this.referenceYield(ledger);
-    return yieldQuantity > 0
-      ? this.totalInvestment(ledger).multiply(1 / yieldQuantity)
-      : new Money(0, ledger.currency);
-  };
-
-  /** Breakeven price plus a profit margin, rounded up to the next whole unit. */
-  suggestedPrice = (ledger: CampaignLedger, marginPercentage = 0): Money =>
-    new Money(Math.ceil(this.breakevenPrice(ledger).amount * (1 + marginPercentage / 100)), ledger.currency);
-
-  /** Investment per hectare of the plot, of one category or of all of them. */
-  costPerHectare = (ledger: CampaignLedger, areaHectares: number, category?: ExpenseCategory): Money => {
-    if (areaHectares <= 0) return new Money(0, ledger.currency);
-    const total = category ? this.totalByCategory(ledger, category) : this.totalInvestment(ledger);
-    return total.multiply(1 / areaHectares);
-  };
-
-  /** Yield per hectare of the plot. */
-  yieldPerHectare = (ledger: CampaignLedger, areaHectares: number): number =>
-    areaHectares <= 0 ? 0 : this.referenceYield(ledger) / areaHectares;
 
   // ---------- Helpers ----------
 
