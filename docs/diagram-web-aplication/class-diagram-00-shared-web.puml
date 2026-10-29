@@ -18,17 +18,6 @@ package "src/app/shared" {
       +get id(): number | string
       +set id(value: number | string)
     }
-
-    class Money <<money.ts>> {
-      -_amount: number
-      -_currency: string
-      +constructor(amount: number, currency: string)
-      +get amount(): number
-      +get currency(): string
-      +add(other: Money): Money
-      +multiply(factor: number): Money
-      +format(): string
-    }
   }
 
   package "infrastructure" {

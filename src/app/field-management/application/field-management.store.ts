@@ -39,7 +39,7 @@ import { SelectCropTypeCommand } from '../domain/model/commands/select-crop-type
 import { SetExpectedYieldCommand } from '../domain/model/commands/set-expected-yield.command';
 import { SpecifySeedVarietyCommand } from '../domain/model/commands/specify-seed-variety.command';
 import { StartCropCampaignCommand } from '../domain/model/commands/start-crop-campaign.command';
-import { Money } from '../../shared/domain/model/money';
+import { Money } from '../domain/model/money';
 import { CampaignLedger, YieldUnit } from '../domain/model/entities/campaign-ledger.entity';
 import { CampaignStatus, CropCampaign, CropType } from '../domain/model/entities/crop-campaign.entity';
 import { ExpenseCategory, ExpenseEntry } from '../domain/model/entities/expense-entry.entity';

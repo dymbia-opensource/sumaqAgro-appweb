@@ -16,7 +16,6 @@ package "src/app/shared" {
   interface BaseAssembler <<base-assembler.ts>>
   abstract class BaseApiEndpoint <<base-api-endpoint.ts>>
   abstract class BaseApi <<base-api.ts>>
-  class Money <<money.ts>>
 }
 
 package "src/app/iam" {
@@ -25,6 +24,14 @@ package "src/app/iam" {
 
 package "src/app/field-management" {
   package "domain/model" {
+    class Money <<money.ts>> {
+      +amount: number
+      +currency: string
+      +add(other: Money): Money
+      +multiply(factor: number): Money
+      +format(): string
+    }
+
     package "entities" {
       class FieldPlot <<field-plot.entity.ts>> {
         -_ownerUserId: number
@@ -446,7 +453,6 @@ RecordDailyLaborExpenseCommand -[hidden]down- ExportCampaignCostReportCommand
 BaseEntity -[hidden]down- BaseAssembler
 BaseResource -[hidden]down- BaseApiEndpoint
 BaseResponse -[hidden]down- BaseApi
-BaseAssembler -[hidden]down- Money
 PlotBoundaryMapView -[hidden]down- FieldManagementStore
 FieldExpenseForm -[hidden]down- FieldManagementStore
 FieldManagementStore -[hidden]down- FieldManagementApi

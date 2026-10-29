@@ -130,7 +130,7 @@ sumaqAgro-appweb/
 ├── src/
 │   ├── app/
 │   │   ├── shared/                        # Lo que usan todos los contextos
-│   │   │   ├── domain/model/              # BaseEntity, Money
+│   │   │   ├── domain/model/              # BaseEntity
 │   │   │   ├── infrastructure/            # BaseApi, BaseApiEndpoint, BaseAssembler, fechas de la API, descarga de archivos
 │   │   │   └── presentation/
 │   │   │       ├── components/            # layout (+ layout.store), left-sidebar, toolbar, language-switcher, page-header, message-card
