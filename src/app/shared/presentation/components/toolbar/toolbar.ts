@@ -11,7 +11,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
-import { LayoutService } from '../layout/layout.service';
+import { LayoutStore } from '../layout/layout.store';
 import { CurrentSessionService } from '../../../../iam/application/current-session.service';
 
 /**
@@ -38,7 +38,7 @@ import { CurrentSessionService } from '../../../../iam/application/current-sessi
   styleUrl: './toolbar.css',
 })
 export class Toolbar {
-  protected readonly layout = inject(LayoutService);
+  protected readonly layout = inject(LayoutStore);
   private readonly session = inject(CurrentSessionService);
 
   /** Display name provided by the current session projection. */

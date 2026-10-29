@@ -4,7 +4,7 @@ import { Router, RouterOutlet } from '@angular/router';
 import { IamStore } from '../../../../iam/application/iam.store';
 import { LeftSidebar } from '../left-sidebar/left-sidebar';
 import { Toolbar } from '../toolbar/toolbar';
-import { LayoutService } from './layout.service';
+import { LayoutStore } from './layout.store';
 
 /**
  * Shell of the private pages: side menu, top bar and the routed content.
@@ -20,7 +20,7 @@ import { LayoutService } from './layout.service';
   styleUrl: './layout.css',
 })
 export class Layout {
-  protected readonly layout = inject(LayoutService);
+  protected readonly layout = inject(LayoutStore);
   private readonly iamStore = inject(IamStore);
   private readonly router = inject(Router);
 

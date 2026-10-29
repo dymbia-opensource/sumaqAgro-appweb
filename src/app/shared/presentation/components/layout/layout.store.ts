@@ -13,7 +13,7 @@ import { IamStore } from '../../../../iam/application/iam.store';
  * from the menu button of the top bar.
  */
 @Injectable({ providedIn: 'root' })
-export class LayoutService {
+export class LayoutStore {
   private readonly router = inject(Router);
   private readonly iamStore = inject(IamStore);
 

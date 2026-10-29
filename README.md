@@ -130,14 +130,11 @@ sumaqAgro-appweb/
 ├── src/
 │   ├── app/
 │   │   ├── shared/                        # Lo que usan todos los contextos
-│   │   │   ├── domain/model/              # BaseEntity, Money, usuario demo
-│   │   │   ├── application/               # Sesión demo (hasta que exista IAM)
-│   │   │   ├── infrastructure/            # BaseApi, BaseApiEndpoint, BaseAssembler, fechas de la API
-│   │   │   │   └── i18n/                  # Loader que une los archivos de traducción
+│   │   │   ├── domain/model/              # BaseEntity
+│   │   │   ├── infrastructure/            # BaseApi, BaseApiEndpoint, BaseAssembler, fechas de la API, descarga de archivos
 │   │   │   └── presentation/
-│   │   │       ├── components/            # layout, left-sidebar, toolbar, language-switcher
-│   │   │       ├── views/                 # demo-access-view, page-not-found
-│   │   │       └── i18n/                  # Textos del paginador de Angular Material
+│   │   │       ├── components/            # layout (+ layout.store), left-sidebar, toolbar, language-switcher, page-header, message-card
+│   │   │       └── views/                 # page-not-found
 │   │   │
 │   │   ├── field-management/              # Parcelas, polígono GPS, campañas y costos
 │   │   │   ├── domain/model/
@@ -147,7 +144,8 @@ sumaqAgro-appweb/
 │   │   │   ├── infrastructure/            # Fachada (*-api.ts)
 │   │   │   │   ├── endpoints/             # Llamadas HTTP de cada recurso (*.endpoint.ts)
 │   │   │   │   ├── assemblers/            # Resource ↔ entidad (*.assembler.ts)
-│   │   │   │   └── responses/             # Contratos de la API (*.response.ts)
+│   │   │   │   ├── responses/             # Contratos de la API (*.response.ts)
+│   │   │   │   └── offline/               # Gastos guardados sin conexión (TS-05)
 │   │   │   ├── presentation/views/        # Una carpeta por vista (.ts, .html, .css)
 │   │   │   └── field-management.routes.ts # Rutas del contexto (lazy loading)
 │   │   │
@@ -155,7 +153,7 @@ sumaqAgro-appweb/
 │   │   ├── profiles/                      # Perfiles, cooperativas y socios
 │   │   ├── harvest-certification/         # Lotes, calificación, certificados y verificación por QR
 │   │   │                                  # (los tres con las mismas capas que field-management)
-│   │   ├── app.config.ts                  # Providers: router, HttpClient, traducciones
+│   │   ├── app.config.ts                  # Providers: router, HttpClient, traducciones (ngx-translate)
 │   │   ├── app.routes.ts                  # Rutas raíz: páginas privadas dentro del layout
 │   │   └── app.ts
 │   ├── environments/

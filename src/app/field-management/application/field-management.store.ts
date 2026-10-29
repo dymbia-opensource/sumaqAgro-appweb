@@ -24,8 +24,8 @@ import {
   toArray,
 } from 'rxjs';
 import { CurrentSessionService } from '../../iam/application/current-session.service';
-import { OfflineSyncService } from '../../shared/infrastructure/offline/offline-sync.service';
-import { PendingOperationType } from '../../shared/infrastructure/offline/pending-operation';
+import { OfflineSync } from '../infrastructure/offline/offline-sync';
+import { PendingOperationType } from '../infrastructure/offline/pending-operation';
 import { CloseCropCampaignCommand } from '../domain/model/commands/close-crop-campaign.command';
 import { DelineatePlotBoundaryCommand } from '../domain/model/commands/delineate-plot-boundary.command';
 import { ExportCampaignCostReportCommand } from '../domain/model/commands/export-campaign-cost-report.command';
@@ -39,7 +39,7 @@ import { SelectCropTypeCommand } from '../domain/model/commands/select-crop-type
 import { SetExpectedYieldCommand } from '../domain/model/commands/set-expected-yield.command';
 import { SpecifySeedVarietyCommand } from '../domain/model/commands/specify-seed-variety.command';
 import { StartCropCampaignCommand } from '../domain/model/commands/start-crop-campaign.command';
-import { Money } from '../../shared/domain/model/money';
+import { Money } from '../domain/model/money';
 import { CampaignLedger, YieldUnit } from '../domain/model/entities/campaign-ledger.entity';
 import { CampaignStatus, CropCampaign, CropType } from '../domain/model/entities/crop-campaign.entity';
 import { ExpenseCategory, ExpenseEntry } from '../domain/model/entities/expense-entry.entity';
@@ -95,7 +95,7 @@ export interface CropCampaignSetup {
 export class FieldManagementStore {
   private readonly fieldManagementApi = inject(FieldManagementApi);
   private readonly session = inject(CurrentSessionService);
-  private readonly offlineSync = inject(OfflineSyncService);
+  private readonly offlineSync = inject(OfflineSync);
   private readonly pendingExpenses = new PendingExpenseAssembler();
   private readonly fileDownloader = inject(FileDownloader);
 

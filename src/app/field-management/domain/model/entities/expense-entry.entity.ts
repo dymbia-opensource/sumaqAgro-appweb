@@ -1,5 +1,5 @@
 import { BaseEntity } from '../../../../shared/domain/model/base-entity';
-import { Money } from '../../../../shared/domain/model/money';
+import { Money } from '../money';
 
 export enum ExpenseCategory {
   INPUTS = 'INPUTS', // seeds, fertilizers...

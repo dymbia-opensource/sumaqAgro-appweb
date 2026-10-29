@@ -4,21 +4,14 @@ import { PendingOperation, PendingOperationType } from './pending-operation';
 const STORAGE_KEY = 'sumaq-agro-pending-operations';
 
 /**
- * Keeps the operations recorded without connection until they are sent to the
- * RESTful API, and tells whether the device is connected.
- *
- * @remarks
- * In the field the producer often has no signal. Field Management and Crop
- * Health use this service to keep their operations on the device. Each
- * context builds its own payload and sends its pending operations when the
- * connection comes back; the `uuid` lets the API ignore the ones that were
- * already saved (for example, if the page closes in the middle of a
- * synchronization).
+ * Keeps on the device the expenses recorded without connection (TS-05) until
+ * the store sends them to the API, and tells whether the device is connected.
+ * The `uuid` lets the API ignore an expense that was already saved.
  */
 @Injectable({ providedIn: 'root' })
-export class OfflineSyncService {
+export class OfflineSync {
   private readonly onlineSignal = signal(typeof navigator === 'undefined' ? true : navigator.onLine);
-  private readonly operationsSignal = signal<PendingOperation[]>(OfflineSyncService.read());
+  private readonly operationsSignal = signal<PendingOperation[]>(OfflineSync.read());
 
   /** `true` while the device has connection. */
   readonly isOnline = this.onlineSignal.asReadonly();

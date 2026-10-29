@@ -6,7 +6,7 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { TranslatePipe } from '@ngx-translate/core';
-import { Money } from '../../../../shared/domain/model/money';
+import { Money } from '../../../domain/model/money';
 import { FieldManagementStore } from '../../../application/field-management.store';
 import { CampaignLedger, YieldUnit } from '../../../domain/model/entities/campaign-ledger.entity';
 import { CropCampaign, CampaignStatus, CropType } from '../../../domain/model/entities/crop-campaign.entity';

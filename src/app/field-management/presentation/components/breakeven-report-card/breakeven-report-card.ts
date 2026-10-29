@@ -6,7 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSliderModule } from '@angular/material/slider';
 import { TranslatePipe } from '@ngx-translate/core';
-import { Money } from '../../../../shared/domain/model/money';
+import { Money } from '../../../domain/model/money';
 import { CampaignLedger } from '../../../domain/model/entities/campaign-ledger.entity';
 
 /**

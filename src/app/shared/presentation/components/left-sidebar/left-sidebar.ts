@@ -7,7 +7,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { LanguageSwitcher } from '../language-switcher/language-switcher';
-import { LayoutService } from '../layout/layout.service';
+import { LayoutStore } from '../layout/layout.store';
 import { navigationFor } from './navigation-config';
 import { CurrentSessionService } from '../../../../iam/application/current-session.service';
 
@@ -32,7 +32,7 @@ import { CurrentSessionService } from '../../../../iam/application/current-sessi
   styleUrl: './left-sidebar.css',
 })
 export class LeftSidebar {
-  protected readonly layout = inject(LayoutService);
+  protected readonly layout = inject(LayoutStore);
   private readonly session = inject(CurrentSessionService);
 
   /** Navigation generated from the current participant's primary role. */
