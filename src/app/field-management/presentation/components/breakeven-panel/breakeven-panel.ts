@@ -1,5 +1,4 @@
-import { Component, effect, input, output, inject } from '@angular/core';
-import { FieldManagementStore } from '../../../application/field-management.store';
+import { Component, effect, input, output } from '@angular/core';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -27,8 +26,6 @@ import { CampaignLedger } from '../../../domain/model/entities/campaign-ledger.e
   styleUrl: './breakeven-panel.css',
 })
 export class BreakevenPanel {
-  protected readonly store = inject(FieldManagementStore);
-
   readonly ledger = input.required<CampaignLedger>();
   readonly saving = input(false);
 

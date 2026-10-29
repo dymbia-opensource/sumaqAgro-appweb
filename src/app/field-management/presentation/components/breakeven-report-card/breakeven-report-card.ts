@@ -1,5 +1,4 @@
-import { Component, computed, input, signal, inject } from '@angular/core';
-import { FieldManagementStore } from '../../../application/field-management.store';
+import { Component, computed, input, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -29,8 +28,6 @@ import { CampaignLedger } from '../../../domain/model/entities/campaign-ledger.e
   styleUrl: './breakeven-report-card.css',
 })
 export class BreakevenReportCard {
-  protected readonly store = inject(FieldManagementStore);
-
   readonly ledger = input.required<CampaignLedger>();
 
   /** Profit margin chosen by the producer, in %. */
@@ -42,33 +39,25 @@ export class BreakevenReportCard {
   /** Breakeven price with the expected and with the actual yield (`BreakevenReport`). */
   protected readonly report = computed(() => {
     const ledger = this.ledger();
-    const totalInvestment = this.store.totalInvestment(ledger);
-    const priceFor = (yieldQuantity: number) =>
-      yieldQuantity > 0
-        ? totalInvestment.multiply(1 / yieldQuantity)
-        : new Money(0, totalInvestment.currency);
     return {
-      totalInvestment,
+      totalInvestment: ledger.totalInvestment(),
       expectedYield: ledger.expectedYield,
       actualYield: ledger.actualYield,
       yieldUnit: ledger.yieldUnit,
-      expectedBreakevenPrice: priceFor(ledger.expectedYield),
-      actualBreakevenPrice: ledger.actualYield === null ? null : priceFor(ledger.actualYield),
-      calculable: this.store.referenceYield(ledger) > 0,
+      expectedBreakevenPrice: ledger.breakevenPriceFor(ledger.expectedYield),
+      actualBreakevenPrice: ledger.actualYield === null ? null : ledger.breakevenPriceFor(ledger.actualYield),
+      calculable: ledger.referenceYield() > 0,
     };
   });
 
-  protected readonly suggestedPrice = computed(() =>
-    this.store.suggestedPrice(this.ledger(), this.margin()),
-  );
+  protected readonly suggestedPrice = computed(() => this.ledger().suggestedPrice(this.margin()));
 
   /** Profit (or loss) selling the whole harvest at the typed price. */
   protected readonly profit = computed(() => {
     const price = this.salePrice();
     if (price === null || price <= 0) return null;
     const amount =
-      price * this.store.referenceYield(this.ledger()) -
-      this.report().totalInvestment.amount;
+      price * this.ledger().referenceYield() - this.report().totalInvestment.amount;
     return { amount, money: new Money(Math.abs(amount), this.ledger().currency) };
   });
 }

@@ -37,7 +37,7 @@ export interface CampaignSummary {
 
 /**
  * Builds the summary of a campaign.
- * @param store - Field Management store, which calculates the figures.
+ * @param store - Field Management store, which knows the yield unit of each crop.
  * @param campaign - The campaign.
  * @param ledger - Its cost ledger, if it has one.
  * @param areaHectares - Area of the plot, for the cost per hectare.
@@ -58,17 +58,15 @@ export function campaignSummaryOf(
     seedVariety: campaign.seedVariety,
     sowingDate: campaign.sowingDate,
     status: campaign.status,
-    isActive: store.isActive(campaign),
+    isActive: campaign.isActive(),
     ledgerId: ledger ? (ledger.id as number) : null,
-    totalInvestment: ledger ? store.totalInvestment(ledger) : new Money(0),
-    breakevenPrice: ledger ? store.breakevenPrice(ledger) : new Money(0),
+    totalInvestment: ledger ? ledger.totalInvestment() : new Money(0),
+    breakevenPrice: ledger ? ledger.breakevenPrice() : new Money(0),
     expectedYield,
     actualYield,
     yieldUnit: ledger?.yieldUnit ?? store.yieldUnitOf(campaign.cropType),
     expenseCount: ledger?.entries.length ?? 0,
-    costPerHectare: ledger
-      ? store.costPerHectare(ledger, areaHectares)
-      : new Money(0),
+    costPerHectare: ledger ? ledger.costPerHectare(areaHectares) : new Money(0),
     yieldAchievement:
       actualYield === null || expectedYield <= 0 ? null : (actualYield / expectedYield) * 100,
   };

@@ -1,6 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { Component, input, inject } from '@angular/core';
-import { FieldManagementStore } from '../../../application/field-management.store';
+import { Component, input } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTableModule } from '@angular/material/table';
@@ -16,8 +15,6 @@ import { EXPENSE_CATEGORY_ICONS } from '../ledger-summary-cards/ledger-summary-c
   styleUrl: './expense-list.css',
 })
 export class ExpenseList {
-  protected readonly store = inject(FieldManagementStore);
-
   readonly entries = input.required<ExpenseEntry[]>();
 
   protected readonly columns = ['date', 'category', 'description', 'quantity', 'unitPrice', 'total'];

@@ -1,6 +1,5 @@
 import { DatePipe, DecimalPipe } from '@angular/common';
 import { Component, computed, inject, input } from '@angular/core';
-import { FieldManagementStore } from '../../../application/field-management.store';
 import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
@@ -30,8 +29,6 @@ import { ExpenseCategory } from '../../../domain/model/entities/expense-entry.en
   styleUrl: './cost-distribution-card.css',
 })
 export class CostDistributionCard {
-  protected readonly store = inject(FieldManagementStore);
-
   private readonly translate = inject(TranslateService);
 
   /** Cost ledger of the campaign, or `null` if it has none. */
@@ -46,19 +43,19 @@ export class CostDistributionCard {
     if (!ledger) return [];
     return Object.values(ExpenseCategory).map((category) => ({
       label: `field-management.expense-category.${category}`,
-      amount: this.store.totalByCategory(ledger, category),
-      percentage: this.store.percentageByCategory(ledger, category),
+      amount: ledger.totalByCategory(category),
+      percentage: ledger.percentageByCategory(category),
     }));
   });
 
   /** Date of the first expense of the campaign. */
-  protected readonly since = computed(() => (this.ledger() ? this.store.expenseHistory(this.ledger()!).at(-1)?.expenseDate : null) ?? null);
+  protected readonly since = computed(() => (this.ledger() ? this.ledger()!.expenseHistory().at(-1)?.expenseDate : null) ?? null);
 
   /** Data of the doughnut chart, or `null` when there are no expenses. */
   protected readonly chartData = computed<ChartConfiguration<'doughnut'>['data'] | null>(() => {
     this.language();
     const ledger = this.ledger();
-    if (!ledger || this.store.totalInvestment(ledger).amount === 0) return null;
+    if (!ledger || ledger.totalInvestment().amount === 0) return null;
     const colors = this.themeColors();
     return {
       labels: this.categories().map((item) => this.translate.instant(item.label)),

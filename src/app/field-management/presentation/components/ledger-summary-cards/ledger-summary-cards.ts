@@ -1,6 +1,5 @@
 import { DecimalPipe } from '@angular/common';
-import { Component, computed, input, inject } from '@angular/core';
-import { FieldManagementStore } from '../../../application/field-management.store';
+import { Component, computed, input } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -22,16 +21,14 @@ export const EXPENSE_CATEGORY_ICONS: Record<ExpenseCategory, string> = {
   styleUrl: './ledger-summary-cards.css',
 })
 export class LedgerSummaryCards {
-  protected readonly store = inject(FieldManagementStore);
-
   readonly ledger = input.required<CampaignLedger>();
 
   protected readonly categories = computed(() =>
     Object.values(ExpenseCategory).map((category) => ({
       category,
       icon: EXPENSE_CATEGORY_ICONS[category],
-      amount: this.store.totalByCategory(this.ledger(), category),
-      percentage: this.store.percentageByCategory(this.ledger(), category),
+      amount: this.ledger().totalByCategory(category),
+      percentage: this.ledger().percentageByCategory(category),
     })),
   );
 }

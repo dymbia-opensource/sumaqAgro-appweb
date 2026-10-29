@@ -1,6 +1,5 @@
 import { DecimalPipe } from '@angular/common';
-import { Component, computed, input, inject } from '@angular/core';
-import { FieldManagementStore } from '../../../application/field-management.store';
+import { Component, computed, input } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
@@ -17,8 +16,6 @@ import { EXPENSE_CATEGORY_ICONS } from '../ledger-summary-cards/ledger-summary-c
   styleUrl: './cost-per-hectare-card.css',
 })
 export class CostPerHectareCard {
-  protected readonly store = inject(FieldManagementStore);
-
   readonly ledger = input.required<CampaignLedger>();
 
   /** Area of the plot, in hectares. */
@@ -35,12 +32,12 @@ export class CostPerHectareCard {
       hasArea: areaHectares > 0,
       rows: Object.values(ExpenseCategory).map((category) => ({
         category,
-        total: this.store.totalByCategory(ledger, category),
-        perHectare: this.store.costPerHectare(ledger, areaHectares, category),
-        percentage: this.store.percentageByCategory(ledger, category),
+        total: ledger.totalByCategory(category),
+        perHectare: ledger.costPerHectare(areaHectares, category),
+        percentage: ledger.percentageByCategory(category),
       })),
-      totalPerHectare: this.store.costPerHectare(ledger, areaHectares),
-      yieldPerHectare: this.store.yieldPerHectare(ledger, areaHectares),
+      totalPerHectare: ledger.costPerHectare(areaHectares),
+      yieldPerHectare: ledger.yieldPerHectare(areaHectares),
       yieldUnit: ledger.yieldUnit,
     };
   });

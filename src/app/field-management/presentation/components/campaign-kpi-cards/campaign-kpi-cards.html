@@ -37,7 +37,7 @@
     @if (campaign(); as campaign) {
       <mat-chip-set class="kpi-chip">
         <mat-chip [disableRipple]="true">
-          <mat-icon matChipAvatar>{{ store.isActive(campaign) ? 'check_circle' : 'lock' }}</mat-icon>
+          <mat-icon matChipAvatar>{{ campaign.isActive() ? 'check_circle' : 'lock' }}</mat-icon>
           {{ 'field-management.campaign-status.' + campaign.status | translate }}
         </mat-chip>
       </mat-chip-set>
@@ -46,7 +46,7 @@
   <mat-card-content>
     @if (ledger(); as ledger) {
       <p class="kpi-label">{{ 'field-management.dashboard.total-invested' | translate }}</p>
-      <p class="kpi-value">{{ store.totalInvestment(ledger).format() }}</p>
+      <p class="kpi-value">{{ ledger.totalInvestment().format() }}</p>
       <p class="kpi-note">
         @for (share of categoryShares(); track share.label; let last = $last) {
           {{ share.label | translate }}: {{ share.percentage | number: '1.0-0' }}%
@@ -79,7 +79,7 @@
       @if (ledger.expectedYield > 0) {
         <p class="kpi-label">{{ 'field-management.dashboard.breakeven-point' | translate }}</p>
         <p class="kpi-value">
-          {{ store.breakevenPrice(ledger).format() }}
+          {{ ledger.breakevenPrice().format() }}
           <span class="kpi-unit">{{
             'field-management.yield-unit.per-' + ledger.yieldUnit | translate
           }}</span>
@@ -108,7 +108,7 @@
             <mat-icon matChipAvatar>trending_up</mat-icon>
             {{
               'field-management.dashboard.minimum-price'
-                | translate: { price: store.suggestedPrice(ledger).format() }
+                | translate: { price: ledger.suggestedPrice().format() }
             }}
           </mat-chip>
         </mat-chip-set>

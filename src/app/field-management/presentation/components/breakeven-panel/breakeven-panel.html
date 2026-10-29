@@ -24,7 +24,7 @@
     </form>
 
     @if (ledger().expectedYield > 0 || ledger().actualYield) {
-      <p class="price">{{ store.breakevenPrice(ledger()).format() }}</p>
+      <p class="price">{{ ledger().breakevenPrice().format() }}</p>
       <p class="hint">
         {{ 'field-management.finances.breakeven-hint' | translate: { unit: ('field-management.yield-unit.per-' + ledger().yieldUnit | translate) } }}
       </p>
@@ -38,7 +38,7 @@
           <mat-icon matChipAvatar>sell</mat-icon>
           {{
             'field-management.finances.suggested-price'
-              | translate: { price: store.suggestedPrice(ledger()).format() }
+              | translate: { price: ledger().suggestedPrice().format() }
           }}
         </mat-chip>
       </mat-chip-set>

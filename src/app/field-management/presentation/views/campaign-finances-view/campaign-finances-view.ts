@@ -75,7 +75,7 @@ export class CampaignFinancesView {
   readonly categoryFilter = signal<ExpenseCategory | null>(null);
 
   /** `ExpenseHistory` read model: expenses of the chosen category, the most recent first. */
-  readonly expenseHistory = computed(() => (this.ledger() ? this.store.expenseHistory(this.ledger()!, this.categoryFilter()) : []));
+  readonly expenseHistory = computed(() => (this.ledger() ? this.ledger()!.expenseHistory(this.categoryFilter()) : []));
 
   /** Values of the subtitle, e.g. "Pampa Alta | Season 2026-I". */
   readonly subtitleParams = computed(() => ({

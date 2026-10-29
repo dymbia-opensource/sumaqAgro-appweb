@@ -3,8 +3,8 @@
     <mat-icon mat-card-avatar>map</mat-icon>
     <mat-card-title>{{ 'field-management.plot-detail.cadastre' | translate }}</mat-card-title>
     <mat-chip-set class="status">
-      <mat-chip [disableRipple]="true" [highlighted]="store.isMonitored(plot())">
-        <mat-icon matChipAvatar>{{ store.isMonitored(plot()) ? 'satellite_alt' : 'pending' }}</mat-icon>
+      <mat-chip [disableRipple]="true" [highlighted]="plot().isMonitored()">
+        <mat-icon matChipAvatar>{{ plot().isMonitored() ? 'satellite_alt' : 'pending' }}</mat-icon>
         {{ 'field-management.plot-status.' + plot().status | translate }}
       </mat-chip>
     </mat-chip-set>
