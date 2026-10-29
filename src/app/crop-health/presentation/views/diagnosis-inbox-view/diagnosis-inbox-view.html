@@ -1,5 +1,10 @@
 @if (store.canReport()) {
-  <app-crop-plot-selector />
+  <app-crop-plot-selector
+    [plots]="store.plots()"
+    [selectedPlotId]="store.selectedPlot()?.id"
+    [disabled]="store.scopeLoading()"
+    (plotSelected)="store.selectPlot(+$event)"
+  />
   @if (store.selectedPlot(); as plot) {
     <app-farmer-advisory-panel [plotId]="+plot.id" />
   }

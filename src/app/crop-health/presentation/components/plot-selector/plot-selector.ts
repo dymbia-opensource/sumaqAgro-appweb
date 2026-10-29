@@ -1,16 +1,18 @@
-import { Component, inject } from '@angular/core';
+import { Component, input, output } from '@angular/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { TranslatePipe } from '@ngx-translate/core';
-import { CropHealthStore } from '../../../application/crop-health.store';
+
+/** Parcel selection control; the parent view owns data loading and selection state. */
 @Component({
   selector: 'app-crop-plot-selector',
   imports: [MatFormFieldModule, MatSelectModule, TranslatePipe],
-  template: `<mat-form-field appearance="outline">
-    <mat-label>{{ 'crop-health.change-plot' | translate }}</mat-label>
-    <mat-select [value]="store.selectedPlot()?.id" (selectionChange)="store.selectPlot($event.value)" [disabled]="store.scopeLoading()">
-      @for (plot of store.plots(); track plot.id) { <mat-option [value]="plot.id">{{ plot.name }}</mat-option> }
-    </mat-select>
-  </mat-form-field>`,
+  templateUrl: './plot-selector.html',
+  styleUrl: './plot-selector.css',
 })
-export class CropPlotSelector { readonly store = inject(CropHealthStore); }
+export class CropPlotSelector {
+  readonly plots = input.required<readonly { id: number | string; name: string }[]>();
+  readonly selectedPlotId = input<number | string | undefined>();
+  readonly disabled = input(false);
+  readonly plotSelected = output<number | string>();
+}

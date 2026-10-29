@@ -5,7 +5,12 @@
 <header class="view-header">
   <span class="breadcrumb">{{ 'crop-health.eyebrow' | translate }}</span>
   <h1>{{ 'crop-health.alerts-title' | translate }}</h1>
-<app-crop-plot-selector />
+<app-crop-plot-selector
+    [plots]="store.plots()"
+    [selectedPlotId]="store.selectedPlot()?.id"
+    [disabled]="store.scopeLoading()"
+    (plotSelected)="store.selectPlot(+$event)"
+  />
   <p>{{ store.selectedPlot()?.region }}</p>
 </header>
 
