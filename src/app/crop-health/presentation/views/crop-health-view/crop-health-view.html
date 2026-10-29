@@ -4,7 +4,12 @@
     <h1>{{ 'crop-health.viewer-title' | translate }}</h1>
     <p>{{ store.selectedPlot()?.name }} · {{ store.selectedPlot()?.region }}</p>
   </div>
-  <app-crop-plot-selector />
+  <app-crop-plot-selector
+    [plots]="store.plots()"
+    [selectedPlotId]="store.selectedPlot()?.id"
+    [disabled]="store.scopeLoading()"
+    (plotSelected)="store.selectPlot(+$event)"
+  />
 </header>
 @if (store.observationsError(); as error) {
   <mat-card appearance="outlined" role="alert"><mat-card-content><p>{{ error | translate }}</p></mat-card-content></mat-card>
