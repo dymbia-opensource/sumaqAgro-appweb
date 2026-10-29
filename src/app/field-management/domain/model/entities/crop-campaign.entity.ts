@@ -1,23 +1,16 @@
 import { BaseEntity } from '../../../../shared/domain/model/base-entity';
 
-/** Crops supported by SumaqAgro. */
 export enum CropType {
   ANDEAN_POTATO = 'ANDEAN_POTATO',
   SPECIALTY_COFFEE = 'SPECIALTY_COFFEE',
 }
 
-/** Status of a crop campaign. */
 export enum CampaignStatus {
   IN_PROGRESS = 'IN_PROGRESS',
   FINISHED = 'FINISHED',
 }
 
-/**
- * Crop campaign of a plot: the crop, the seed variety and the sowing date.
- *
- * @remarks
- * Root of the `CropCampaign` aggregate. It only holds the data of the campaign.
- */
+/** Crop campaign of a plot (crop, seed variety and sowing date). */
 export class CropCampaign extends BaseEntity {
   private _plotId: number;
   private _season: string;
@@ -55,7 +48,7 @@ export class CropCampaign extends BaseEntity {
     this._plotId = value;
   }
 
-  /** Agricultural season (for example, `2026-I`). */
+  /** e.g. 2026-I */
   get season(): string {
     return this._season;
   }
@@ -80,7 +73,7 @@ export class CropCampaign extends BaseEntity {
     this._seedVariety = value;
   }
 
-  /** `true` when the producer typed a variety that is not in the catalog. */
+  /** The producer typed a variety that is not in the list. */
   get customSeedVariety(): boolean {
     return this._customSeedVariety;
   }
@@ -103,5 +96,9 @@ export class CropCampaign extends BaseEntity {
 
   set status(value: CampaignStatus) {
     this._status = value;
+  }
+
+  isActive(): boolean {
+    return this._status === CampaignStatus.IN_PROGRESS;
   }
 }

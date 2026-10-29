@@ -1,22 +1,13 @@
 import { BaseEntity } from '../../../../shared/domain/model/base-entity';
-import { ExpenseEntry } from './expense-entry.entity';
+import { Money } from '../../../../shared/domain/model/money';
+import { ExpenseCategory, ExpenseEntry } from './expense-entry.entity';
 
-/** Units used to measure the harvest yield. */
 export enum YieldUnit {
-  /** Sack, used for potato. */
-  SACK = 'SACK',
-  /** Quintal (46 kg), used for coffee. */
-  QUINTAL = 'QUINTAL',
+  SACK = 'SACK', // potato
+  QUINTAL = 'QUINTAL', // coffee (46 kg)
 }
 
-/**
- * Cost ledger of a crop campaign: its expenses and its yield.
- *
- * @remarks
- * Root of the `CampaignLedger` aggregate. It only holds the data of the
- * ledger; its figures (total investment, breakeven price) are calculated by
- * the store.
- */
+/** Cost ledger of a campaign: expenses and expected/actual yield. */
 export class CampaignLedger extends BaseEntity {
   private _campaignId: number;
   private _entries: ExpenseEntry[];
@@ -54,7 +45,6 @@ export class CampaignLedger extends BaseEntity {
     this._campaignId = value;
   }
 
-  /** Expenses of the ledger, in the order they were recorded. */
   get entries(): ExpenseEntry[] {
     return this._entries;
   }
@@ -87,7 +77,7 @@ export class CampaignLedger extends BaseEntity {
     this._yieldUnit = value;
   }
 
-  /** `true` when the ledger is closed and does not accept new expenses. */
+  /** A frozen ledger does not accept more expenses. */
   get frozen(): boolean {
     return this._frozen;
   }
@@ -102,5 +92,63 @@ export class CampaignLedger extends BaseEntity {
 
   set currency(value: string) {
     this._currency = value;
+  }
+
+  /** Most recent first. If a category is given, only that one. */
+  expenseHistory(category?: ExpenseCategory | null): ExpenseEntry[] {
+    return [...this._entries]
+      .sort((a, b) => b.expenseDate.getTime() - a.expenseDate.getTime())
+      .filter((entry) => !category || entry.category === category);
+  }
+
+  totalInvestment(): Money {
+    return this.sumOf(this._entries);
+  }
+
+  totalByCategory(category: ExpenseCategory): Money {
+    return this.sumOf(this._entries.filter((entry) => entry.category === category));
+  }
+
+  /** Percentage (0-100) of the total investment. */
+  percentageByCategory(category: ExpenseCategory): number {
+    const total = this.totalInvestment().amount;
+    return total === 0 ? 0 : (this.totalByCategory(category).amount / total) * 100;
+  }
+
+  /** Actual yield if there is one, otherwise the expected one. */
+  referenceYield(): number {
+    return this._actualYield ?? this._expectedYield;
+  }
+
+  /** Total investment / yield. */
+  breakevenPrice(): Money {
+    return this.breakevenPriceFor(this.referenceYield());
+  }
+
+  /** Same as breakevenPrice, but with the yield we pass. */
+  breakevenPriceFor(yieldQuantity: number): Money {
+    return yieldQuantity > 0
+      ? this.totalInvestment().multiply(1 / yieldQuantity)
+      : new Money(0, this._currency);
+  }
+
+  /** Breakeven price + margin (%), rounded up. */
+  suggestedPrice(marginPercentage = 0): Money {
+    return new Money(Math.ceil(this.breakevenPrice().amount * (1 + marginPercentage / 100)), this._currency);
+  }
+
+  /** Without a category it uses the total investment. */
+  costPerHectare(areaHectares: number, category?: ExpenseCategory): Money {
+    if (areaHectares <= 0) return new Money(0, this._currency);
+    const total = category ? this.totalByCategory(category) : this.totalInvestment();
+    return total.multiply(1 / areaHectares);
+  }
+
+  yieldPerHectare(areaHectares: number): number {
+    return areaHectares <= 0 ? 0 : this.referenceYield() / areaHectares;
+  }
+
+  private sumOf(entries: ExpenseEntry[]): Money {
+    return entries.reduce((sum, entry) => sum.add(entry.total()), new Money(0, this._currency));
   }
 }
