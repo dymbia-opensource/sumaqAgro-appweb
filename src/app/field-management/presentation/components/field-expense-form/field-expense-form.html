@@ -4,7 +4,11 @@
     <form [formGroup]="inputForm" (ngSubmit)="onSubmit()" class="form-grid" id="expense-form">
       <mat-form-field class="full">
         <mat-label>{{ 'field-management.expense-form.input-name' | translate }}</mat-label>
-        <input matInput formControlName="inputName" [placeholder]="'field-management.expense-form.input-name-placeholder' | translate" />
+        <input
+          matInput
+          formControlName="inputName"
+          [placeholder]="'field-management.expense-form.input-name-placeholder' | translate"
+        />
         <mat-error>{{ 'field-management.expense-form.required' | translate }}</mat-error>
       </mat-form-field>
       <mat-form-field>
@@ -69,7 +73,11 @@
     <form [formGroup]="freightForm" (ngSubmit)="onSubmit()" class="form-grid" id="expense-form">
       <mat-form-field class="full">
         <mat-label>{{ 'field-management.expense-form.route' | translate }}</mat-label>
-        <input matInput formControlName="route" [placeholder]="'field-management.expense-form.route-placeholder' | translate" />
+        <input
+          matInput
+          formControlName="route"
+          [placeholder]="'field-management.expense-form.route-placeholder' | translate"
+        />
         <mat-error>{{ 'field-management.expense-form.required' | translate }}</mat-error>
       </mat-form-field>
       <mat-form-field>

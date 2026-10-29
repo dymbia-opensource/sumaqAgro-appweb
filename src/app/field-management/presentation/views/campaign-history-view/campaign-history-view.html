@@ -21,7 +21,10 @@
 
 @if (plot()) {
   @if (hasCampaignInProgress()) {
-    <app-message-card icon="info" [message]="'field-management.campaigns.one-in-progress' | translate" />
+    <app-message-card
+      icon="info"
+      [message]="'field-management.campaigns.one-in-progress' | translate"
+    />
   }
 
   <section class="campaign-list" [attr.aria-label]="'field-management.campaigns.title' | translate">
@@ -33,7 +36,10 @@
         (exportReport)="onExport($event)"
       />
     } @empty {
-      <app-message-card icon="agriculture" [message]="'field-management.campaigns.empty' | translate">
+      <app-message-card
+        icon="agriculture"
+        [message]="'field-management.campaigns.empty' | translate"
+      >
         <mat-card-actions align="end">
           <a mat-flat-button routerLink="new">{{ 'field-management.campaigns.new' | translate }}</a>
         </mat-card-actions>

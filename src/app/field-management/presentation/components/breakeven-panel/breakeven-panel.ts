@@ -1,5 +1,5 @@
 import { Component, effect, input, output } from '@angular/core';
-import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
@@ -32,10 +32,10 @@ export class BreakevenPanel {
   /** The producer typed a new expected yield. */
   readonly expectedYieldChange = output<number>();
 
-  protected readonly expectedYield = new FormControl<number | null>(null, [
-    Validators.required,
-    Validators.min(1),
-  ]);
+  protected readonly form = new FormGroup({
+    expectedYield: new FormControl<number | null>(null, [Validators.required, Validators.min(1)]),
+  });
+  protected readonly expectedYield = this.form.controls.expectedYield;
 
   constructor() {
     // Show the saved value every time the ledger changes.

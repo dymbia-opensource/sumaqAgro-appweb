@@ -12,7 +12,10 @@
     @if (online() && pending() > 0) {
       <button mat-button [disabled]="syncing()" (click)="sync.emit()">
         <mat-icon>sync</mat-icon>
-        {{ (syncing() ? 'field-management.offline.syncing' : 'field-management.offline.sync-now') | translate }}
+        {{
+          (syncing() ? 'field-management.offline.syncing' : 'field-management.offline.sync-now')
+            | translate
+        }}
       </button>
     }
   </div>

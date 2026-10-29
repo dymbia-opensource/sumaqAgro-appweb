@@ -37,7 +37,9 @@
     <mat-label>{{ 'field-management.plot-form.sowing-date' | translate }}</mat-label>
     <input matInput type="date" formControlName="sowingDate" required />
     @if (season()) {
-      <mat-hint>{{ 'field-management.campaigns.season-hint' | translate: { season: season() } }}</mat-hint>
+      <mat-hint>{{
+        'field-management.campaigns.season-hint' | translate: { season: season() }
+      }}</mat-hint>
     }
     @if (form.controls.sowingDate.touched && form.controls.sowingDate.hasError('required')) {
       <mat-error>{{ 'common.required' | translate }}</mat-error>

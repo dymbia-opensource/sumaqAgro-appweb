@@ -1,5 +1,5 @@
 import { Component, effect, input, output } from '@angular/core';
-import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -36,10 +36,10 @@ export class ActualYieldCard {
   /** The producer typed the harvested yield. */
   readonly actualYieldChange = output<number>();
 
-  protected readonly actualYield = new FormControl<number | null>(null, [
-    Validators.required,
-    Validators.min(0.01),
-  ]);
+  protected readonly form = new FormGroup({
+    actualYield: new FormControl<number | null>(null, [Validators.required, Validators.min(0.01)]),
+  });
+  protected readonly actualYield = this.form.controls.actualYield;
 
   constructor() {
     // Show the saved value every time the ledger changes.

@@ -5,7 +5,9 @@
     <mat-icon mat-card-avatar>square_foot</mat-icon>
     <mat-card-title>{{ 'field-management.reports.cost-per-hectare' | translate }}</mat-card-title>
     <mat-card-subtitle>
-      {{ 'field-management.reports.area' | translate: { area: (data.areaHectares | number: '1.0-2') } }}
+      {{
+        'field-management.reports.area' | translate: { area: (data.areaHectares | number: '1.0-2') }
+      }}
     </mat-card-subtitle>
   </mat-card-header>
 
@@ -26,9 +28,16 @@
               </span>
               <span class="amount">{{ row.perHectare.format() }}</span>
             </div>
-            <mat-progress-bar mode="determinate" [value]="row.percentage" [attr.aria-label]="'field-management.expense-category.' + row.category | translate" />
+            <mat-progress-bar
+              mode="determinate"
+              [value]="row.percentage"
+              [attr.aria-label]="'field-management.expense-category.' + row.category | translate"
+            />
             <span class="share">
-              {{ 'field-management.finances.of-total' | translate: { percentage: (row.percentage | number: '1.0-0') } }}
+              {{
+                'field-management.finances.of-total'
+                  | translate: { percentage: (row.percentage | number: '1.0-0') }
+              }}
               · {{ row.total.format() }}
             </span>
           </li>
@@ -39,7 +48,11 @@
         <mat-icon aria-hidden="true">grass</mat-icon>
         {{
           'field-management.reports.yield-per-hectare'
-            | translate: { quantity: (data.yieldPerHectare | number: '1.0-1'), unit: ('field-management.yield-unit.' + data.yieldUnit | translate) }
+            | translate
+              : {
+                  quantity: (data.yieldPerHectare | number: '1.0-1'),
+                  unit: ('field-management.yield-unit.' + data.yieldUnit | translate),
+                }
         }}
       </p>
     } @else {

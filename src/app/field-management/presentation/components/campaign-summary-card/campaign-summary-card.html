@@ -22,7 +22,11 @@
       <div>
         <dt>{{ 'field-management.campaigns.sowing-date' | translate }}</dt>
         <dd>
-          {{ item.sowingDate ? (item.sowingDate | date: 'mediumDate') : ('field-management.campaigns.not-sown' | translate) }}
+          {{
+            item.sowingDate
+              ? (item.sowingDate | date: 'mediumDate')
+              : ('field-management.campaigns.not-sown' | translate)
+          }}
         </dd>
       </div>
       <div>

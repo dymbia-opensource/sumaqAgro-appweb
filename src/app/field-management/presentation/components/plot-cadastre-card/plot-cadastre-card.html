@@ -16,7 +16,10 @@
       <dd>{{ plot().region }}</dd>
 
       <dt>{{ 'field-management.plots.area' | translate }}</dt>
-      <dd>{{ plot().areaHectares | number: '1.0-4' }} {{ 'field-management.plots.hectares' | translate }}</dd>
+      <dd>
+        {{ plot().areaHectares | number: '1.0-4' }}
+        {{ 'field-management.plots.hectares' | translate }}
+      </dd>
 
       <dt>{{ 'field-management.plot-detail.vertices' | translate }}</dt>
       <dd>{{ plot().boundary.length }}</dd>
@@ -27,8 +30,8 @@
       <dt>{{ 'field-management.plots.crop' | translate }}</dt>
       <dd>
         @if (campaign(); as campaign) {
-          {{ 'field-management.crop-type.' + campaign.cropType | translate }} – {{ campaign.seedVariety }}
-          ({{ campaign.season }})
+          {{ 'field-management.crop-type.' + campaign.cropType | translate }} –
+          {{ campaign.seedVariety }} ({{ campaign.season }})
         } @else {
           {{ 'field-management.plots.no-campaign' | translate }}
         }
@@ -45,7 +48,9 @@
         <summary>{{ 'field-management.boundary.coordinates' | translate }}</summary>
         <ol>
           @for (vertex of plot().boundary; track $index) {
-            <li>{{ vertex.latitude | number: '1.5-5' }}, {{ vertex.longitude | number: '1.5-5' }}</li>
+            <li>
+              {{ vertex.latitude | number: '1.5-5' }}, {{ vertex.longitude | number: '1.5-5' }}
+            </li>
           }
         </ol>
       </details>
