@@ -2,7 +2,7 @@ import { fromApiDate, toApiDate } from '../../../shared/infrastructure/api-date'
 import {
   PendingOperation,
   PendingOperationType,
-} from '../../../shared/infrastructure/offline/pending-operation';
+} from '../offline/pending-operation';
 import { RecordDailyLaborExpenseCommand } from '../../domain/model/commands/record-daily-labor-expense.command';
 import { RecordFieldFreightExpenseCommand } from '../../domain/model/commands/record-field-freight-expense.command';
 import { RecordInputExpenseCommand } from '../../domain/model/commands/record-input-expense.command';
@@ -22,7 +22,7 @@ export type PendingExpensePayload =
 
 /**
  * Maps the expense commands recorded without connection to the operations that
- * the shared `OfflineSyncService` keeps on the device, and back.
+ * `OfflineSync` keeps on the device, and back.
  */
 export class PendingExpenseAssembler {
   /**

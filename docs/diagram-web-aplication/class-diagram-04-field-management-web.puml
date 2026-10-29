@@ -17,7 +17,6 @@ package "src/app/shared" {
   abstract class BaseApiEndpoint <<base-api-endpoint.ts>>
   abstract class BaseApi <<base-api.ts>>
   class Money <<money.ts>>
-  class OfflineSyncService <<offline-sync.service.ts>>
 }
 
 package "src/app/iam" {
@@ -194,7 +193,7 @@ package "src/app/field-management" {
       -selectedPlotIdSignal: WritableSignal<number | null>
       -campaignsSignal: WritableSignal<CropCampaign[]>
       -ledgerSignal: WritableSignal<CampaignLedger | null>
-      -offlineSyncService: OfflineSyncService
+      -offlineSync: OfflineSync
       +plots: Signal<FieldPlot[]>
       +selectedPlot: Signal<FieldPlot | undefined>
       +activeCampaign: Signal<CropCampaign | undefined>
@@ -218,6 +217,13 @@ package "src/app/field-management" {
   }
 
   package "infrastructure" {
+    class OfflineSync <<offline/offline-sync.ts>> {
+      +isOnline: Signal<boolean>
+      +enqueue(operation: PendingOperation): void
+      +pendingOf(type: PendingOperationType): PendingOperation[]
+      +remove(uuids: string[]): void
+    }
+
     class FieldManagementApi <<field-management-api.ts>> {
       -plotsEndpoint: FieldPlotsApiEndpoint
       -campaignsEndpoint: CropCampaignsApiEndpoint
@@ -383,7 +389,7 @@ ExpenseEntry --> "1" ExpenseCategory : "belongs to"
 ExpenseEntry --> "1" Money
 
 FieldManagementStore "1" --> "1" FieldManagementApi
-FieldManagementStore "1" --> "1" OfflineSyncService
+FieldManagementStore "1" --> "1" OfflineSync
 FieldManagementStore "1" o-- "0..*" FieldPlot
 FieldManagementStore "1" o-- "0..1" CampaignLedger
 FieldManagementApi "1" *-- "1" FieldPlotsApiEndpoint
@@ -441,7 +447,6 @@ BaseEntity -[hidden]down- BaseAssembler
 BaseResource -[hidden]down- BaseApiEndpoint
 BaseResponse -[hidden]down- BaseApi
 BaseAssembler -[hidden]down- Money
-BaseApiEndpoint -[hidden]down- OfflineSyncService
 PlotBoundaryMapView -[hidden]down- FieldManagementStore
 FieldExpenseForm -[hidden]down- FieldManagementStore
 FieldManagementStore -[hidden]down- FieldManagementApi
