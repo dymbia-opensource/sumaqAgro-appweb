@@ -10,13 +10,14 @@ import { PaymentStatus } from '../entities/payment-status';
  * it decides if the payment is approved or rejected, until Niubiz answers.
  */
 export class SubmitPaymentCommand {
-  readonly subscriptionId: number;
+  /** `null` for the first payment, when the user has no subscription yet. */
+  readonly subscriptionId: number | null;
   readonly cardToken: string;
   readonly amount: Money;
   readonly simulatedStatus?: PaymentStatus.COMPLETED | PaymentStatus.REJECTED;
 
   constructor(props: {
-    subscriptionId: number;
+    subscriptionId: number | null;
     cardToken: string;
     amount: Money;
     simulatedStatus?: PaymentStatus.COMPLETED | PaymentStatus.REJECTED;
