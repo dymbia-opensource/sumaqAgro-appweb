@@ -29,6 +29,7 @@ const TRANSLATION_FILES = [
   'profiles',
   'harvest-certification',
   'iam',
+  'subscriptions',
 ];
 
 /**

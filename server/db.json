@@ -687,5 +687,71 @@
       "recordedAt": "2026-10-21T22:14:12.101Z"
     }
   ],
-  "case-assessments": []
+  "case-assessments": [],
+
+  "plans": [
+    {
+      "id": 1,
+      "code": "SEED",
+      "name": "Seed",
+      "monthlyPrice": 0,
+      "annualPrice": 0,
+      "currency": "PEN",
+      "plotQuota": 1,
+      "features": ["basic-ndvi", "field-costs"]
+    },
+    {
+      "id": 2,
+      "code": "COOPERATIVE_PRO",
+      "name": "Cooperative Pro",
+      "monthlyPrice": 189,
+      "annualPrice": 1890,
+      "currency": "PEN",
+      "plotQuota": 50,
+      "features": ["members", "quality-certification", "reports"]
+    },
+    {
+      "id": 3,
+      "code": "TECHNICAL_ADVISOR",
+      "name": "Technical Advisor",
+      "monthlyPrice": 89,
+      "annualPrice": 890,
+      "currency": "PEN",
+      "plotQuota": 20,
+      "features": ["advanced-ndvi", "prescriptions"]
+    }
+  ],
+  "subscriptions": [
+    {
+      "id": 1,
+      "userId": 1,
+      "planId": 1,
+      "status": "ACTIVE",
+      "billingCycle": "MONTHLY",
+      "startDate": "2026-09-01",
+      "endDate": null,
+      "autoRenew": false
+    },
+    {
+      "id": 2,
+      "userId": 3,
+      "planId": 2,
+      "status": "ACTIVE",
+      "billingCycle": "MONTHLY",
+      "startDate": "2026-10-01",
+      "endDate": "2026-11-01",
+      "autoRenew": true
+    }
+  ],
+  "payments": [
+    {
+      "id": 1,
+      "subscriptionId": 2,
+      "amount": 189,
+      "currency": "PEN",
+      "transactionToken": "demo-tx-0001",
+      "status": "COMPLETED",
+      "paidAt": "2026-10-01T10:00:00Z"
+    }
+  ]
 }
