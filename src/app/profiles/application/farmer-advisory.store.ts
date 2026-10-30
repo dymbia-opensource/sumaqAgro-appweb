@@ -1,7 +1,7 @@
 import { computed, DestroyRef, effect, inject, Injectable, signal, untracked } from '@angular/core';
 import { forkJoin, Subscription, switchMap } from 'rxjs';
 import { FieldManagementStore } from '../../field-management/application/field-management.store';
-import { CurrentSessionService, SessionParticipant } from '../../iam/application/current-session.service';
+import { IamStore, SessionParticipant } from '../../iam/application/iam.store';
 import { PlotAdvisorAssignment } from '../domain/model/entities/plot-advisor-assignment';
 import { TechnicalAdvisor } from '../domain/model/entities/technical-advisor.entity';
 import { ProfilesApi } from '../infrastructure/profiles-api';
@@ -18,7 +18,7 @@ export class FarmerAdvisoryStore {
   private readonly profiles = inject(ProfilesApi);
   private readonly api = inject(PlotAdvisorAssignmentsApi);
   private readonly fields = inject(FieldManagementStore);
-  private readonly session = inject(CurrentSessionService);
+  private readonly session = inject(IamStore);
   private readonly participant = signal<SessionParticipant | null>(null);
   private readonly advisorState = signal<TechnicalAdvisor[]>([]);
   private readonly assignmentState = signal<PlotAdvisorAssignment[]>([]);

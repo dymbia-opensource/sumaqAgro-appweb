@@ -1,6 +1,6 @@
 import { inject, Service } from '@angular/core';
 import { PRIMARY_OUTLET, Router, UrlTree } from '@angular/router';
-import { CurrentSessionService } from '../application/current-session.service';
+import { IamStore } from '../application/iam.store';
 
 const PRIVATE_CONTEXTS = new Set([
   'field-management',
@@ -13,7 +13,7 @@ const PRIVATE_CONTEXTS = new Set([
 @Service()
 export class AuthNavigationService {
   private readonly router = inject(Router);
-  private readonly session = inject(CurrentSessionService);
+  private readonly session = inject(IamStore);
 
   destination(returnUrl: string | null): UrlTree {
     const fallback = this.router.parseUrl(

@@ -9,7 +9,6 @@ import { SignInCommand } from '../../../domain/model/commands/sign-in.command';
 import { AuthLayout } from '../../components/auth-layout/auth-layout';
 import { TranslatePipe } from '@ngx-translate/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { CurrentSessionService } from '../../../application/current-session.service';
 import { AuthNavigationService } from '../../../infrastructure/auth-navigation.service';
 import {
   DevelopmentDemoAccount,
@@ -38,13 +37,12 @@ export class SignInForm {
   protected readonly demoAccounts = getDevelopmentDemoAccounts();
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
-  private readonly session = inject(CurrentSessionService);
   private readonly navigation = inject(AuthNavigationService);
 
   constructor() {
     this.store.clearFeedback();
     effect(() => {
-      if (!this.session.hasActiveUser()) return;
+      if (!this.store.hasActiveUser()) return;
 
       untracked(() => {
         const destination = this.navigation.destination(

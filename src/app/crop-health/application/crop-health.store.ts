@@ -19,7 +19,7 @@ import {
   tap,
   throwError,
 } from 'rxjs';
-import { CurrentSessionService, SessionParticipant } from '../../iam/application/current-session.service';
+import { IamStore, SessionParticipant } from '../../iam/application/iam.store';
 import { FieldManagementApi } from '../../field-management/infrastructure/field-management-api';
 import { FieldManagementStore } from '../../field-management/application/field-management.store';
 import { FieldPlot } from '../../field-management/domain/model/entities/field-plot.entity';
@@ -57,7 +57,7 @@ export class CropHealthStore {
   private readonly profiles = inject(ProfilesApi);
   private readonly fields = inject(FieldManagementApi);
   private readonly fieldStore = inject(FieldManagementStore);
-  private readonly session = inject(CurrentSessionService);
+  private readonly session = inject(IamStore);
   private readonly requests = new Map<string, Subscription>();
   private readonly busy = signal<Record<string, boolean>>({});
   private readonly errors = signal<Record<string, string | null>>({});

@@ -1,6 +1,6 @@
 import { computed, inject, Injectable, Signal, signal } from '@angular/core';
 import { forkJoin, map, Observable, of, switchMap } from 'rxjs';
-import { CurrentSessionService } from '../../iam/application/current-session.service';
+import { IamStore } from '../../iam/application/iam.store';
 import { Money } from '../../shared/domain/model/money';
 import { FileDownloader } from '../../shared/infrastructure/file-downloader';
 import { ApplyCouponCommand } from '../domain/model/commands/apply-coupon.command';
@@ -35,7 +35,7 @@ export interface AppliedCoupon {
 @Injectable({ providedIn: 'root' })
 export class SubscriptionsStore {
   private readonly subscriptionsApi = inject(SubscriptionsApi);
-  private readonly session = inject(CurrentSessionService);
+  private readonly session = inject(IamStore);
   private readonly fileDownloader = inject(FileDownloader);
 
   // Store state

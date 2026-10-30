@@ -12,7 +12,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { LayoutStore } from '../layout/layout.store';
-import { CurrentSessionService } from '../../../../iam/application/current-session.service';
+import { IamStore } from '../../../../iam/application/iam.store';
 
 /**
  * Top bar of the shell: menu button (on phones), search, connection status,
@@ -39,7 +39,7 @@ import { CurrentSessionService } from '../../../../iam/application/current-sessi
 })
 export class Toolbar {
   protected readonly layout = inject(LayoutStore);
-  private readonly session = inject(CurrentSessionService);
+  private readonly session = inject(IamStore);
 
   /** Display name provided by the current session projection. */
   readonly userName = computed(() => this.session.activeUser()?.displayName ?? '');

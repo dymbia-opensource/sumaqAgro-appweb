@@ -1,6 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { computed, DestroyRef, inject, Service, signal } from '@angular/core';
-import { finalize, Subscription,Observable} from 'rxjs';
+import { finalize, Subscription, Observable } from 'rxjs';
 import { SignInCommand } from '../domain/model/commands/sign-in.command';
 import { SignUpCommand } from '../domain/model/commands/sign-up.command';
 import { AuthenticatedUser } from '../domain/model/entities/authenticated-user.entity';
@@ -9,6 +9,7 @@ import { SessionStorageService } from '../infrastructure/session/session-storage
 import { SessionExpirationService } from '../infrastructure/session/session-expiration.service';
 import { RequestPasswordResetCommand } from '../domain/model/commands/request-password-reset.command';
 import { ResetPasswordCommand } from '../domain/model/commands/reset-password.command';
+import { UserRole } from '../domain/model/value-objects/user-role';
 
 export type IamError =
   | 'INVALID_CREDENTIALS'
@@ -20,9 +21,22 @@ export type IamError =
 export type PasswordRecoveryError =
   'INVALID_LINK' | 'RATE_LIMITED' | 'CONNECTION_ERROR' | 'REQUEST_REJECTED' | 'UNEXPECTED_ERROR';
 
-
 type IamOperation = 'sign-in' | 'sign-up';
 
+export interface SessionParticipant {
+  readonly id: number;
+  readonly displayName: string;
+  readonly experience: UserRole;
+  readonly initialRoute: string;
+}
+
+const ROLE_PRIORITY: readonly UserRole[] = ['COOPERATIVE_DIRECTOR', 'AGRONOMIST', 'FARMER'];
+
+const INITIAL_ROUTES: Record<UserRole, string> = {
+  FARMER: '/field-management/dashboard',
+  COOPERATIVE_DIRECTOR: '/profiles/cooperative/dashboard',
+  AGRONOMIST: '/crop-health/inbox',
+};
 /**
  * Holds IAM state and orchestrates authentication operations.
  */
@@ -40,6 +54,32 @@ export class IamStore {
   private readonly registrationCompletedSignal = signal(false);
 
   readonly currentUser = this.currentUserSignal.asReadonly();
+  /**
+   * Public identity projection consumed by other bounded contexts.
+   */
+  readonly activeUser = computed<SessionParticipant | null>(() => {
+    const user = this.currentUser();
+
+    if (!user) return null;
+
+    const experience = ROLE_PRIORITY.find((role) => user.hasRole(role));
+
+    if (!experience) return null;
+
+    const id =
+      typeof user.id === 'number' ? user.id : /^[0-9]+$/.test(user.id) ? Number(user.id) : NaN;
+
+    if (!Number.isSafeInteger(id) || id <= 0) return null;
+
+    return {
+      id,
+      displayName: user.email,
+      experience,
+      initialRoute: INITIAL_ROUTES[experience],
+    };
+  });
+
+  readonly hasActiveUser = computed(() => this.activeUser() !== null);
   readonly pendingOperation = this.pendingOperationSignal.asReadonly();
   readonly error = this.errorSignal.asReadonly();
   readonly registrationCompleted = this.registrationCompletedSignal.asReadonly();

@@ -12,7 +12,7 @@ import { ChartConfiguration } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
 import { environment } from '../../../../../environments/environment';
 import { ProfilesStore } from '../../../application/profiles.store';
-import { CurrentSessionService } from '../../../../iam/application/current-session.service';
+import { IamStore } from '../../../../iam/application/iam.store';
 
 /** Landing view for the cooperative director experience. */
 @Component({
@@ -23,7 +23,7 @@ import { CurrentSessionService } from '../../../../iam/application/current-sessi
 })
 export class CooperativeDashboardView {
   private readonly store = inject(ProfilesStore);
-  private readonly session = inject(CurrentSessionService);
+  private readonly session = inject(IamStore);
   readonly dashboard = this.store.dashboard;
   readonly loading = this.store.loading;
   readonly error = this.store.error;
