@@ -1,12 +1,12 @@
 import { HttpErrorResponse, HttpInterceptorFn, HttpResponse } from '@angular/common/http';
 import { defer, delay, of, switchMap, throwError } from 'rxjs';
-import { environment } from '../../../environments/environment';
-import { SignInRequest } from './requests/sign-in.request';
-import { SignUpRequest } from './requests/sign-up.request';
-import { SignInResponse } from './responses/sign-in.response';
-import { SignUpResponse } from './responses/sign-up.response';
+import { environment } from '../../../../environments/environment';
+import { SignInRequest } from '../requests/sign-in.request';
+import { SignUpRequest } from '../requests/sign-up.request';
+import { SignInResponse } from '../responses/sign-in.response';
+import { SignUpResponse } from '../responses/sign-up.response';
 import { getDevelopmentDemoAccounts } from './development-demo-accounts';
-import { UserRoleAssembler } from './assemblers/user-role.assembler';
+import { UserRoleAssembler } from '../assemblers/user-role.assembler';
 
 interface MockAccount {
   readonly user: SignUpResponse;

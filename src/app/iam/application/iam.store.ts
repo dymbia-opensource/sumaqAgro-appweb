@@ -78,6 +78,9 @@ export class IamStore {
 
           this.sessionExpiration.start(expiresAt, () => this.signOut());
         },
+        error:(error:unknown) => {
+          this.errorSignal.set(this.resolveError(error,'sign-in'));
+        }
       });
   }
 

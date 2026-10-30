@@ -14,7 +14,7 @@ import { AuthNavigationService } from '../../../infrastructure/auth-navigation.s
 import {
   DevelopmentDemoAccount,
   getDevelopmentDemoAccounts,
-} from '../../../infrastructure/development-demo-accounts';
+} from '../../../infrastructure/mock/development-demo-accounts';
 
 @Component({
   selector: 'app-sign-in-form',
