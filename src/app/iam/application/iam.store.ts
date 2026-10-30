@@ -1,12 +1,12 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { DOCUMENT } from '@angular/common';
 import { computed, DestroyRef, inject, Service, signal } from '@angular/core';
 import { finalize, Subscription } from 'rxjs';
 import { SignInCommand } from '../domain/model/commands/sign-in.command';
 import { SignUpCommand } from '../domain/model/commands/sign-up.command';
 import { AuthenticatedUser } from '../domain/model/entities/authenticated-user.entity';
 import { IamApi } from '../infrastructure/iam-api';
-import { SessionStorageService } from '../infrastructure/session/mock-session.storage';
+import { SessionStorageService } from '../infrastructure/session/session-storage-service';
+import { SessionExpirationService } from '../infrastructure/session/session-expiration.service';
 
 export type IamError =
   | 'INVALID_CREDENTIALS'
@@ -24,8 +24,8 @@ type IamOperation = 'sign-in' | 'sign-up';
 export class IamStore {
   private readonly iamApi = inject(IamApi);
   private readonly sessionStorage = inject(SessionStorageService);
+  private readonly sessionExpiration = inject(SessionExpirationService);
   private readonly expiresAtSignal = signal<number | null>(null);
-  private expirationTimer?: ReturnType<typeof setTimeout>;
   private activeRequest?: Subscription;
 
   private readonly currentUserSignal = signal<AuthenticatedUser | null>(null);
@@ -45,25 +45,17 @@ export class IamStore {
 
   constructor() {
     const restored = this.sessionStorage.restore();
+
     if (restored) {
       this.currentUserSignal.set(restored.user);
       this.expiresAtSignal.set(restored.expiresAt);
-      this.scheduleExpiration();
-    }
 
-    const document = inject(DOCUMENT);
-    const window = document.defaultView;
-    const checkExpiration = () => this.checkSessionExpiration();
-    window?.addEventListener('focus', checkExpiration);
-    window?.addEventListener('pageshow', checkExpiration);
-    document.addEventListener('visibilitychange', checkExpiration);
+      this.sessionExpiration.start(restored.expiresAt, () => this.signOut());
+    }
 
     inject(DestroyRef).onDestroy(() => {
       this.activeRequest?.unsubscribe();
-      this.clearExpirationTimer();
-      window?.removeEventListener('focus', checkExpiration);
-      window?.removeEventListener('pageshow', checkExpiration);
-      document.removeEventListener('visibilitychange', checkExpiration);
+      this.sessionExpiration.stop();
     });
   }
 
@@ -81,7 +73,6 @@ export class IamStore {
           const session = this.sessionStorage.save(user);
           this.expiresAtSignal.set(session?.expiresAt ?? null);
           this.currentUserSignal.set(user);
-          this.scheduleExpiration();
         },
         error: (error: unknown) => {
           this.errorSignal.set(this.resolveError(error, 'sign-in'));
@@ -112,7 +103,7 @@ export class IamStore {
   signOut(): void {
     this.activeRequest?.unsubscribe();
     this.activeRequest = undefined;
-    this.clearExpirationTimer();
+    this.sessionExpiration.stop();
     this.expiresAtSignal.set(null);
     this.sessionStorage.clear();
     this.pendingOperationSignal.set(null);
@@ -123,28 +114,7 @@ export class IamStore {
 
   /** Rechecks wall-clock expiration after suspension and before guarded access. */
   checkSessionExpiration(): void {
-    const expiresAt = this.expiresAtSignal();
-    if (expiresAt !== null && Date.now() >= expiresAt) this.signOut();
-  }
-
-  private scheduleExpiration(): void {
-    this.clearExpirationTimer();
-    const expiresAt = this.expiresAtSignal();
-    if (expiresAt === null) return;
-
-    this.expirationTimer = setTimeout(
-      () => {
-        this.checkSessionExpiration();
-        // Recalculate if the system clock moved backwards while waiting.
-        if (this.expiresAtSignal() !== null) this.scheduleExpiration();
-      },
-      Math.max(0, expiresAt - Date.now()),
-    );
-  }
-
-  private clearExpirationTimer(): void {
-    if (this.expirationTimer !== undefined) clearTimeout(this.expirationTimer);
-    this.expirationTimer = undefined;
+    this.sessionExpiration.check();
   }
 
   clearFeedback(): void {
