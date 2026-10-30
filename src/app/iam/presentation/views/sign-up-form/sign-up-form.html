@@ -45,9 +45,7 @@
       <div class="name-fields">
         <mat-form-field appearance="outline">
           <mat-label>{{ 'iam.fields.firstName' | translate }}</mat-label>
-          <mat-icon matPrefix class="field-icon" aria-hidden="true">
-            person_outline
-          </mat-icon>
+          <mat-icon matPrefix class="field-icon" aria-hidden="true"> person_outline </mat-icon>
 
           <input
             matInput
@@ -62,7 +60,7 @@
           @if (
             form.controls.firstName.hasError('required') ||
             form.controls.firstName.hasError('pattern')
-            ) {
+          ) {
             <mat-error>{{ 'iam.validation.required' | translate }}</mat-error>
           } @else if (form.controls.firstName.hasError('maxlength')) {
             <mat-error>{{ 'iam.validation.nameLength' | translate }}</mat-error>
@@ -71,9 +69,7 @@
 
         <mat-form-field appearance="outline">
           <mat-label>{{ 'iam.fields.lastName' | translate }}</mat-label>
-          <mat-icon matPrefix class="field-icon" aria-hidden="true">
-            person_outline
-          </mat-icon>
+          <mat-icon matPrefix class="field-icon" aria-hidden="true"> person_outline </mat-icon>
 
           <input
             matInput
@@ -88,7 +84,7 @@
           @if (
             form.controls.lastName.hasError('required') ||
             form.controls.lastName.hasError('pattern')
-            ) {
+          ) {
             <mat-error>{{ 'iam.validation.required' | translate }}</mat-error>
           } @else if (form.controls.lastName.hasError('maxlength')) {
             <mat-error>{{ 'iam.validation.nameLength' | translate }}</mat-error>
@@ -147,6 +143,41 @@
           <mat-error>{{ 'iam.validation.required' | translate }}</mat-error>
         } @else if (form.controls.password.hasError('minlength')) {
           <mat-error>{{ 'iam.validation.passwordLength' | translate }}</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>{{ 'iam.fields.confirmPassword' | translate }}</mat-label>
+        <mat-icon matPrefix class="field-icon" aria-hidden="true">lock_outline</mat-icon>
+
+        <input
+          matInput
+          [type]="hideConfirmPassword() ? 'password' : 'text'"
+          formControlName="confirmPassword"
+          autocomplete="new-password"
+          [errorStateMatcher]="confirmationErrorMatcher"
+          required
+        />
+
+        <button
+          mat-icon-button
+          matSuffix
+          type="button"
+          (click)="toggleConfirmPassword()"
+          [attr.aria-label]="
+            (hideConfirmPassword() ? 'iam.actions.showPassword' : 'iam.actions.hidePassword')
+              | translate
+          "
+        >
+          <mat-icon aria-hidden="true">
+            {{ hideConfirmPassword() ? 'visibility' : 'visibility_off' }}
+          </mat-icon>
+        </button>
+
+        @if (form.controls.confirmPassword.hasError('required')) {
+          <mat-error>{{ 'iam.validation.required' | translate }}</mat-error>
+        } @else if (form.hasError('passwordMismatch')) {
+          <mat-error>{{ 'iam.validation.passwordMismatch' | translate }}</mat-error>
         }
       </mat-form-field>
 

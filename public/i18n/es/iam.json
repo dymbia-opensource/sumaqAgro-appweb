@@ -89,7 +89,8 @@
       "email": "Correo electrónico",
       "password": "Contraseña",
       "firstName": "Nombres",
-      "lastName": "Apellidos"
+      "lastName": "Apellidos",
+      "confirmPassword": "Confirmar contraseña"
     },
     "actions": {
       "showPassword": "Mostrar contraseña",
@@ -99,7 +100,8 @@
       "required": "Este campo es obligatorio.",
       "email": "Ingresa un correo electrónico válido.",
       "passwordLength": "La contraseña debe tener al menos 8 caracteres.",
-      "nameLength": "Utiliza como máximo 100 caracteres."
+      "nameLength": "Utiliza como máximo 100 caracteres.",
+      "passwordMismatch": "Las contraseñas no coinciden."
     },
     "errors": {
       "INVALID_CREDENTIALS": "El correo o la contraseña son incorrectos.",
