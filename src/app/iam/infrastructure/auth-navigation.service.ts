@@ -56,4 +56,12 @@ export class AuthNavigationService {
       return fallback;
     }
   }
+
+  signOut(): void {
+    this.session.signOut();
+
+    void this.router.navigateByUrl('/iam/sign-in', {
+      replaceUrl: true,
+    });
+  }
 }

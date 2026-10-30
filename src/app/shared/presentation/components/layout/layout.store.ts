@@ -1,9 +1,7 @@
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { effect, inject, Injectable, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { Router } from '@angular/router';
 import { fromEvent, map, merge } from 'rxjs';
-import { IamStore } from '../../../../iam/application/iam.store';
 
 /**
  * State shared by the parts of the app shell: the side menu and the top bar.
@@ -14,8 +12,6 @@ import { IamStore } from '../../../../iam/application/iam.store';
  */
 @Injectable({ providedIn: 'root' })
 export class LayoutStore {
-  private readonly router = inject(Router);
-  private readonly iamStore = inject(IamStore);
 
   /** `true` on phones and small tablets. */
   readonly isHandset = toSignal(
@@ -64,11 +60,4 @@ export class LayoutStore {
     }
   }
 
-  /** Clears the IAM session and returns to sign-in. */
-  signOut(): void {
-    this.closeSidebarOnHandset();
-    this.iamStore.signOut();
-
-    void this.router.navigate(['/iam/sign-in']);
-  }
 }

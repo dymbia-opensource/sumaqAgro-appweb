@@ -13,6 +13,7 @@ import { RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { LayoutStore } from '../layout/layout.store';
 import { IamStore } from '../../../../iam/application/iam.store';
+import { AuthNavigationService } from '../../../../iam/infrastructure/auth-navigation.service';
 
 /**
  * Top bar of the shell: menu button (on phones), search, connection status,
@@ -40,9 +41,15 @@ import { IamStore } from '../../../../iam/application/iam.store';
 export class Toolbar {
   protected readonly layout = inject(LayoutStore);
   private readonly session = inject(IamStore);
+  private readonly authNavigation = inject(AuthNavigationService);
 
   /** Display name provided by the current session projection. */
   readonly userName = computed(() => this.session.activeUser()?.displayName ?? '');
   /** Pending notifications. Connected to the agroclimatic alerts later. */
   readonly notificationCount = signal(0);
+
+  protected signOut(): void {
+    this.layout.closeSidebarOnHandset();
+    this.authNavigation.signOut();
+  }
 }

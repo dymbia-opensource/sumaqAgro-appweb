@@ -5,7 +5,7 @@ import { SignInCommand } from '../domain/model/commands/sign-in.command';
 import { SignUpCommand } from '../domain/model/commands/sign-up.command';
 import { AuthenticatedUser } from '../domain/model/entities/authenticated-user.entity';
 import { IamApi } from '../infrastructure/iam-api';
-import { SessionStorageService } from '../infrastructure/session/session-storage-service';
+import { SessionStorageService } from '../infrastructure/session/session-storage.service';
 import { SessionExpirationService } from '../infrastructure/session/session-expiration.service';
 import { RequestPasswordResetCommand } from '../domain/model/commands/request-password-reset.command';
 import { ResetPasswordCommand } from '../domain/model/commands/reset-password.command';
