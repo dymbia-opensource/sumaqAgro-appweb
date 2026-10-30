@@ -1,7 +1,7 @@
 import { Service } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { AuthenticatedUser } from '../domain/model/entities/authenticated-user.entity';
-import { UserRole } from '../domain/model/entities/user-role';
+import { UserRole } from '../domain/model/value-objects/user-role';
 
 export const MOCK_SESSION_STORAGE_KEY = 'sumaq-agro.iam.mock-session.v1';
 export const MOCK_SESSION_DURATION_MS = 30 * 60 * 1000;

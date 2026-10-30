@@ -1,7 +1,7 @@
 import { inject } from '@angular/core';
 import { CanActivateChildFn, Router } from '@angular/router';
 import { CurrentSessionService } from '../application/current-session.service';
-import { UserRole } from '../domain/model/entities/user-role';
+import { UserRole } from '../domain/model/value-objects/user-role';
 import { IamStore } from '../application/iam.store';
 
 /** Checks route permissions against the session's active role; the API enforces authorization. */
