@@ -11,6 +11,7 @@ import { UserRoleAssembler } from '../assemblers/user-role.assembler';
 interface MockAccount {
   readonly user: SignUpResponse;
   readonly password: string;
+  readonly profile?: SignUpRequest['profile'];
 }
 
 const accounts = new Map<string, MockAccount>(
@@ -26,6 +27,7 @@ const accounts = new Map<string, MockAccount>(
     },
   ]),
 );
+
 let nextUserId = Date.now();
 
 const signInUrl =
@@ -37,11 +39,18 @@ const signUpUrl =
 const supportedRoles = new Set(['ROLE_FARMER', 'ROLE_COOPERATIVE_DIRECTOR', 'ROLE_AGRONOMIST']);
 
 function failure(status: number, url: string) {
-  return throwError(() => new HttpErrorResponse({ status, url }));
+  return throwError(
+    () =>
+      new HttpErrorResponse({
+        status,
+        url,
+      }),
+  );
 }
 
 /**
- * Simulates authentication in development without persisting credentials.
+ * Simulates authentication in development.
+ * Registered accounts and profile details remain in memory until reload.
  */
 export const mockAuthenticationInterceptor: HttpInterceptorFn = (request, next) => {
   if (environment.production || !environment.useMockAuthentication || request.method !== 'POST') {
@@ -51,15 +60,26 @@ export const mockAuthenticationInterceptor: HttpInterceptorFn = (request, next) 
   if (request.url === signUpUrl) {
     return of(null).pipe(
       delay(400),
-      // Defer account changes until the simulated request completes.
       switchMap(() =>
         defer(() => {
           const body = request.body as SignUpRequest | null;
-          const email = body?.email?.trim().toLowerCase();
+
+          const email = typeof body?.email === 'string' ? body.email.trim().toLowerCase() : '';
+
+          const firstName =
+            typeof body?.profile?.firstName === 'string' ? body.profile.firstName.trim() : '';
+
+          const lastName =
+            typeof body?.profile?.lastName === 'string' ? body.profile.lastName.trim() : '';
 
           if (
             !email ||
-            !body?.password ||
+            typeof body?.password !== 'string' ||
+            body.password.length < 8 ||
+            !firstName ||
+            !lastName ||
+            firstName.length > 100 ||
+            lastName.length > 100 ||
             !Array.isArray(body.roles) ||
             body.roles.length !== 1 ||
             !supportedRoles.has(body.roles[0])
@@ -80,10 +100,14 @@ export const mockAuthenticationInterceptor: HttpInterceptorFn = (request, next) 
           accounts.set(email, {
             user,
             password: body.password,
+            profile: {
+              firstName,
+              lastName,
+            },
           });
 
           return of(
-            new HttpResponse({
+            new HttpResponse<SignUpResponse>({
               status: 201,
               body: user,
             }),
@@ -99,7 +123,9 @@ export const mockAuthenticationInterceptor: HttpInterceptorFn = (request, next) 
       switchMap(() =>
         defer(() => {
           const body = request.body as SignInRequest | null;
-          const email = body?.email?.trim().toLowerCase();
+
+          const email = typeof body?.email === 'string' ? body.email.trim().toLowerCase() : '';
+
           const account = email ? accounts.get(email) : undefined;
 
           if (!account || account.password !== body?.password) {
@@ -112,7 +138,7 @@ export const mockAuthenticationInterceptor: HttpInterceptorFn = (request, next) 
           };
 
           return of(
-            new HttpResponse({
+            new HttpResponse<SignInResponse>({
               status: 200,
               body: response,
             }),

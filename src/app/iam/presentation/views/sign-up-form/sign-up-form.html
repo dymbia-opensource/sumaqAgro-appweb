@@ -42,6 +42,60 @@
         </mat-radio-group>
       </fieldset>
 
+      <div class="name-fields">
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'iam.fields.firstName' | translate }}</mat-label>
+          <mat-icon matPrefix class="field-icon" aria-hidden="true">
+            person_outline
+          </mat-icon>
+
+          <input
+            matInput
+            type="text"
+            formControlName="firstName"
+            autocomplete="given-name"
+            autocapitalize="words"
+            maxlength="100"
+            required
+          />
+
+          @if (
+            form.controls.firstName.hasError('required') ||
+            form.controls.firstName.hasError('pattern')
+            ) {
+            <mat-error>{{ 'iam.validation.required' | translate }}</mat-error>
+          } @else if (form.controls.firstName.hasError('maxlength')) {
+            <mat-error>{{ 'iam.validation.nameLength' | translate }}</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'iam.fields.lastName' | translate }}</mat-label>
+          <mat-icon matPrefix class="field-icon" aria-hidden="true">
+            person_outline
+          </mat-icon>
+
+          <input
+            matInput
+            type="text"
+            formControlName="lastName"
+            autocomplete="family-name"
+            autocapitalize="words"
+            maxlength="100"
+            required
+          />
+
+          @if (
+            form.controls.lastName.hasError('required') ||
+            form.controls.lastName.hasError('pattern')
+            ) {
+            <mat-error>{{ 'iam.validation.required' | translate }}</mat-error>
+          } @else if (form.controls.lastName.hasError('maxlength')) {
+            <mat-error>{{ 'iam.validation.nameLength' | translate }}</mat-error>
+          }
+        </mat-form-field>
+      </div>
+
       <mat-form-field appearance="outline">
         <mat-label>{{ 'iam.fields.email' | translate }}</mat-label>
         <mat-icon matPrefix class="field-icon" aria-hidden="true">alternate_email</mat-icon>
