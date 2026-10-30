@@ -1,5 +1,5 @@
 import { BaseEntity } from '../../../../shared/domain/model/base-entity';
-import { Money } from '../money';
+import { Money } from '../../../../shared/domain/model/money';
 import { ExpenseCategory, ExpenseEntry } from './expense-entry.entity';
 
 export enum YieldUnit {
