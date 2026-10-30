@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, signal, untracked } from '@angular/core';
+import { Component, computed, effect, inject, signal, untracked ,DestroyRef} from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import {
   AbstractControl,
@@ -15,9 +15,9 @@ import { MatInputModule } from '@angular/material/input';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { map } from 'rxjs';
-import { PasswordRecoveryStore } from '../../../application/password-recovery.store';
 import { ResetPasswordCommand } from '../../../domain/model/commands/reset-password.command';
 import { AuthLayout } from '../../components/auth-layout/auth-layout';
+import { IamStore } from '../../../application/iam.store';
 
 function matchingPasswords(control: AbstractControl): ValidationErrors | null {
   return control.get('newPassword')?.value === control.get('confirmation')?.value
@@ -37,12 +37,12 @@ function matchingPasswords(control: AbstractControl): ValidationErrors | null {
     TranslatePipe,
     AuthLayout,
   ],
-  providers: [PasswordRecoveryStore],
+  providers: [],
   templateUrl: './reset-password-form.html',
   styleUrl: './reset-password-form.css',
 })
 export class ResetPasswordForm {
-  protected readonly store = inject(PasswordRecoveryStore);
+  protected readonly store = inject(IamStore);
   protected readonly hidePassword = signal(true);
   protected readonly hideConfirmation = signal(true);
   private readonly token = toSignal(
@@ -50,7 +50,7 @@ export class ResetPasswordForm {
     { initialValue: '' },
   );
   protected readonly invalidLink = computed(
-    () => !this.token() || this.store.error() === 'INVALID_LINK',
+    () => !this.token() || this.store.passwordRecoveryError() === 'INVALID_LINK',
   );
 
   protected readonly form = new FormGroup(
@@ -68,22 +68,26 @@ export class ResetPasswordForm {
   );
 
   constructor() {
+    inject(DestroyRef).onDestroy(() => {
+      this.store.clearPasswordRecovery();
+    });
     effect(() => {
       this.token();
       untracked(() => {
-        this.store.clear();
+        this.store.clearPasswordRecovery();
         this.form.reset();
         this.hidePassword.set(true);
         this.hideConfirmation.set(true);
       });
     });
     effect(() => {
-      if (this.store.completed()) untracked(() => this.form.reset());
+      if (this.store.passwordRecoveryCompleted()) untracked(() => this.form.reset());
     });
   }
 
   protected submit(): void {
-    if (this.invalidLink() || this.store.isLoading() || this.store.completed()) return;
+    if (this.invalidLink() || this.store.isLoading() || this.store.passwordRecoveryCompleted())
+      return;
     this.form.markAllAsTouched();
     if (this.form.invalid) return;
     this.store.resetPassword(
