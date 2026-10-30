@@ -60,11 +60,6 @@ export class Plan extends BaseEntity {
     return cycle === BillingCycle.ANNUAL ? this._annualPrice : this._monthlyPrice;
   }
 
-  /** `true` when the plan costs nothing (the Seed plan). */
-  isFree(): boolean {
-    return this._monthlyPrice.amount === 0 && this._annualPrice.amount === 0;
-  }
-
   /** Money saved by paying the year at once instead of twelve months. */
   annualSavings(): Money {
     const savings = this._monthlyPrice.amount * 12 - this._annualPrice.amount;
