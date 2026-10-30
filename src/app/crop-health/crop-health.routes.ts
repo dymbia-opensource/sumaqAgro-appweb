@@ -1,5 +1,4 @@
 import { iamGuard } from '../iam/infrastructure/iam.guard';
-import { roleGuard } from '../iam/infrastructure/role.guard';
 import { Routes } from '@angular/router';
 
 const cropHealthView = () =>
@@ -40,7 +39,7 @@ export const cropHealthRoutes: Routes = [
   {
     path: '',
     canActivate: [iamGuard],
-    canActivateChild: [roleGuard],
+    canActivateChild: [iamGuard],
     children: [
       {
         path: 'assigned-plots',
