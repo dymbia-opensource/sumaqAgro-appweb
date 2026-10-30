@@ -96,27 +96,6 @@
     rgb(18 62 43 / 94%) 100%
   );
 }
-.visual-badge {
-  position: absolute;
-  top: 30px;
-  left: 30px;
-  display: inline-flex;
-  align-items: center;
-  gap: 9px;
-  padding: 10px 15px;
-  border: 1px solid rgb(255 255 255 / 35%);
-  border-radius: 999px;
-  color: #fff;
-  background: rgb(18 62 43 / 55%);
-  font-size: 11px;
-  font-weight: 500;
-}
-.badge-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #edf7ee;
-}
 .visual-content {
   position: absolute;
   right: 36px;
@@ -164,6 +143,22 @@
   width: 18px;
   height: 18px;
   font-size: 18px;
+}
+.auth-layout-compact .auth-main {
+  padding: 20px clamp(24px, 3vw, 56px);
+}
+.auth-layout-compact .auth-content {
+  max-width: 560px;
+}
+.auth-layout-compact .auth-brand {
+  margin-bottom: 16px;
+}
+.auth-layout-compact .auth-logo {
+  width: 48px;
+  height: 48px;
+}
+.auth-layout-compact .auth-footer {
+  margin-top: 16px;
 }
 @media (min-width: 1500px) {
   .auth-layout {

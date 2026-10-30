@@ -1,4 +1,4 @@
-<div class="auth-layout">
+<div class="auth-layout" [class.auth-layout-compact]="compact()">
   <main class="auth-main">
     <div class="auth-content">
       <div class="auth-brand">
@@ -21,9 +21,6 @@
   <aside class="auth-visual" aria-hidden="true">
     <img class="auth-cover" [src]="imageSrc()" [style.object-position]="imagePosition()" alt="" />
     <div class="visual-shade"></div>
-    <div class="visual-badge">
-      <span class="badge-dot"></span>{{ 'iam.layout.badge' | translate }}
-    </div>
     <div class="visual-content">
       <span class="visual-eyebrow">{{ 'iam.layout.eyebrow' | translate }}</span>
       <h2>{{ 'iam.layout.title' | translate }}</h2>
