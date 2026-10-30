@@ -57,19 +57,26 @@ export class Subscription extends BaseEntity {
     this._autoRenew = props.autoRenew;
   }
 
-  /** New subscription to the free Seed plan (despues lo voy a cambiar porque no va a ser gratis). */
-  static seedFor(userId: number, seedPlan: Plan, today: Date): Subscription {
-    return new Subscription({
+  /** New subscription after the first approved payment. The server assigns the id. */
+  static start(props: {
+    userId: number;
+    plan: Plan;
+    billingCycle: BillingCycle;
+    startDate: Date;
+  }): Subscription {
+    const subscription = new Subscription({
       id: 0,
-      userId,
-      planId: seedPlan.id as number,
-      plan: seedPlan,
+      userId: props.userId,
+      planId: props.plan.id as number,
+      plan: props.plan,
       status: SubscriptionStatus.ACTIVE,
-      billingCycle: BillingCycle.MONTHLY,
-      startDate: startOfDay(today),
+      billingCycle: props.billingCycle,
+      startDate: startOfDay(props.startDate),
       endDate: null,
-      autoRenew: false,
+      autoRenew: true,
     });
+    subscription.changePlan(props.plan, props.billingCycle, props.startDate);
+    return subscription;
   }
 
   get userId(): number {
@@ -121,7 +128,7 @@ export class Subscription extends BaseEntity {
     return this._endDate !== null && this._endDate >= startOfDay(today);
   }
 
-  /** `true` when a cancelled plan reached its end date and the user returns to Seed. */
+  /** `true` when a cancelled plan reached its end date, so the user is left without plan. */
   isExpired(today: Date = new Date()): boolean {
     return (
       this._status === SubscriptionStatus.CANCELLED &&
@@ -147,13 +154,12 @@ export class Subscription extends BaseEntity {
     this._status = SubscriptionStatus.ACTIVE;
     this._billingCycle = cycle;
     this._startDate = startOfDay(startDate);
-    this._endDate = plan.isFree() ? null : addCycle(this._startDate, cycle);
-    this._autoRenew = !plan.isFree();
+    this._endDate = addCycle(this._startDate, cycle);
+    this._autoRenew = true;
   }
 
-  /** Stops the renewal; the user keeps the access until the end date (US-26). */
+  /** Stops the renewal; the user keeps the access until the end date. */
   cancel(): void {
-    if (this._plan?.isFree()) throw new Error('The Seed plan cannot be cancelled.');
     if (this._status === SubscriptionStatus.CANCELLED) {
       throw new Error('The subscription is already cancelled.');
     }
