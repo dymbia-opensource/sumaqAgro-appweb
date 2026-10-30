@@ -71,11 +71,12 @@ export class IamStore {
       .subscribe({
         next: (user) => {
           const session = this.sessionStorage.save(user);
-          this.expiresAtSignal.set(session?.expiresAt ?? null);
+          const expiresAt = session?.expiresAt ?? null;
+
+          this.expiresAtSignal.set(expiresAt);
           this.currentUserSignal.set(user);
-        },
-        error: (error: unknown) => {
-          this.errorSignal.set(this.resolveError(error, 'sign-in'));
+
+          this.sessionExpiration.start(expiresAt, () => this.signOut());
         },
       });
   }
