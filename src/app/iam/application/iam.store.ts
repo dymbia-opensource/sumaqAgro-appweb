@@ -6,7 +6,7 @@ import { SignInCommand } from '../domain/model/commands/sign-in.command';
 import { SignUpCommand } from '../domain/model/commands/sign-up.command';
 import { AuthenticatedUser } from '../domain/model/entities/authenticated-user.entity';
 import { IamApi } from '../infrastructure/iam-api';
-import { MockSessionStorage } from '../infrastructure/mock-session.storage';
+import { SessionStorageService } from '../infrastructure/session/mock-session.storage';
 
 export type IamError =
   | 'INVALID_CREDENTIALS'
@@ -23,7 +23,7 @@ type IamOperation = 'sign-in' | 'sign-up';
 @Service()
 export class IamStore {
   private readonly iamApi = inject(IamApi);
-  private readonly sessionStorage = inject(MockSessionStorage);
+  private readonly sessionStorage = inject(SessionStorageService);
   private readonly expiresAtSignal = signal<number | null>(null);
   private expirationTimer?: ReturnType<typeof setTimeout>;
   private activeRequest?: Subscription;
