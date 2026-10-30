@@ -1,4 +1,4 @@
-import { Money } from '../../domain/model/money';
+import { Money } from '../../../shared/domain/model/money';
 import { fromApiDate, toApiDate } from '../../../shared/infrastructure/api-date';
 import { BaseAssembler } from '../../../shared/infrastructure/base-assembler';
 import { CampaignLedger, YieldUnit } from '../../domain/model/entities/campaign-ledger.entity';

@@ -7,7 +7,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { TranslatePipe } from '@ngx-translate/core';
-import { Money } from '../../../domain/model/money';
+import { Money } from '../../../../shared/domain/model/money';
 import { ExpenseCategory } from '../../../domain/model/entities/expense-entry.entity';
 
 /** Field tasks paid with daily wages (US-38). */
