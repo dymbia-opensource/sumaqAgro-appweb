@@ -12,6 +12,7 @@ import { TranslatePipe } from '@ngx-translate/core';
   templateUrl: './auth-layout.html',
 })
 export class AuthLayout {
+  readonly compact = input(false);
   /** Replace the file in public/images to update all authentication views. */
   readonly imageSrc = input('/images/img-login-register.jpg');
   readonly imagePosition = input('35% center');

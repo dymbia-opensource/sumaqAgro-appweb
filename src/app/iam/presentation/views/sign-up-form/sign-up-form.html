@@ -1,4 +1,4 @@
-<app-auth-layout>
+<app-auth-layout [compact]="true">
   <header class="form-header">
     <span class="form-eyebrow">{{ 'iam.signUp.eyebrow' | translate }}</span>
     <h1>{{ 'iam.signUp.title' | translate }}</h1>
@@ -112,74 +112,76 @@
         }
       </mat-form-field>
 
-      <mat-form-field appearance="outline">
-        <mat-label>{{ 'iam.fields.password' | translate }}</mat-label>
-        <mat-icon matPrefix class="field-icon" aria-hidden="true">lock_outline</mat-icon>
+      <div class="password-fields">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+          <mat-label>{{ 'iam.fields.password' | translate }}</mat-label>
+          <mat-icon matPrefix class="field-icon" aria-hidden="true">lock_outline</mat-icon>
 
-        <input
-          matInput
-          [type]="hidePassword() ? 'password' : 'text'"
-          formControlName="password"
-          autocomplete="new-password"
-        />
+          <input
+            matInput
+            [type]="hidePassword() ? 'password' : 'text'"
+            formControlName="password"
+            autocomplete="new-password"
+          />
 
-        <button
-          mat-icon-button
-          matSuffix
-          type="button"
-          (click)="togglePassword()"
-          [attr.aria-label]="
-            (hidePassword() ? 'iam.actions.showPassword' : 'iam.actions.hidePassword') | translate
-          "
-        >
-          <mat-icon>
-            {{ hidePassword() ? 'visibility' : 'visibility_off' }}
-          </mat-icon>
-        </button>
+          <button
+            mat-icon-button
+            matSuffix
+            type="button"
+            (click)="togglePassword()"
+            [attr.aria-label]="
+              (hidePassword() ? 'iam.actions.showPassword' : 'iam.actions.hidePassword') | translate
+            "
+          >
+            <mat-icon>
+              {{ hidePassword() ? 'visibility' : 'visibility_off' }}
+            </mat-icon>
+          </button>
 
-        <mat-hint>{{ 'iam.signUp.passwordHint' | translate }}</mat-hint>
+          <mat-hint>{{ 'iam.signUp.passwordHint' | translate }}</mat-hint>
 
-        @if (form.controls.password.hasError('required')) {
-          <mat-error>{{ 'iam.validation.required' | translate }}</mat-error>
-        } @else if (form.controls.password.hasError('minlength')) {
-          <mat-error>{{ 'iam.validation.passwordLength' | translate }}</mat-error>
-        }
-      </mat-form-field>
+          @if (form.controls.password.hasError('required')) {
+            <mat-error>{{ 'iam.validation.required' | translate }}</mat-error>
+          } @else if (form.controls.password.hasError('minlength')) {
+            <mat-error>{{ 'iam.validation.passwordLength' | translate }}</mat-error>
+          }
+        </mat-form-field>
 
-      <mat-form-field appearance="outline">
-        <mat-label>{{ 'iam.fields.confirmPassword' | translate }}</mat-label>
-        <mat-icon matPrefix class="field-icon" aria-hidden="true">lock_outline</mat-icon>
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+          <mat-label>{{ 'iam.fields.confirmPassword' | translate }}</mat-label>
+          <mat-icon matPrefix class="field-icon" aria-hidden="true">lock_outline</mat-icon>
 
-        <input
-          matInput
-          [type]="hideConfirmPassword() ? 'password' : 'text'"
-          formControlName="confirmPassword"
-          autocomplete="new-password"
-          [errorStateMatcher]="confirmationErrorMatcher"
-          required
-        />
+          <input
+            matInput
+            [type]="hideConfirmPassword() ? 'password' : 'text'"
+            formControlName="confirmPassword"
+            autocomplete="new-password"
+            [errorStateMatcher]="confirmationErrorMatcher"
+            required
+          />
 
-        <button
-          mat-icon-button
-          matSuffix
-          type="button"
-          (click)="toggleConfirmPassword()"
-          [attr.aria-label]="
-            (hideConfirmPassword() ? 'iam.actions.showPassword' : 'iam.actions.hidePassword')
-              | translate
-          "
-        >
-          <mat-icon aria-hidden="true">
-            {{ hideConfirmPassword() ? 'visibility' : 'visibility_off' }}
-          </mat-icon>
-        </button>
+          <button
+            mat-icon-button
+            matSuffix
+            type="button"
+            (click)="toggleConfirmPassword()"
+            [attr.aria-label]="
+              (hideConfirmPassword() ? 'iam.actions.showPassword' : 'iam.actions.hidePassword')
+                | translate
+            "
+          >
+            <mat-icon aria-hidden="true">
+              {{ hideConfirmPassword() ? 'visibility' : 'visibility_off' }}
+            </mat-icon>
+          </button>
 
-        @if (form.controls.confirmPassword.hasError('required')) {
-          <mat-error>{{ 'iam.validation.required' | translate }}</mat-error>
-        } @else if (form.hasError('passwordMismatch')) {
-          <mat-error>{{ 'iam.validation.passwordMismatch' | translate }}</mat-error>
-        }
-      </mat-form-field>
+          @if (form.controls.confirmPassword.hasError('required')) {
+            <mat-error>{{ 'iam.validation.required' | translate }}</mat-error>
+          } @else if (form.hasError('passwordMismatch')) {
+            <mat-error>{{ 'iam.validation.passwordMismatch' | translate }}</mat-error>
+          }
+        </mat-form-field>
+      </div>
 
       @if (store.error(); as error) {
         <p class="feedback-error" role="alert">
