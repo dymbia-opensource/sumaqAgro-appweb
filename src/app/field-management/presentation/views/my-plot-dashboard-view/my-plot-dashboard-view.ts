@@ -5,7 +5,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
-import { CurrentSessionService } from '../../../../iam/application/current-session.service';
+import { IamStore } from '../../../../iam/application/iam.store';
 import { CropHealthStore } from '../../../../crop-health/application/crop-health.store';
 import { Breadcrumb, PageHeader } from '../../../../shared/presentation/components/page-header/page-header';
 import { MessageCard } from '../../../../shared/presentation/components/message-card/message-card';
@@ -35,7 +35,7 @@ import { NdviChartCard } from '../../components/ndvi-chart-card/ndvi-chart-card'
 })
 export class MyPlotDashboardView {
   private readonly store = inject(FieldManagementStore);
-  private readonly session = inject(CurrentSessionService);
+  private readonly session = inject(IamStore);
   private readonly cropHealthStore = inject(CropHealthStore);
 
   // Store state

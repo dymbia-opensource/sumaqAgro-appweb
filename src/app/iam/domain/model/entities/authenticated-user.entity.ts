@@ -1,5 +1,5 @@
 import { User } from './user.entity';
-import { UserRole } from './user-role';
+import { UserRole } from '../value-objects/user-role';
 
 /**
  * Represents a user authenticated by the IAM API.

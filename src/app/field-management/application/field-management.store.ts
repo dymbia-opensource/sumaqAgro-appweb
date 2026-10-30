@@ -23,7 +23,7 @@ import {
   throwError,
   toArray,
 } from 'rxjs';
-import { CurrentSessionService } from '../../iam/application/current-session.service';
+import { IamStore } from '../../iam/application/iam.store';
 import { OfflineSync } from '../infrastructure/offline/offline-sync';
 import { PendingOperationType } from '../infrastructure/offline/pending-operation';
 import { CloseCropCampaignCommand } from '../domain/model/commands/close-crop-campaign.command';
@@ -94,7 +94,7 @@ export interface CropCampaignSetup {
 @Injectable({ providedIn: 'root' })
 export class FieldManagementStore {
   private readonly fieldManagementApi = inject(FieldManagementApi);
-  private readonly session = inject(CurrentSessionService);
+  private readonly session = inject(IamStore);
   private readonly offlineSync = inject(OfflineSync);
   private readonly pendingExpenses = new PendingExpenseAssembler();
   private readonly fileDownloader = inject(FileDownloader);

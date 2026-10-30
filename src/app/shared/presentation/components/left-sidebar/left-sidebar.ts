@@ -9,7 +9,8 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { LanguageSwitcher } from '../language-switcher/language-switcher';
 import { LayoutStore } from '../layout/layout.store';
 import { navigationFor } from './navigation-config';
-import { CurrentSessionService } from '../../../../iam/application/current-session.service';
+import { IamStore } from '../../../../iam/application/iam.store';
+import { AuthNavigationService } from '../../../../iam/infrastructure/auth-navigation.service';
 
 /**
  * Side menu of the shell: brand, options of the user's role, offline status,
@@ -33,7 +34,8 @@ import { CurrentSessionService } from '../../../../iam/application/current-sessi
 })
 export class LeftSidebar {
   protected readonly layout = inject(LayoutStore);
-  private readonly session = inject(CurrentSessionService);
+  private readonly session = inject(IamStore);
+  private readonly authNavigation = inject(AuthNavigationService);
 
   /** Navigation generated from the current participant's primary role. */
   readonly sections = computed(() => {
@@ -41,4 +43,9 @@ export class LeftSidebar {
 
     return user ? navigationFor(user.experience) : [];
   });
+
+  protected signOut(): void {
+    this.layout.closeSidebarOnHandset();
+    this.authNavigation.signOut();
+  }
 }

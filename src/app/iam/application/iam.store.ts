@@ -1,12 +1,15 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { DOCUMENT } from '@angular/common';
 import { computed, DestroyRef, inject, Service, signal } from '@angular/core';
-import { finalize, Subscription } from 'rxjs';
+import { finalize, Subscription, Observable } from 'rxjs';
 import { SignInCommand } from '../domain/model/commands/sign-in.command';
 import { SignUpCommand } from '../domain/model/commands/sign-up.command';
 import { AuthenticatedUser } from '../domain/model/entities/authenticated-user.entity';
 import { IamApi } from '../infrastructure/iam-api';
-import { MockSessionStorage } from '../infrastructure/mock-session.storage';
+import { SessionStorageService } from '../infrastructure/session/session-storage.service';
+import { SessionExpirationService } from '../infrastructure/session/session-expiration.service';
+import { RequestPasswordResetCommand } from '../domain/model/commands/request-password-reset.command';
+import { ResetPasswordCommand } from '../domain/model/commands/reset-password.command';
+import { UserRole } from '../domain/model/value-objects/user-role';
 
 export type IamError =
   | 'INVALID_CREDENTIALS'
@@ -15,17 +18,34 @@ export type IamError =
   | 'CONNECTION_ERROR'
   | 'UNEXPECTED_ERROR';
 
+export type PasswordRecoveryError =
+  'INVALID_LINK' | 'RATE_LIMITED' | 'CONNECTION_ERROR' | 'REQUEST_REJECTED' | 'UNEXPECTED_ERROR';
+
 type IamOperation = 'sign-in' | 'sign-up';
 
+export interface SessionParticipant {
+  readonly id: number;
+  readonly displayName: string;
+  readonly experience: UserRole;
+  readonly initialRoute: string;
+}
+
+const ROLE_PRIORITY: readonly UserRole[] = ['COOPERATIVE_DIRECTOR', 'AGRONOMIST', 'FARMER'];
+
+const INITIAL_ROUTES: Record<UserRole, string> = {
+  FARMER: '/field-management/dashboard',
+  COOPERATIVE_DIRECTOR: '/profiles/cooperative/dashboard',
+  AGRONOMIST: '/crop-health/inbox',
+};
 /**
  * Holds IAM state and orchestrates authentication operations.
  */
 @Service()
 export class IamStore {
   private readonly iamApi = inject(IamApi);
-  private readonly sessionStorage = inject(MockSessionStorage);
+  private readonly sessionStorage = inject(SessionStorageService);
+  private readonly sessionExpiration = inject(SessionExpirationService);
   private readonly expiresAtSignal = signal<number | null>(null);
-  private expirationTimer?: ReturnType<typeof setTimeout>;
   private activeRequest?: Subscription;
 
   private readonly currentUserSignal = signal<AuthenticatedUser | null>(null);
@@ -34,6 +54,32 @@ export class IamStore {
   private readonly registrationCompletedSignal = signal(false);
 
   readonly currentUser = this.currentUserSignal.asReadonly();
+  /**
+   * Public identity projection consumed by other bounded contexts.
+   */
+  readonly activeUser = computed<SessionParticipant | null>(() => {
+    const user = this.currentUser();
+
+    if (!user) return null;
+
+    const experience = ROLE_PRIORITY.find((role) => user.hasRole(role));
+
+    if (!experience) return null;
+
+    const id =
+      typeof user.id === 'number' ? user.id : /^[0-9]+$/.test(user.id) ? Number(user.id) : NaN;
+
+    if (!Number.isSafeInteger(id) || id <= 0) return null;
+
+    return {
+      id,
+      displayName: user.email,
+      experience,
+      initialRoute: INITIAL_ROUTES[experience],
+    };
+  });
+
+  readonly hasActiveUser = computed(() => this.activeUser() !== null);
   readonly pendingOperation = this.pendingOperationSignal.asReadonly();
   readonly error = this.errorSignal.asReadonly();
   readonly registrationCompleted = this.registrationCompletedSignal.asReadonly();
@@ -43,27 +89,34 @@ export class IamStore {
   readonly currentToken = computed(() => this.currentUser()?.token ?? null);
   readonly isLoading = computed(() => this.pendingOperation() !== null);
 
+  private recoveryRequest?: Subscription;
+
+  private readonly recoveryStateSignal = signal<'idle' | 'pending' | 'completed'>('idle');
+
+  private readonly recoveryErrorSignal = signal<PasswordRecoveryError | null>(null);
+
+  readonly isPasswordRecoveryPreview = this.iamApi.isPasswordRecoveryPreview;
+
+  readonly passwordRecoveryLoading = computed(() => this.recoveryStateSignal() === 'pending');
+
+  readonly passwordRecoveryCompleted = computed(() => this.recoveryStateSignal() === 'completed');
+
+  readonly passwordRecoveryError = this.recoveryErrorSignal.asReadonly();
+
   constructor() {
     const restored = this.sessionStorage.restore();
+
     if (restored) {
       this.currentUserSignal.set(restored.user);
       this.expiresAtSignal.set(restored.expiresAt);
-      this.scheduleExpiration();
-    }
 
-    const document = inject(DOCUMENT);
-    const window = document.defaultView;
-    const checkExpiration = () => this.checkSessionExpiration();
-    window?.addEventListener('focus', checkExpiration);
-    window?.addEventListener('pageshow', checkExpiration);
-    document.addEventListener('visibilitychange', checkExpiration);
+      this.sessionExpiration.start(restored.expiresAt, () => this.signOut());
+    }
 
     inject(DestroyRef).onDestroy(() => {
       this.activeRequest?.unsubscribe();
-      this.clearExpirationTimer();
-      window?.removeEventListener('focus', checkExpiration);
-      window?.removeEventListener('pageshow', checkExpiration);
-      document.removeEventListener('visibilitychange', checkExpiration);
+      this.recoveryRequest?.unsubscribe();
+      this.sessionExpiration.stop();
     });
   }
 
@@ -79,9 +132,12 @@ export class IamStore {
       .subscribe({
         next: (user) => {
           const session = this.sessionStorage.save(user);
-          this.expiresAtSignal.set(session?.expiresAt ?? null);
+          const expiresAt = session?.expiresAt ?? null;
+
+          this.expiresAtSignal.set(expiresAt);
           this.currentUserSignal.set(user);
-          this.scheduleExpiration();
+
+          this.sessionExpiration.start(expiresAt, () => this.signOut());
         },
         error: (error: unknown) => {
           this.errorSignal.set(this.resolveError(error, 'sign-in'));
@@ -112,7 +168,7 @@ export class IamStore {
   signOut(): void {
     this.activeRequest?.unsubscribe();
     this.activeRequest = undefined;
-    this.clearExpirationTimer();
+    this.sessionExpiration.stop();
     this.expiresAtSignal.set(null);
     this.sessionStorage.clear();
     this.pendingOperationSignal.set(null);
@@ -121,30 +177,8 @@ export class IamStore {
     this.registrationCompletedSignal.set(false);
   }
 
-  /** Rechecks wall-clock expiration after suspension and before guarded access. */
   checkSessionExpiration(): void {
-    const expiresAt = this.expiresAtSignal();
-    if (expiresAt !== null && Date.now() >= expiresAt) this.signOut();
-  }
-
-  private scheduleExpiration(): void {
-    this.clearExpirationTimer();
-    const expiresAt = this.expiresAtSignal();
-    if (expiresAt === null) return;
-
-    this.expirationTimer = setTimeout(
-      () => {
-        this.checkSessionExpiration();
-        // Recalculate if the system clock moved backwards while waiting.
-        if (this.expiresAtSignal() !== null) this.scheduleExpiration();
-      },
-      Math.max(0, expiresAt - Date.now()),
-    );
-  }
-
-  private clearExpirationTimer(): void {
-    if (this.expirationTimer !== undefined) clearTimeout(this.expirationTimer);
-    this.expirationTimer = undefined;
+    this.sessionExpiration.check();
   }
 
   clearFeedback(): void {
@@ -173,5 +207,70 @@ export class IamStore {
       default:
         return 'UNEXPECTED_ERROR';
     }
+  }
+
+  requestPasswordReset(command: RequestPasswordResetCommand): void {
+    if (this.passwordRecoveryLoading() || this.passwordRecoveryCompleted()) {
+      return;
+    }
+
+    this.executePasswordRecovery(this.iamApi.requestPasswordReset(command), false);
+  }
+
+  resetPassword(command: ResetPasswordCommand): void {
+    if (this.passwordRecoveryLoading() || this.passwordRecoveryCompleted()) {
+      return;
+    }
+
+    this.executePasswordRecovery(this.iamApi.resetPassword(command), true);
+  }
+
+  clearPasswordRecovery(): void {
+    this.recoveryRequest?.unsubscribe();
+    this.recoveryRequest = undefined;
+
+    this.recoveryErrorSignal.set(null);
+    this.recoveryStateSignal.set('idle');
+  }
+
+  private executePasswordRecovery(operation: Observable<void>, resetting: boolean): void {
+    this.recoveryErrorSignal.set(null);
+    this.recoveryStateSignal.set('pending');
+
+    this.recoveryRequest = operation
+      .pipe(
+        finalize(() => {
+          if (this.recoveryStateSignal() === 'pending') {
+            this.recoveryStateSignal.set('idle');
+          }
+        }),
+      )
+      .subscribe({
+        next: () => {
+          this.recoveryStateSignal.set('completed');
+        },
+        error: (error: unknown) => {
+          this.recoveryErrorSignal.set(this.resolvePasswordRecoveryError(error, resetting));
+        },
+      });
+  }
+
+  private resolvePasswordRecoveryError(error: unknown, resetting: boolean): PasswordRecoveryError {
+    if (!(error instanceof HttpErrorResponse)) {
+      return 'UNEXPECTED_ERROR';
+    }
+
+    if (error.status === 0) return 'CONNECTION_ERROR';
+    if (error.status === 429) return 'RATE_LIMITED';
+
+    if (resetting && [401, 404, 410].includes(error.status)) {
+      return 'INVALID_LINK';
+    }
+
+    if ([400, 422].includes(error.status)) {
+      return 'REQUEST_REJECTED';
+    }
+
+    return 'UNEXPECTED_ERROR';
   }
 }

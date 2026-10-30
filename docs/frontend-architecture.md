@@ -26,7 +26,8 @@ de la compilación de producción. `tsconfig.spec.json` descubre sus nuevas ruta
 
 ## Propiedad de los servicios
 
-- IAM posee `CurrentSessionService`: proyecta la identidad y el rol activo.
+- IAM expone `activeUser` y `hasActiveUser` desde `IamStore`: proyectan la identidad
+  y el rol activo para los demás contextos, sin un servicio de sesión duplicado.
 - IAM posee `AuthNavigationService` en infraestructura: adapta destinos de acceso
   a `UrlTree` y Angular Router.
 - Field Management posee `PlotSelectionService`: selección de parcela para la

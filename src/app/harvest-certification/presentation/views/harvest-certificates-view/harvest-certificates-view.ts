@@ -5,7 +5,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { TranslatePipe } from '@ngx-translate/core';
-import { CurrentSessionService } from '../../../../iam/application/current-session.service';
+import { IamStore } from '../../../../iam/application/iam.store';
 import { HarvestCertificationStore } from '../../../application/harvest-certification.store';
 import {
   HarvestBatch,
@@ -41,7 +41,7 @@ import { HarvestGradingSheetView } from '../harvest-grading-sheet-view/harvest-g
  */
 export class HarvestCertificatesView {
   readonly store = inject(HarvestCertificationStore);
-  private readonly session = inject(CurrentSessionService);
+  private readonly session = inject(IamStore);
   readonly isFarmer = computed(() => this.session.activeUser()?.experience === 'FARMER');
   readonly farmerCertificates = computed(() => {
     return this.store.activeCertificates().flatMap((certificate) => {

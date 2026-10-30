@@ -12,7 +12,7 @@ export interface NavigationSection {
 }
 
 /** Experiences currently supported by the web application. */
-import { UserRole } from '../../../../iam/domain/model/entities/user-role';
+import { UserRole } from '../../../../iam/domain/model/value-objects/user-role';
 
 /** Navigation for an independent farmer. */
 export const farmerNavigationSections: NavigationSection[] = [

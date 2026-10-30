@@ -13,7 +13,7 @@ import { provideTranslateService } from '@ngx-translate/core';
 import { provideTranslateMultiHttpLoader } from '@ngx-translate/http-loader';
 import { routes } from './app.routes';
 import { iamInterceptor } from './iam/infrastructure/iam.interceptor';
-import { mockAuthenticationInterceptor } from './iam/infrastructure/mock-authentication.interceptor';
+import { mockAuthenticationInterceptor } from './iam/infrastructure/mock/mock-authentication.interceptor';
 
 /** Spanish (Peru) data for dates and numbers; English is built in. */
 registerLocaleData(localeEsPe, 'es');

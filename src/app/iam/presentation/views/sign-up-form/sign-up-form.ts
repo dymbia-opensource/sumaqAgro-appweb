@@ -9,7 +9,7 @@ import { MatRadioModule } from '@angular/material/radio';
 import { TranslatePipe } from '@ngx-translate/core';
 import { IamStore } from '../../../application/iam.store';
 import { SignUpCommand } from '../../../domain/model/commands/sign-up.command';
-import { UserRole } from '../../../domain/model/entities/user-role';
+import { UserRole } from '../../../domain/model/value-objects/user-role';
 import { AuthLayout } from '../../components/auth-layout/auth-layout';
 
 @Component({

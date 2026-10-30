@@ -1,12 +1,12 @@
 import { Service } from '@angular/core';
-import { environment } from '../../../environments/environment';
-import { AuthenticatedUser } from '../domain/model/entities/authenticated-user.entity';
-import { UserRole } from '../domain/model/entities/user-role';
+import { environment } from '../../../../environments/environment';
+import { AuthenticatedUser } from '../../domain/model/entities/authenticated-user.entity';
+import { UserRole } from '../../domain/model/value-objects/user-role';
 
 export const MOCK_SESSION_STORAGE_KEY = 'sumaq-agro.iam.mock-session.v1';
 export const MOCK_SESSION_DURATION_MS = 30 * 60 * 1000;
 
-export interface MockSession {
+export interface StoredSession {
   readonly user: AuthenticatedUser;
   readonly expiresAt: number;
 }
@@ -19,12 +19,12 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 
 /** Tab-scoped persistence for development sessions only. It never validates real credentials. */
 @Service()
-export class MockSessionStorage {
+export class SessionStorageService {
   get enabled(): boolean {
     return !environment.production && environment.useMockAuthentication;
   }
 
-  save(user: AuthenticatedUser): MockSession | null {
+  save(user: AuthenticatedUser): StoredSession | null {
     if (!this.enabled || !user.token.startsWith('mock-session-')) return null;
 
     const issuedAt = Date.now();
@@ -52,7 +52,7 @@ export class MockSessionStorage {
     return { user, expiresAt };
   }
 
-  restore(): MockSession | null {
+  restore(): StoredSession | null {
     if (!this.enabled) return null;
 
     try {

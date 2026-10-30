@@ -29,6 +29,8 @@ export class Layout {
       if (this.iamStore.isSignedIn()) return;
 
       untracked(() => {
+        if (this.router.currentNavigation()) return;
+
         void this.router.navigate(['/iam/sign-in'], {
           queryParams: { returnUrl: this.router.url },
           replaceUrl: true,

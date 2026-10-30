@@ -2,7 +2,7 @@ import { computed, DestroyRef, effect, inject, Service, signal, untracked } from
 import { forkJoin, map, Observable, of, Subscription, switchMap } from 'rxjs';
 import { CooperativeMember } from '../../profiles/domain/model/entities/cooperative-member.entity';
 import { ProfilesApi } from '../../profiles/infrastructure/profiles-api';
-import { CurrentSessionService, SessionParticipant } from '../../iam/application/current-session.service';
+import { IamStore, SessionParticipant } from '../../iam/application/iam.store';
 import { RegisterHarvestBatchCommand } from '../domain/model/commands/register-harvest-batch.command';
 import { IssueQualityCertificateCommand } from '../domain/model/commands/issue-quality-certificate.command';
 import { HarvestBatch } from '../domain/model/entities/harvest-batch.entity';
@@ -25,7 +25,7 @@ interface CertificationScope {
 export class HarvestCertificationStore {
   private readonly api = inject(HarvestCertificationApi);
   private readonly profiles = inject(ProfilesApi);
-  private readonly session = inject(CurrentSessionService);
+  private readonly session = inject(IamStore);
   private readonly batchesSignal = signal<HarvestBatch[]>([]);
   private readonly certificatesSignal = signal<QualityCertificate[]>([]);
   private readonly membersSignal = signal<CooperativeMember[]>([]);

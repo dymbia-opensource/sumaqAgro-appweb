@@ -1,4 +1,4 @@
-import { UserRole } from '../entities/user-role';
+import { UserRole } from '../value-objects/user-role';
 
 /**
  * Captures the information required to register an account.
