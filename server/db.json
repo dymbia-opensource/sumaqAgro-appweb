@@ -694,11 +694,11 @@
       "id": 1,
       "code": "SEED",
       "name": "Seed",
-      "monthlyPrice": 0,
-      "annualPrice": 0,
+      "monthlyPrice": 49,
+      "annualPrice": 490,
       "currency": "PEN",
-      "plotQuota": 1,
-      "features": ["basic-ndvi", "field-costs"]
+      "plotQuota": 4,
+      "features": ["campaigns-by-plot", "ndvi-ndwi", "expenses", "unit-cost", "agroclimatic-alerts"]
     },
     {
       "id": 2,
@@ -708,7 +708,13 @@
       "annualPrice": 1890,
       "currency": "PEN",
       "plotQuota": 50,
-      "features": ["members", "quality-certification", "reports"]
+      "features": [
+        "members-registry",
+        "ndvi-ndwi",
+        "incidents-inspections",
+        "harvest-lots",
+        "qr-certificates"
+      ]
     },
     {
       "id": 3,
@@ -718,7 +724,7 @@
       "annualPrice": 890,
       "currency": "PEN",
       "plotQuota": 20,
-      "features": ["advanced-ndvi", "prescriptions"]
+      "features": ["ndvi-ndwi", "pest-reports", "inspections", "prescriptions", "visit-history"]
     }
   ],
   "subscriptions": [
@@ -728,9 +734,9 @@
       "planId": 1,
       "status": "ACTIVE",
       "billingCycle": "MONTHLY",
-      "startDate": "2026-09-01",
-      "endDate": null,
-      "autoRenew": false
+      "startDate": "2026-10-01",
+      "endDate": "2026-11-01",
+      "autoRenew": true
     },
     {
       "id": 2,
@@ -746,12 +752,21 @@
   "payments": [
     {
       "id": 1,
-      "subscriptionId": 2,
-      "amount": 189,
+      "subscriptionId": 1,
+      "amount": 49,
       "currency": "PEN",
       "transactionToken": "demo-tx-0001",
       "status": "COMPLETED",
       "paidAt": "2026-10-01T10:00:00Z"
+    },
+    {
+      "id": 2,
+      "subscriptionId": 2,
+      "amount": 189,
+      "currency": "PEN",
+      "transactionToken": "demo-tx-0002",
+      "status": "COMPLETED",
+      "paidAt": "2026-10-01T10:05:00Z"
     }
   ]
 }
