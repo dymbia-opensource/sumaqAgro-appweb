@@ -1,0 +1,32 @@
+{
+  "subscriptions": {
+    "plan-code": {
+      "SEED": "Semilla",
+      "COOPERATIVE_PRO": "Cooperativa Pro",
+      "TECHNICAL_ADVISOR": "Asesor Técnico"
+    },
+    "billing-cycle": {
+      "MONTHLY": "Mensual",
+      "ANNUAL": "Anual"
+    },
+    "subscription-status": {
+      "ACTIVE": "Activa",
+      "CANCELLED": "Cancelada"
+    },
+    "payment-status": {
+      "PENDING": "Pendiente",
+      "COMPLETED": "Completado",
+      "REJECTED": "Rechazado"
+    },
+    "errors": {
+      "load-plans": "No se pudieron cargar los planes.",
+      "load-subscription": "No se pudo cargar tu suscripción.",
+      "no-seed-plan": "El plan gratuito no está disponible. Inténtalo más tarde.",
+      "select-plan": "No se pudo seleccionar el plan.",
+      "invalid-coupon": "El código promocional no es válido.",
+      "payment": "No se pudo procesar el pago. Tu plan no cambió.",
+      "cancel": "No se pudo cancelar la suscripción.",
+      "receipt": "No se encontró el comprobante."
+    }
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "subscriptions": {
+    "plan-code": {
+      "SEED": "Seed",
+      "COOPERATIVE_PRO": "Cooperative Pro",
+      "TECHNICAL_ADVISOR": "Technical Advisor"
+    },
+    "billing-cycle": {
+      "MONTHLY": "Monthly",
+      "ANNUAL": "Annual"
+    },
+    "subscription-status": {
+      "ACTIVE": "Active",
+      "CANCELLED": "Cancelled"
+    },
+    "payment-status": {
+      "PENDING": "Pending",
+      "COMPLETED": "Completed",
+      "REJECTED": "Rejected"
+    },
+    "errors": {
+      "load-plans": "The plans could not be loaded.",
+      "load-subscription": "Your subscription could not be loaded.",
+      "no-seed-plan": "The free plan is not available. Try again later.",
+      "select-plan": "The plan could not be selected.",
+      "invalid-coupon": "The promotional code is not valid.",
+      "payment": "The payment could not be processed. Your plan was not changed.",
+      "cancel": "The subscription could not be cancelled.",
+      "receipt": "The receipt could not be found."
+    }
+  }
+}
