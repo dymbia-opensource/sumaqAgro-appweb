@@ -21,7 +21,6 @@
     "errors": {
       "load-plans": "The plans could not be loaded.",
       "load-subscription": "Your subscription could not be loaded.",
-      "no-seed-plan": "The free plan is not available. Try again later.",
       "select-plan": "The plan could not be selected.",
       "invalid-coupon": "The promotional code is not valid.",
       "payment": "The payment could not be processed. Your plan was not changed.",
