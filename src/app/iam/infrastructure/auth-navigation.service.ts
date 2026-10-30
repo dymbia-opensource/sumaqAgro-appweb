@@ -44,7 +44,7 @@ export class AuthNavigationService {
           (segment) =>
             Object.keys(segment.parameters).length > 0 ||
             /[/\\\u0000-\u0020]/.test(segment.path) ||
-            segment.path === '../application' ||
+            segment.path === '.' ||
             segment.path === '..',
         )
       ) {
