@@ -1,0 +1,28 @@
+import { Routes } from '@angular/router';
+
+/** Lazy-loaded routes for the Subscriptions and Payments context. */
+export const subscriptionsRoutes: Routes = [
+  {
+    path: 'plans',
+    loadComponent: () =>
+      import('./presentation/views/plans-catalog-view/plans-catalog-view').then(
+        (m) => m.PlansCatalogView,
+      ),
+    title: 'Planes | SumaqAgro',
+  },
+  {
+    path: 'checkout',
+    loadComponent: () =>
+      import('./presentation/views/checkout-view/checkout-view').then((m) => m.CheckoutView),
+    title: 'Pago | SumaqAgro',
+  },
+  {
+    path: 'billing',
+    loadComponent: () =>
+      import('./presentation/views/billing-history-view/billing-history-view').then(
+        (m) => m.BillingHistoryView,
+      ),
+    title: 'Suscripción y pagos | SumaqAgro',
+  },
+  { path: '', redirectTo: 'plans', pathMatch: 'full' },
+];

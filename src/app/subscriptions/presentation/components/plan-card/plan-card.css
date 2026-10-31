@@ -1,0 +1,74 @@
+:host {
+  display: block;
+  height: 100%;
+}
+
+.plan-card {
+  height: 100%;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+}
+
+.plan-card.current {
+  border-color: var(--mat-sys-primary);
+  background: var(--mat-sys-primary-container);
+}
+
+.plan-card.selected {
+  border-color: var(--mat-sys-secondary);
+}
+
+mat-card-content {
+  flex: 1;
+}
+
+.price {
+  margin: 20px 0 4px;
+}
+
+.price strong {
+  font-size: 2rem;
+}
+
+.price span,
+.savings {
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.savings {
+  margin: 0 0 16px;
+}
+
+.quota,
+li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.quota {
+  margin: 20px 0;
+  font-weight: 600;
+}
+
+ul {
+  display: grid;
+  gap: 12px;
+  list-style: none;
+  padding: 0;
+}
+
+li mat-icon,
+.quota mat-icon {
+  flex: none;
+  color: var(--mat-sys-primary);
+}
+
+mat-card-actions {
+  padding: 16px;
+}
+
+mat-card-actions button {
+  width: 100%;
+}

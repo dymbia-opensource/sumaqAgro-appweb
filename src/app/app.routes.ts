@@ -19,6 +19,9 @@ const harvestCertificationRoutes = () =>
     (m) => m.harvestCertificationRoutes,
   );
 
+const subscriptionsRoutes = () =>
+  import('./subscriptions/subscriptions.routes').then((m) => m.subscriptionsRoutes);
+
 const publicTraceabilityView = () =>
   import('./harvest-certification/presentation/views/public-traceability-view/public-traceability-view').then(
     (m) => m.PublicTraceabilityView,
@@ -55,6 +58,7 @@ export const routes: Routes = [
       { path: 'crop-health', loadChildren: cropHealthRoutes },
       { path: 'profiles', loadChildren: profilesRoutes },
       { path: 'harvest-certification', loadChildren: harvestCertificationRoutes },
+      { path: 'subscriptions', loadChildren: subscriptionsRoutes },
       { path: '**', loadComponent: pageNotFound, title: `${baseTitle} - Page Not Found` },
     ],
   },

@@ -1,0 +1,112 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.subscription-card,
+.payment-card {
+  border-radius: 16px;
+}
+
+.subscription-card {
+  max-width: 760px;
+}
+
+.subscription-card mat-card-avatar {
+  color: var(--mat-sys-primary);
+}
+
+dl {
+  display: grid;
+  gap: 16px;
+  margin: 8px 0 24px;
+}
+
+dl div {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+dt,
+.payment-details dt {
+  color: var(--mat-sys-on-surface-variant);
+}
+
+dd {
+  margin: 0;
+  text-align: right;
+  font-weight: 600;
+}
+
+.status-note {
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.cancel-confirmation {
+  padding: 16px;
+  border-radius: 12px;
+  background: var(--mat-sys-error-container);
+}
+
+.cancel-confirmation p {
+  margin-top: 0;
+}
+
+.cancel-actions {
+  display: flex;
+  justify-content: end;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.payments-section {
+  display: grid;
+  gap: 16px;
+}
+
+.payments-section h2 {
+  margin: 0;
+}
+
+.payment-list {
+  display: grid;
+  gap: 12px;
+}
+
+.payment-card mat-card-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.payment-details {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  flex: 1;
+  gap: 12px 24px;
+  margin: 0;
+}
+
+.transaction-token {
+  overflow-wrap: anywhere;
+}
+
+.payment-card button {
+  flex: none;
+}
+
+@media (max-width: 720px) {
+  .payment-card mat-card-content {
+    align-items: stretch;
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 480px) {
+  .payment-details {
+    grid-template-columns: 1fr;
+  }
+}

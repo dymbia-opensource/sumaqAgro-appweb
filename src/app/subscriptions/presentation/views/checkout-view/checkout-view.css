@@ -1,0 +1,103 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.checkout-grid {
+  display: grid;
+  grid-template-columns: minmax(260px, 0.8fr) minmax(320px, 1.2fr);
+  align-items: start;
+  gap: 24px;
+}
+
+.summary-card,
+.demo-notice {
+  border-radius: 16px;
+}
+
+.summary-card mat-card-avatar {
+  color: var(--mat-sys-primary);
+}
+
+dl {
+  display: grid;
+  gap: 16px;
+}
+
+dl div {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+dt {
+  color: var(--mat-sys-on-surface-variant);
+}
+
+dd {
+  margin: 0;
+  text-align: right;
+  font-weight: 600;
+}
+
+.total-label {
+  margin: 28px 0 4px;
+}
+
+.total {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.payment-panel {
+  display: grid;
+  gap: 16px;
+}
+
+.payment-panel h2 {
+  margin: 0;
+}
+
+.demo-notice mat-card-content {
+  display: flex;
+  align-items: start;
+  gap: 12px;
+}
+
+.demo-notice mat-icon {
+  flex: none;
+  color: var(--mat-sys-primary);
+}
+
+.demo-notice p {
+  margin: 0;
+}
+
+.payment-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.demo-payment-actions {
+  display: flex;
+  justify-content: end;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+@media (max-width: 760px) {
+  .checkout-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .payment-actions {
+    flex-direction: column-reverse;
+  }
+
+  .demo-payment-actions {
+    flex-direction: column-reverse;
+  }
+}

@@ -37,6 +37,7 @@ export const farmerNavigationSections: NavigationSection[] = [
     title: 'section.system',
     options: [
       { link: '/crop-health/alerts', label: 'option.alerts', icon: 'notification_important' },
+      { link: '/subscriptions/billing', label: 'subscriptions.nav-title', icon: 'credit_card' },
       { link: '/profiles/settings', label: 'option.settings', icon: 'settings' },
     ],
   },
@@ -75,6 +76,7 @@ export const cooperativeDirectorNavigationSections: NavigationSection[] = [
   {
     title: 'section.system',
     options: [
+      { link: '/subscriptions/billing', label: 'subscriptions.nav-title', icon: 'credit_card' },
       {
         link: '/profiles/cooperative/settings',
         label: 'option.cooperative-settings',
@@ -98,6 +100,12 @@ export const agronomistNavigationSections: NavigationSection[] = [
       { link: '/crop-health/prescriptions', label: 'option.prescriptions', icon: 'medication' },
       { link: '/crop-health/monitoring', label: 'option.crop-health', icon: 'eco' },
       { link: '/crop-health/alerts', label: 'option.alerts', icon: 'warning' },
+    ],
+  },
+  {
+    title: 'section.system',
+    options: [
+      { link: '/subscriptions/billing', label: 'subscriptions.nav-title', icon: 'credit_card' },
     ],
   },
 ];
