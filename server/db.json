@@ -623,7 +623,62 @@
       "recommendation": "Check the area for signs of the onset of wilting."
     }
   ],
-  "agroclimatic-alerts": [],
+  "agroclimatic-alerts": [
+    {
+      "id": 1,
+      "title": "Posible descenso de temperatura nocturna",
+      "description": "Ejemplo simulado: se reporta riesgo de bajas temperaturas en parcelas del valle. Revisa las condiciones de tu terreno y coordina con tu asesor las medidas adecuadas para tu cultivo.",
+      "severity": "HIGH",
+      "region": "Junín - Valle del Mantaro",
+      "issuedAt": "2026-10-30T08:00:00-05:00",
+      "source": "SumaqAgro · Datos de demostración"
+    },
+    {
+      "id": 2,
+      "title": "Vigilancia de humedad en el suelo",
+      "description": "Ejemplo simulado: algunas parcelas presentan señales de menor disponibilidad de agua. Consulta los indicadores de salud de tu parcela y verifica la humedad en campo antes de ajustar el riego.",
+      "severity": "MEDIUM",
+      "region": "Junín - Valle del Mantaro",
+      "issuedAt": "2026-10-29T10:30:00-05:00",
+      "source": "SumaqAgro · Datos de demostración"
+    },
+    {
+      "id": 3,
+      "title": "Lluvias intensas y revisión de drenajes",
+      "description": "Ejemplo simulado: se prevé un periodo de lluvias intensas. Revisa los drenajes y los accesos a la parcela, y coordina las labores de campo según las condiciones locales.",
+      "severity": "HIGH",
+      "region": "Junín - Chanchamayo",
+      "issuedAt": "2026-10-30T07:30:00-05:00",
+      "source": "SumaqAgro · Datos de demostración"
+    },
+    {
+      "id": 4,
+      "title": "Revisión preventiva de la salud del cafetal",
+      "description": "Ejemplo simulado: condiciones de humedad elevada requieren mayor seguimiento del cultivo. Inspecciona las hojas y, si observas síntomas, registra un reporte con fotografías para tu asesor.",
+      "severity": "MEDIUM",
+      "region": "Junín - Chanchamayo",
+      "issuedAt": "2026-10-29T09:00:00-05:00",
+      "source": "SumaqAgro · Datos de demostración"
+    },
+    {
+      "id": 5,
+      "title": "Riesgo de helada en zonas altas",
+      "description": "Ejemplo simulado: se informa un escenario de helada en zonas altas. Verifica las condiciones de tu parcela y consulta con tu asesor las acciones apropiadas para la etapa de tu cultivo.",
+      "severity": "CRITICAL",
+      "region": "Huancavelica",
+      "issuedAt": "2026-10-30T06:00:00-05:00",
+      "source": "SumaqAgro · Datos de demostración"
+    },
+    {
+      "id": 6,
+      "title": "Seguimiento preventivo de parcelas",
+      "description": "Ejemplo simulado: realiza una inspección de rutina y revisa los últimos indicadores disponibles. Registra cambios visibles del cultivo para mantener actualizado su seguimiento.",
+      "severity": "LOW",
+      "region": "Huancavelica",
+      "issuedAt": "2026-10-28T11:00:00-05:00",
+      "source": "SumaqAgro · Datos de demostración"
+    }
+  ],
   "climate-forecasts": [],
   "pest-reports": [
     {
