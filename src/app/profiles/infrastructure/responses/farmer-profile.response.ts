@@ -4,6 +4,8 @@ import { BaseResource, BaseResponse } from '../../../shared/infrastructure/base-
 export interface FarmerProfileResource extends BaseResource {
   id: number;
   userId: number;
+  firstName?: string;
+  lastName?: string;
   phoneNumber: string;
   email: string;
 }

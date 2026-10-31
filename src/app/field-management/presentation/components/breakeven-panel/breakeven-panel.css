@@ -1,9 +1,13 @@
 :host {
-  display: block;
+  display: flex;
+  flex-direction: column;
   min-width: 0;
 }
 
 .breakeven-card {
+  flex: 1;
+  width: 100%;
+  min-width: 0;
   border-radius: 20px;
 }
 
@@ -42,4 +46,14 @@
   --mat-chip-selected-label-text-color: var(--mat-sys-on-secondary-container);
   --mat-chip-with-icon-selected-icon-color: var(--mat-sys-on-secondary-container);
   --mat-chip-outline-width: 0;
+}
+
+.yield-form {
+  flex-wrap: wrap;
+}
+.yield-form mat-form-field {
+  flex-basis: 160px;
+}
+.price {
+  overflow-wrap: anywhere;
 }

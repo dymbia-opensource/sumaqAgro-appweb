@@ -70,13 +70,12 @@
     },
     "settings": {
       "title": "Ajustes de Cuenta y Asistencia al Agricultor",
-      "subtitle": "Revisa y actualiza los datos de tu parcela y cuenta.",
-      "plot-tab": "Datos de mi Parcela",
+      "subtitle": "Administra tu cuenta y encuentra orientación para usar SumaqAgro.",
       "account-tab": "Cuenta",
       "help-tab": "Manuales de Ayuda",
-      "contact-title": "Datos de Contacto",
+      "contact-title": "Información personal y de contacto",
       "phone": "Número de teléfono",
-      "email": "Correo electrónico",
+      "email": "Correo de contacto",
       "phone-error": "Ingresa un teléfono válido.",
       "email-error": "Ingresa un correo válido.",
       "saving": "Guardando...",
@@ -84,8 +83,99 @@
       "current-password": "Contraseña actual",
       "new-password": "Nueva contraseña",
       "confirm-password": "Confirmar nueva contraseña",
-      "security-description": "El cambio de contraseña estará disponible cuando se incorpore la autenticación de la plataforma.",
-      "change-password": "Cambiar contraseña"
+      "security-description": "Usa tu correo de inicio de sesión para solicitar el restablecimiento de tu contraseña mediante el flujo de recuperación de acceso.",
+      "change-password": "Cambiar contraseña",
+      "profile-title": "Tu cuenta de agricultor",
+      "farmer-role": "Agricultor",
+      "manage-plots": "Administrar mis parcelas",
+      "contact-description": "Actualiza tus datos de contacto. El correo de contacto no modifica el correo con el que inicias sesión.",
+      "saved": "Datos de tu cuenta guardados.",
+      "preview": "La recuperación funciona actualmente como vista previa: no envía correos ni cambia contraseñas.",
+      "preferences": "Preferencias",
+      "language": "Idioma de la aplicación",
+      "language-description": "El idioma se aplica durante esta visita. Puedes cambiarlo también desde el menú lateral.",
+      "help-title": "Aprende a usar SumaqAgro",
+      "help-description": "Consulta los pasos de cada tarea y abre su sección para ponerlos en práctica.",
+      "search": "Buscar una guía",
+      "clear": "Limpiar búsqueda",
+      "open-section": "Ir a la sección",
+      "no-results": "No encontramos guías. Prueba con parcela, gastos, alertas o conexión.",
+      "faq-title": "Preguntas frecuentes",
+      "guides": {
+        "plots": {
+          "title": "Registrar y consultar parcelas",
+          "summary": "Mantén organizada la información de tus terrenos.",
+          "steps": [
+            "Abre Mis parcelas y selecciona registrar una parcela.",
+            "Completa los datos del terreno y delimita su polígono en el mapa.",
+            "Guarda y consulta el detalle o el análisis de suelo desde la parcela."
+          ]
+        },
+        "campaigns": {
+          "title": "Iniciar una campaña",
+          "summary": "Organiza el ciclo de producción de tu parcela.",
+          "steps": [
+            "Registra primero tu parcela.",
+            "Abre Campañas e inicia una campaña con su parcela, cultivo y fecha de siembra.",
+            "Revisa los datos antes de guardar y consulta el historial para dar seguimiento."
+          ]
+        },
+        "expenses": {
+          "title": "Registrar gastos y consultar costos",
+          "summary": "Controla insumos, jornales y fletes de campaña.",
+          "steps": [
+            "Selecciona la parcela y campaña correspondientes.",
+            "En Mis gastos elige insumos, jornales o fletes y completa el formulario.",
+            "Guarda el gasto y revisa el resumen y los reportes de costos."
+          ]
+        },
+        "health": {
+          "title": "Consultar salud y alertas",
+          "summary": "Revisa indicadores y reporta problemas en campo.",
+          "steps": [
+            "Selecciona la parcela que deseas revisar en Salud del cultivo.",
+            "Consulta los indicadores disponibles y las alertas de esa parcela.",
+            "Si detectas un problema, usa Reportar plaga y revisa después el seguimiento del caso."
+          ]
+        },
+        "certificates": {
+          "title": "Consultar certificados",
+          "summary": "Encuentra información de calidad y trazabilidad.",
+          "steps": [
+            "Abre Certificados y revisa los lotes disponibles.",
+            "Selecciona un registro para consultar sus datos y estado.",
+            "Si tiene un certificado emitido, consulta su verificación pública mediante el enlace o QR disponible."
+          ]
+        },
+        "offline": {
+          "title": "Trabajar con conexión inestable",
+          "summary": "Comprueba qué registros están pendientes.",
+          "steps": [
+            "Abre la aplicación con conexión y selecciona la parcela y campaña.",
+            "Al registrar un gasto sin conexión, revisa que aparezca como pendiente de sincronización.",
+            "Al recuperar la conexión, revisa el aviso de sincronización y verifica que no queden operaciones pendientes."
+          ]
+        }
+      },
+      "faq": {
+        "connection": {
+          "question": "¿Puedo usar toda la aplicación sin internet?",
+          "answer": "No. Algunas operaciones de campo, como el registro de gastos, admiten una cola pendiente. Las consultas a la API y la actualización de tu cuenta requieren conexión. Revisa el indicador de sincronización antes de cerrar la aplicación."
+        },
+        "contact": {
+          "question": "¿Cambiar mi correo de contacto cambia mi acceso?",
+          "answer": "No. El correo de contacto pertenece a tu perfil. Para recuperar acceso, utiliza el correo con el que inicias sesión, visible en el resumen de tu cuenta."
+        },
+        "alerts": {
+          "question": "¿Una alerta reemplaza la evaluación de un agrónomo?",
+          "answer": "Las alertas orientan la revisión de tu parcela. Consulta el detalle, verifica las condiciones en campo y solicita asesoría técnica cuando corresponda."
+        }
+      },
+      "first-name": "Nombres",
+      "last-name": "Apellidos",
+      "name-error": "Ingresa un nombre válido de hasta 100 caracteres.",
+      "edit-account": "Editar cuenta",
+      "cancel": "Cancelar"
     },
     "advisory": {
       "title": "Asesor responsable de la parcela",
