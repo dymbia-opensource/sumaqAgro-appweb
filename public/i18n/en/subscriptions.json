@@ -18,6 +18,34 @@
       "COMPLETED": "Completed",
       "REJECTED": "Rejected"
     },
+    "features": {
+      "campaigns-by-plot": "Crop campaigns per plot",
+      "ndvi-ndwi": "NDVI and NDWI satellite monitoring",
+      "expenses": "Expense tracking",
+      "unit-cost": "Production unit cost",
+      "agroclimatic-alerts": "Agroclimatic alerts",
+      "members-registry": "Member directory",
+      "incidents-inspections": "Incidents and inspections",
+      "harvest-lots": "Harvest batch management",
+      "qr-certificates": "QR-code certificates",
+      "pest-reports": "Pest reports",
+      "inspections": "Field visits",
+      "prescriptions": "Technical prescriptions",
+      "visit-history": "Visit history"
+    },
+    "plans": {
+      "current": "Current plan",
+      "selected": "Plan selected",
+      "annual-savings": "Save {{amount}} per year",
+      "plot-quota": "Up to {{quota}} plots",
+      "choose": "Choose plan"
+    },
+    "catalog": {
+      "title": "Plans",
+      "subtitle": "Choose the plan that best fits your work.",
+      "billing-cycle": "Billing cycle",
+      "empty": "No plans are available right now."
+    },
     "errors": {
       "load-plans": "The plans could not be loaded.",
       "load-subscription": "Your subscription could not be loaded.",

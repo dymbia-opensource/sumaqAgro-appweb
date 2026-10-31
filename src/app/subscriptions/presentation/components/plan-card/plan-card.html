@@ -1,0 +1,52 @@
+<mat-card appearance="outlined" class="plan-card" [class.current]="current()" [class.selected]="selected()">
+  <mat-card-header>
+    <mat-icon mat-card-avatar>{{ current() ? 'verified' : 'workspace_premium' }}</mat-icon>
+    <mat-card-title>{{ 'subscriptions.plan-code.' + plan().code | translate }}</mat-card-title>
+    @if (current()) {
+      <mat-card-subtitle>{{ 'subscriptions.plans.current' | translate }}</mat-card-subtitle>
+    } @else if (selected()) {
+      <mat-card-subtitle>{{ 'subscriptions.plans.selected' | translate }}</mat-card-subtitle>
+    }
+  </mat-card-header>
+
+  <mat-card-content>
+    <p class="price">
+      <strong>{{ plan().priceFor(cycle()).format() }}</strong>
+      <span>/ {{ ('subscriptions.billing-cycle.' + cycle()) | translate }}</span>
+    </p>
+    @if (cycle() === billingCycles.ANNUAL && plan().annualSavings().amount > 0) {
+      <p class="savings">
+        {{ 'subscriptions.plans.annual-savings' | translate: { amount: plan().annualSavings().format() } }}
+      </p>
+    }
+    <p class="quota">
+      <mat-icon aria-hidden="true">landscape</mat-icon>
+      {{ 'subscriptions.plans.plot-quota' | translate: { quota: plan().plotQuota } }}
+    </p>
+    <ul>
+      @for (feature of plan().features; track feature) {
+        <li>
+          <mat-icon aria-hidden="true">check</mat-icon>
+          {{ ('subscriptions.features.' + feature) | translate }}
+        </li>
+      }
+    </ul>
+  </mat-card-content>
+
+  <mat-card-actions>
+    <button
+      mat-flat-button
+      type="button"
+      [disabled]="disabled() || current() || selected()"
+      (click)="choose.emit(plan())"
+    >
+      {{
+        (current()
+          ? 'subscriptions.plans.current'
+          : selected()
+            ? 'subscriptions.plans.selected'
+            : 'subscriptions.plans.choose') | translate
+      }}
+    </button>
+  </mat-card-actions>
+</mat-card>

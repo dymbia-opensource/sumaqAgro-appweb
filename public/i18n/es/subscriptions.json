@@ -18,6 +18,34 @@
       "COMPLETED": "Completado",
       "REJECTED": "Rechazado"
     },
+    "features": {
+      "campaigns-by-plot": "Campañas agrícolas por parcela",
+      "ndvi-ndwi": "Monitoreo satelital NDVI y NDWI",
+      "expenses": "Registro de gastos",
+      "unit-cost": "Costo unitario de producción",
+      "agroclimatic-alerts": "Alertas agroclimáticas",
+      "members-registry": "Registro de socios",
+      "incidents-inspections": "Incidencias e inspecciones",
+      "harvest-lots": "Gestión de lotes de cosecha",
+      "qr-certificates": "Certificados con código QR",
+      "pest-reports": "Reportes de plagas",
+      "inspections": "Visitas de campo",
+      "prescriptions": "Recetas técnicas",
+      "visit-history": "Historial de visitas"
+    },
+    "plans": {
+      "current": "Plan actual",
+      "selected": "Plan seleccionado",
+      "annual-savings": "Ahorras {{amount}} al año",
+      "plot-quota": "Hasta {{quota}} parcelas",
+      "choose": "Elegir plan"
+    },
+    "catalog": {
+      "title": "Planes",
+      "subtitle": "Elige el plan que mejor se adapte a tu actividad.",
+      "billing-cycle": "Frecuencia de pago",
+      "empty": "No hay planes disponibles en este momento."
+    },
     "errors": {
       "load-plans": "No se pudieron cargar los planes.",
       "load-subscription": "No se pudo cargar tu suscripción.",
