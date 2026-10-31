@@ -1,4 +1,4 @@
-import { Component, effect, inject } from '@angular/core';
+import { Component, computed, effect, inject, signal } from '@angular/core';
 import { ReactiveFormsModule, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -7,8 +7,10 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { TranslatePipe } from '@ngx-translate/core';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatSelectModule } from '@angular/material/select';
+import { RouterLink } from '@angular/router';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { IamStore } from '../../../../iam/application/iam.store';
 import { ProfilesStore } from '../../../application/profiles.store';
 import { UpdateFarmerContactCommand } from '../../../domain/model/commands/update-farmer-contact.command';
@@ -25,7 +27,9 @@ import { UpdateFarmerContactCommand } from '../../../domain/model/commands/updat
     MatInputModule,
     MatProgressBarModule,
     MatSnackBarModule,
-    MatTooltipModule,
+    MatExpansionModule,
+    MatSelectModule,
+    RouterLink,
     TranslatePipe,
   ],
   templateUrl: './farmer-settings-view.html',
@@ -34,7 +38,53 @@ import { UpdateFarmerContactCommand } from '../../../domain/model/commands/updat
 export class FarmerSettingsView {
   private readonly store = inject(ProfilesStore);
   private readonly snackBar = inject(MatSnackBar);
-  private readonly session = inject(IamStore);
+  readonly session = inject(IamStore);
+  readonly translate = inject(TranslateService);
+  readonly tab = signal<'account' | 'help'>('account');
+  readonly search = signal('');
+  readonly guideIds = [
+    'plots',
+    'campaigns',
+    'expenses',
+    'health',
+    'certificates',
+    'offline',
+  ] as const;
+  readonly faqs = ['connection', 'contact', 'alerts'] as const;
+  readonly destinations: Record<string, string> = {
+    plots: '/field-management/plots',
+    campaigns: '/field-management/campaigns',
+    expenses: '/field-management/finances',
+    health: '/crop-health/monitoring',
+    certificates: '/harvest-certification/certificates',
+    offline: '/field-management/finances',
+  };
+  readonly icons: Record<string, string> = {
+    plots: 'map',
+    campaigns: 'grass',
+    expenses: 'payments',
+    health: 'monitor_heart',
+    certificates: 'verified',
+    offline: 'sync',
+  };
+  readonly filteredGuides = computed(() => {
+    this.translate.currentLang();
+    const normalize = (value: string) =>
+      value
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase();
+    const query = normalize(this.search().trim());
+    return this.guideIds.filter((id) =>
+      normalize(
+        this.translate.instant('profiles.settings.guides.' + id + '.title') +
+          ' ' +
+          this.translate.instant('profiles.settings.guides.' + id + '.summary') +
+          ' ' +
+          String(this.translate.instant('profiles.settings.guides.' + id + '.steps')),
+      ).includes(query),
+    );
+  });
 
   readonly profile = this.store.profile;
   readonly loading = this.store.loading;
@@ -42,8 +92,14 @@ export class FarmerSettingsView {
   readonly error = this.store.error;
 
   readonly contactForm = new FormGroup({
-    phoneNumber: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.minLength(7)] }),
-    email: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.email] }),
+    phoneNumber: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required, Validators.minLength(7)],
+    }),
+    email: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required, Validators.email],
+    }),
   });
 
   constructor() {
@@ -52,9 +108,20 @@ export class FarmerSettingsView {
       this.store.loadFarmerProfile(userId);
     }
     effect(() => {
+      if (this.store.contactSaved()) {
+        this.contactForm.markAsPristine();
+        this.snackBar.open(this.translate.instant('profiles.settings.saved'), undefined, {
+          duration: 3000,
+        });
+      }
+    });
+    effect(() => {
       const profile = this.profile();
       if (profile) {
-        this.contactForm.setValue({ phoneNumber: profile.phoneNumber, email: profile.email }, { emitEvent: false });
+        this.contactForm.setValue(
+          { phoneNumber: profile.phoneNumber, email: profile.email },
+          { emitEvent: false },
+        );
       }
     });
   }
@@ -64,13 +131,7 @@ export class FarmerSettingsView {
       this.contactForm.markAllAsTouched();
       return;
     }
+    if (this.saving() || this.loading() || !this.profile()) return;
     this.store.saveContact(new UpdateFarmerContactCommand(this.contactForm.getRawValue()));
-    this.snackBar.open('Datos de contacto guardados.', undefined, { duration: 3000 });
-  }
-
-  passwordChangeUnavailable(): void {
-    this.snackBar.open('El cambio de contraseña estará disponible al implementar IAM.', undefined, {
-      duration: 3500,
-    });
   }
 }

@@ -8,56 +8,156 @@
 </header>
 
 <nav class="settings-tabs" [attr.aria-label]="'profiles.settings.title' | translate">
-  <button mat-stroked-button disabled>{{ 'profiles.settings.plot-tab' | translate }}</button>
-  <button mat-flat-button class="active-tab"><mat-icon>radio_button_checked</mat-icon>{{ 'profiles.settings.account-tab' | translate }}</button>
-  <button mat-stroked-button disabled>{{ 'profiles.settings.help-tab' | translate }}</button>
+  <button
+    mat-stroked-button
+    [class.active-tab]="tab() === 'account'"
+    [attr.aria-current]="tab() === 'account' ? 'page' : null"
+    (click)="tab.set('account')"
+  >
+    <mat-icon>person</mat-icon>{{ 'profiles.settings.account-tab' | translate }}
+  </button>
+  <button
+    mat-stroked-button
+    [class.active-tab]="tab() === 'help'"
+    [attr.aria-current]="tab() === 'help' ? 'page' : null"
+    (click)="tab.set('help')"
+  >
+    <mat-icon>help_outline</mat-icon>{{ 'profiles.settings.help-tab' | translate }}
+  </button>
 </nav>
+@if (tab() === 'account') {
+  <mat-card class="profile-summary"
+    ><mat-card-content>
+      <mat-icon>account_circle</mat-icon>
+      <div>
+        <h2>{{ 'profiles.settings.profile-title' | translate }}</h2>
+        <p>{{ session.currentUser()?.email }}</p>
+        <span>{{ 'profiles.settings.farmer-role' | translate }}</span>
+      </div>
+      <a mat-stroked-button routerLink="/field-management/plots">{{
+        'profiles.settings.manage-plots' | translate
+      }}</a>
+    </mat-card-content></mat-card
+  >
+  @if (error(); as error) {
+    <mat-card class="message-card" role="alert"
+      ><mat-card-content>{{ error }}</mat-card-content></mat-card
+    >
+  }
 
-@if (error(); as error) {
-  <mat-card class="message-card" role="alert"><mat-card-content>{{ error }}</mat-card-content></mat-card>
-}
+  <mat-card class="account-card">
+    <section class="contact-section">
+      <h2>{{ 'profiles.settings.contact-title' | translate }}</h2>
+      <p class="section-description">{{ 'profiles.settings.contact-description' | translate }}</p>
+      <form [formGroup]="contactForm" (ngSubmit)="saveContact()">
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'profiles.settings.phone' | translate }}</mat-label>
+          <input matInput type="tel" formControlName="phoneNumber" />
+          @if (
+            contactForm.controls.phoneNumber.invalid && contactForm.controls.phoneNumber.touched
+          ) {
+            <mat-error>{{ 'profiles.settings.phone-error' | translate }}</mat-error>
+          }
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'profiles.settings.email' | translate }}</mat-label>
+          <input matInput type="email" formControlName="email" />
+          @if (contactForm.controls.email.invalid && contactForm.controls.email.touched) {
+            <mat-error>{{ 'profiles.settings.email-error' | translate }}</mat-error>
+          }
+        </mat-form-field>
+        <button
+          mat-flat-button
+          class="save-button"
+          type="submit"
+          [disabled]="saving() || loading() || !profile() || !contactForm.dirty"
+        >
+          <mat-icon>save</mat-icon
+          >{{ saving() ? ('profiles.settings.saving' | translate) : ('common.save' | translate) }}
+        </button>
+      </form>
+    </section>
 
-<mat-card class="account-card">
-  <section class="contact-section">
-    <h2>{{ 'profiles.settings.contact-title' | translate }}</h2>
-    <form [formGroup]="contactForm" (ngSubmit)="saveContact()">
-      <mat-form-field appearance="outline">
-        <mat-label>{{ 'profiles.settings.phone' | translate }}</mat-label>
-        <input matInput type="tel" formControlName="phoneNumber" />
-        @if (contactForm.controls.phoneNumber.invalid && contactForm.controls.phoneNumber.touched) {
-          <mat-error>{{ 'profiles.settings.phone-error' | translate }}</mat-error>
-        }
-      </mat-form-field>
-      <mat-form-field appearance="outline">
-        <mat-label>{{ 'profiles.settings.email' | translate }}</mat-label>
-        <input matInput type="email" formControlName="email" />
-        @if (contactForm.controls.email.invalid && contactForm.controls.email.touched) {
-          <mat-error>{{ 'profiles.settings.email-error' | translate }}</mat-error>
-        }
-      </mat-form-field>
-      <button mat-flat-button class="save-button" type="submit" [disabled]="saving()">
-        <mat-icon>save</mat-icon>{{ saving() ? ('profiles.settings.saving' | translate) : ('common.save' | translate) }}
+    <section class="security-section">
+      <h2>{{ 'profiles.settings.security-title' | translate }}</h2>
+      <p>{{ 'profiles.settings.security-description' | translate }}</p>
+      @if (session.isPasswordRecoveryPreview) {
+        <p class="notice">{{ 'profiles.settings.preview' | translate }}</p>
+      }
+      <a mat-stroked-button routerLink="/iam/forgot-password"
+        ><mat-icon>lock_reset</mat-icon>{{ 'profiles.settings.change-password' | translate }}</a
+      >
+      <div class="preferences">
+        <h2>{{ 'profiles.settings.preferences' | translate }}</h2>
+        <mat-form-field appearance="outline"
+          ><mat-label>{{ 'profiles.settings.language' | translate }}</mat-label>
+          <mat-select
+            [value]="translate.currentLang()"
+            (selectionChange)="translate.use($event.value)"
+            ><mat-option value="es">Español</mat-option
+            ><mat-option value="en">English</mat-option></mat-select
+          >
+        </mat-form-field>
+        <p>{{ 'profiles.settings.language-description' | translate }}</p>
+      </div>
+    </section>
+  </mat-card>
+} @else {
+  <section class="help-intro">
+    <h2>{{ 'profiles.settings.help-title' | translate }}</h2>
+    <p>{{ 'profiles.settings.help-description' | translate }}</p>
+  </section>
+  <mat-form-field appearance="outline" class="help-search"
+    ><mat-label>{{ 'profiles.settings.search' | translate }}</mat-label
+    ><mat-icon matPrefix>search</mat-icon
+    ><input matInput [value]="search()" (input)="search.set($any($event.target).value)" />
+    @if (search()) {
+      <button
+        mat-icon-button
+        matSuffix
+        (click)="search.set('')"
+        [attr.aria-label]="'profiles.settings.clear' | translate"
+      >
+        <mat-icon>close</mat-icon>
       </button>
-    </form>
+    }
+  </mat-form-field>
+  <div class="guide-grid">
+    @for (id of filteredGuides(); track id) {
+      <mat-expansion-panel
+        ><mat-expansion-panel-header
+          ><mat-panel-title
+            ><mat-icon>{{ icons[id] }}</mat-icon
+            >{{ 'profiles.settings.guides.' + id + '.title' | translate }}</mat-panel-title
+          ></mat-expansion-panel-header
+        >
+        <p>{{ 'profiles.settings.guides.' + id + '.summary' | translate }}</p>
+        <ol>
+          @for (step of 'profiles.settings.guides.' + id + '.steps' | translate; track $index) {
+            <li>{{ step }}</li>
+          }
+        </ol>
+        <a mat-stroked-button [routerLink]="destinations[id]"
+          >{{ 'profiles.settings.open-section' | translate }}<mat-icon>arrow_forward</mat-icon></a
+        >
+      </mat-expansion-panel>
+    } @empty {
+      <p role="status">{{ 'profiles.settings.no-results' | translate }}</p>
+    }
+  </div>
+  <section class="faq-section">
+    <h2>{{ 'profiles.settings.faq-title' | translate }}</h2>
+    <mat-accordion>
+      @for (id of faqs; track id) {
+        <mat-expansion-panel
+          ><mat-expansion-panel-header
+            ><mat-panel-title>{{
+              'profiles.settings.faq.' + id + '.question' | translate
+            }}</mat-panel-title></mat-expansion-panel-header
+          >
+          <p>{{ 'profiles.settings.faq.' + id + '.answer' | translate }}</p></mat-expansion-panel
+        >
+      }
+    </mat-accordion>
   </section>
-
-  <section class="security-section">
-    <h2>{{ 'profiles.settings.security-title' | translate }}</h2>
-    <mat-form-field appearance="outline">
-      <mat-label>{{ 'profiles.settings.current-password' | translate }}</mat-label>
-      <input matInput type="password" value="not-implemented" disabled />
-    </mat-form-field>
-    <mat-form-field appearance="outline">
-      <mat-label>{{ 'profiles.settings.new-password' | translate }}</mat-label>
-      <input matInput type="password" disabled />
-    </mat-form-field>
-    <mat-form-field appearance="outline">
-      <mat-label>{{ 'profiles.settings.confirm-password' | translate }}</mat-label>
-      <input matInput type="password" disabled />
-    </mat-form-field>
-    <p>{{ 'profiles.settings.security-description' | translate }}</p>
-    <button mat-stroked-button (click)="passwordChangeUnavailable()">
-      <mat-icon>lock</mat-icon>{{ 'profiles.settings.change-password' | translate }}
-    </button>
-  </section>
-</mat-card>
+}
