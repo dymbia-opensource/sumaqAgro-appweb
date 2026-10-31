@@ -1,9 +1,13 @@
 :host {
-  display: block;
+  display: flex;
+  flex-direction: column;
   min-width: 0;
 }
 
 .list-card {
+  flex: 1;
+  width: 100%;
+  min-width: 0;
   border-radius: 20px;
   overflow: hidden;
 }
@@ -15,13 +19,16 @@
 /* On phones the table scrolls sideways instead of the page. */
 .table-scroll {
   overflow-x: auto;
+  width: 100%;
 }
 
 table {
+  width: 100%;
   min-width: 560px;
 }
 
 .number {
+  white-space: nowrap;
   text-align: right;
 }
 
@@ -45,4 +52,21 @@ table {
 .empty {
   margin: 0 0 8px;
   color: var(--mat-sys-on-surface-variant);
+}
+
+.mat-column-description {
+  overflow-wrap: anywhere;
+  min-width: 140px;
+}
+.mat-column-date {
+  white-space: nowrap;
+}
+th.mat-mdc-header-cell {
+  background: var(--mat-sys-surface-container-low);
+}
+tr.mat-mdc-row:hover {
+  background: var(--mat-sys-surface-container-low);
+}
+.empty {
+  padding-top: 12px;
 }
