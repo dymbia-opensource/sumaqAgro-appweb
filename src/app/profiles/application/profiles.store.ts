@@ -24,6 +24,7 @@ export class ProfilesStore {
   private readonly savingSignal = signal(false);
   private readonly errorSignal = signal<string | null>(null);
 
+  readonly contactSaved = signal(false);
   readonly profile = this.profileSignal.asReadonly();
   readonly cooperative = this.cooperativeSignal.asReadonly();
   readonly members = this.membersSignal.asReadonly();
@@ -32,10 +33,14 @@ export class ProfilesStore {
   readonly loading = this.loadingSignal.asReadonly();
   readonly saving = this.savingSignal.asReadonly();
   readonly error = this.errorSignal.asReadonly();
-  readonly activeMemberCount = computed(() => this.members().filter((member) => member.active).length);
+  readonly activeMemberCount = computed(
+    () => this.members().filter((member) => member.active).length,
+  );
 
   /** Loads the personal contact profile of the independent farmer. */
   loadFarmerProfile(userId: number): void {
+    this.contactSaved.set(false);
+    this.profileSignal.set(null);
     this.loadingSignal.set(true);
     this.errorSignal.set(null);
     this.profilesApi
@@ -49,8 +54,15 @@ export class ProfilesStore {
 
   /** Validates and persists the farmer's contact data. */
   saveContact(command: UpdateFarmerContactCommand): void {
-    const profile = this.profileSignal();
-    if (!profile) return;
+    this.contactSaved.set(false);
+    const current = this.profileSignal();
+    if (!current || this.saving()) return;
+    const profile = new FarmerProfile({
+      id: current.id as number,
+      userId: current.userId,
+      phoneNumber: current.phoneNumber,
+      email: current.email,
+    });
 
     try {
       profile.updateContact(command.phoneNumber, command.email);
@@ -65,7 +77,10 @@ export class ProfilesStore {
       .updateFarmerProfile(profile)
       .pipe(finalize(() => this.savingSignal.set(false)))
       .subscribe({
-        next: (updatedProfile) => this.profileSignal.set(updatedProfile),
+        next: (updatedProfile) => {
+          this.profileSignal.set(updatedProfile);
+          this.contactSaved.set(true);
+        },
         error: (error: Error) => this.errorSignal.set(error.message),
       });
   }
@@ -99,14 +114,16 @@ export class ProfilesStore {
             return of({ members: [], advisors: [] });
           }
           const coopId = cooperative.id as number;
-          return this.profilesApi.getCooperativeMembers(coopId).pipe(
-            switchMap((members) =>
-              this.profilesApi.getTechnicalAdvisors(coopId).pipe(
-                switchMap((advisors) => of({ members, advisors }))
-              )
-            )
-          );
-        })
+          return this.profilesApi
+            .getCooperativeMembers(coopId)
+            .pipe(
+              switchMap((members) =>
+                this.profilesApi
+                  .getTechnicalAdvisors(coopId)
+                  .pipe(switchMap((advisors) => of({ members, advisors }))),
+              ),
+            );
+        }),
       )
       .subscribe({
         next: (result) => {
@@ -187,7 +204,12 @@ export class ProfilesStore {
     if (!advisor) return;
 
     try {
-      advisor.updateDetails(command.name, command.cipCode, command.phone, command.assignedPlotsCount);
+      advisor.updateDetails(
+        command.name,
+        command.cipCode,
+        command.phone,
+        command.assignedPlotsCount,
+      );
     } catch (error) {
       this.errorSignal.set(error instanceof Error ? error.message : 'Datos inválidos.');
       return;
@@ -201,7 +223,7 @@ export class ProfilesStore {
       .subscribe({
         next: (updatedAdvisor) => {
           this.technicalAdvisorsSignal.update((current) =>
-            current.map((item) => (item.id === updatedAdvisor.id ? updatedAdvisor : item))
+            current.map((item) => (item.id === updatedAdvisor.id ? updatedAdvisor : item)),
           );
         },
         error: (error: Error) => this.errorSignal.set(error.message),
@@ -217,7 +239,9 @@ export class ProfilesStore {
       .pipe(finalize(() => this.savingSignal.set(false)))
       .subscribe({
         next: () => {
-          this.technicalAdvisorsSignal.update((current) => current.filter((item) => item.id !== id));
+          this.technicalAdvisorsSignal.update((current) =>
+            current.filter((item) => item.id !== id),
+          );
         },
         error: (error: Error) => this.errorSignal.set(error.message),
       });
