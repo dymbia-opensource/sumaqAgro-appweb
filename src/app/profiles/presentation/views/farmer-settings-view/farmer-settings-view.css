@@ -204,3 +204,38 @@ mat-form-field {
     font-weight: 700;
   }
 }
+.section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+.section-heading h2 {
+  margin: 0;
+}
+.form-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 8px;
+}
+.form-actions .save-button {
+  margin: 0;
+}
+.name-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.profile-name {
+  font-weight: 600;
+}
+@media (max-width: 960px) {
+  .name-fields {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+}

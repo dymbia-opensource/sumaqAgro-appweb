@@ -3,6 +3,8 @@
     {
       "id": 1,
       "userId": 1,
+      "firstName": "Rene",
+      "lastName": "Higuita",
       "phoneNumber": "+51 987 654 2321",
       "email": "guillermoquispe@gmail.com"
     }
@@ -130,10 +132,22 @@
       "region": "Junín - Valle del Mantaro",
       "status": "ACTIVE_MONITORING",
       "boundary": [
-        [-12.0712, -75.2135],
-        [-12.0708, -75.2111],
-        [-12.0741, -75.2104],
-        [-12.0746, -75.2131]
+        [
+          -12.0712,
+          -75.2135
+        ],
+        [
+          -12.0708,
+          -75.2111
+        ],
+        [
+          -12.0741,
+          -75.2104
+        ],
+        [
+          -12.0746,
+          -75.2131
+        ]
       ],
       "areaHectares": 3.5,
       "agroMonitoringPolygonId": "5f9a1c2b7e1d3a0012ab34cd",
@@ -151,10 +165,22 @@
       "region": "Junín - Chanchamayo",
       "status": "ACTIVE_MONITORING",
       "boundary": [
-        [-11.1245, -75.3561],
-        [-11.1241, -75.3524],
-        [-11.1272, -75.3519],
-        [-11.1279, -75.3557]
+        [
+          -11.1245,
+          -75.3561
+        ],
+        [
+          -11.1241,
+          -75.3524
+        ],
+        [
+          -11.1272,
+          -75.3519
+        ],
+        [
+          -11.1279,
+          -75.3557
+        ]
       ],
       "areaHectares": 2.5,
       "agroMonitoringPolygonId": "5f9a1c2b7e1d3a0012ab34ce"
@@ -176,10 +202,22 @@
       "region": "Huancavelica",
       "status": "ACTIVE_MONITORING",
       "boundary": [
-        [-12.7865, -74.9762],
-        [-12.7861, -74.9731],
-        [-12.7889, -74.9728],
-        [-12.7893, -74.9759]
+        [
+          -12.7865,
+          -74.9762
+        ],
+        [
+          -12.7861,
+          -74.9731
+        ],
+        [
+          -12.7889,
+          -74.9728
+        ],
+        [
+          -12.7893,
+          -74.9759
+        ]
       ],
       "areaHectares": 1.8,
       "agroMonitoringPolygonId": "5f9a1c2b7e1d3a0012ab34cf",
@@ -688,7 +726,6 @@
     }
   ],
   "case-assessments": [],
-
   "plans": [
     {
       "id": 1,
@@ -698,7 +735,13 @@
       "annualPrice": 490,
       "currency": "PEN",
       "plotQuota": 4,
-      "features": ["campaigns-by-plot", "ndvi-ndwi", "expenses", "unit-cost", "agroclimatic-alerts"]
+      "features": [
+        "campaigns-by-plot",
+        "ndvi-ndwi",
+        "expenses",
+        "unit-cost",
+        "agroclimatic-alerts"
+      ]
     },
     {
       "id": 2,
@@ -724,7 +767,13 @@
       "annualPrice": 890,
       "currency": "PEN",
       "plotQuota": 20,
-      "features": ["ndvi-ndwi", "pest-reports", "inspections", "prescriptions", "visit-history"]
+      "features": [
+        "ndvi-ndwi",
+        "pest-reports",
+        "inspections",
+        "prescriptions",
+        "visit-history"
+      ]
     }
   ],
   "subscriptions": [

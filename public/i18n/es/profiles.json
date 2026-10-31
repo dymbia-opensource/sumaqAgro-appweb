@@ -73,7 +73,7 @@
       "subtitle": "Administra tu cuenta y encuentra orientación para usar SumaqAgro.",
       "account-tab": "Cuenta",
       "help-tab": "Manuales de Ayuda",
-      "contact-title": "Datos de Contacto",
+      "contact-title": "Información personal y de contacto",
       "phone": "Número de teléfono",
       "email": "Correo de contacto",
       "phone-error": "Ingresa un teléfono válido.",
@@ -86,10 +86,10 @@
       "security-description": "Usa tu correo de inicio de sesión para solicitar el restablecimiento de tu contraseña mediante el flujo de recuperación de acceso.",
       "change-password": "Cambiar contraseña",
       "profile-title": "Tu cuenta de agricultor",
-      "farmer-role": "Agricultor · Segmento 1",
+      "farmer-role": "Agricultor",
       "manage-plots": "Administrar mis parcelas",
       "contact-description": "Actualiza tus datos de contacto. El correo de contacto no modifica el correo con el que inicias sesión.",
-      "saved": "Datos de contacto guardados.",
+      "saved": "Datos de tu cuenta guardados.",
       "preview": "La recuperación funciona actualmente como vista previa: no envía correos ni cambia contraseñas.",
       "preferences": "Preferencias",
       "language": "Idioma de la aplicación",
@@ -170,7 +170,12 @@
           "question": "¿Una alerta reemplaza la evaluación de un agrónomo?",
           "answer": "Las alertas orientan la revisión de tu parcela. Consulta el detalle, verifica las condiciones en campo y solicita asesoría técnica cuando corresponda."
         }
-      }
+      },
+      "first-name": "Nombres",
+      "last-name": "Apellidos",
+      "name-error": "Ingresa un nombre válido de hasta 100 caracteres.",
+      "edit-account": "Editar cuenta",
+      "cancel": "Cancelar"
     },
     "advisory": {
       "title": "Asesor responsable de la parcela",

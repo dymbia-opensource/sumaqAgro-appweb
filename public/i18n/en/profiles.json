@@ -73,7 +73,7 @@
       "subtitle": "Manage your account and find guidance for using SumaqAgro.",
       "account-tab": "Account",
       "help-tab": "Help Manuals",
-      "contact-title": "Contact Details",
+      "contact-title": "Personal and contact information",
       "phone": "Phone number",
       "email": "Contact email",
       "phone-error": "Enter a valid phone number.",
@@ -86,10 +86,10 @@
       "security-description": "Use your sign-in email to request a password reset through the account recovery flow.",
       "change-password": "Change password",
       "profile-title": "Your farmer account",
-      "farmer-role": "Farmer · Segment 1",
+      "farmer-role": "Farmer",
       "manage-plots": "Manage my plots",
       "contact-description": "Update your contact details. Your contact email does not change your sign-in email.",
-      "saved": "Contact details saved.",
+      "saved": "Account details saved.",
       "preview": "Account recovery currently runs as a preview: it does not send emails or change passwords.",
       "preferences": "Preferences",
       "language": "Application language",
@@ -170,7 +170,12 @@
           "question": "Does an alert replace an agronomist assessment?",
           "answer": "Alerts help you decide what to inspect. Read the details, check conditions in the field and seek technical advice when needed."
         }
-      }
+      },
+      "first-name": "First name",
+      "last-name": "Last name",
+      "name-error": "Enter a valid name up to 100 characters.",
+      "edit-account": "Edit account",
+      "cancel": "Cancel"
     },
     "advisory": {
       "title": "Responsible plot advisor",

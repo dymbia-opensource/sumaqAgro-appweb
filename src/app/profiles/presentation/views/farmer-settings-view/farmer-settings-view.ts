@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, signal } from '@angular/core';
+import { Component, computed, effect, inject, signal, untracked } from '@angular/core';
 import { ReactiveFormsModule, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -13,7 +13,7 @@ import { RouterLink } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { IamStore } from '../../../../iam/application/iam.store';
 import { ProfilesStore } from '../../../application/profiles.store';
-import { UpdateFarmerContactCommand } from '../../../domain/model/commands/update-farmer-contact.command';
+import { UpdateFarmerAccountCommand } from '../../../domain/model/commands/update-farmer-account.command';
 
 /** Account settings view for the independent farmer (segment 1). */
 @Component({
@@ -42,6 +42,7 @@ export class FarmerSettingsView {
   readonly translate = inject(TranslateService);
   readonly tab = signal<'account' | 'help'>('account');
   readonly search = signal('');
+  readonly editing = signal(false);
   readonly guideIds = [
     'plots',
     'campaigns',
@@ -92,6 +93,14 @@ export class FarmerSettingsView {
   readonly error = this.store.error;
 
   readonly contactForm = new FormGroup({
+    firstName: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required, Validators.pattern(/\S/), Validators.maxLength(100)],
+    }),
+    lastName: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required, Validators.pattern(/\S/), Validators.maxLength(100)],
+    }),
     phoneNumber: new FormControl('', {
       nonNullable: true,
       validators: [Validators.required, Validators.minLength(7)],
@@ -109,21 +118,48 @@ export class FarmerSettingsView {
     }
     effect(() => {
       if (this.store.contactSaved()) {
+        this.editing.set(false);
         this.contactForm.markAsPristine();
-        this.snackBar.open(this.translate.instant('profiles.settings.saved'), undefined, {
-          duration: 3000,
-        });
+        untracked(() =>
+          this.snackBar.open(this.translate.instant('profiles.settings.saved'), undefined, {
+            duration: 3000,
+          }),
+        );
       }
     });
     effect(() => {
       const profile = this.profile();
       if (profile) {
         this.contactForm.setValue(
-          { phoneNumber: profile.phoneNumber, email: profile.email },
+          {
+            firstName: profile.firstName,
+            lastName: profile.lastName,
+            phoneNumber: profile.phoneNumber,
+            email: profile.email,
+          },
           { emitEvent: false },
         );
       }
     });
+  }
+
+  startEditing(): void {
+    if (!this.profile() || this.loading() || this.saving()) return;
+    this.store.clearContactFeedback();
+    this.editing.set(true);
+  }
+
+  cancelEditing(): void {
+    if (this.saving()) return;
+    const profile = this.profile();
+    if (profile)
+      this.contactForm.reset({
+        firstName: profile.firstName,
+        lastName: profile.lastName,
+        phoneNumber: profile.phoneNumber,
+        email: profile.email,
+      });
+    this.editing.set(false);
   }
 
   saveContact(): void {
@@ -131,7 +167,7 @@ export class FarmerSettingsView {
       this.contactForm.markAllAsTouched();
       return;
     }
-    if (this.saving() || this.loading() || !this.profile()) return;
-    this.store.saveContact(new UpdateFarmerContactCommand(this.contactForm.getRawValue()));
+    if (!this.editing() || this.saving() || this.loading() || !this.profile()) return;
+    this.store.saveAccount(new UpdateFarmerAccountCommand(this.contactForm.getRawValue()));
   }
 }

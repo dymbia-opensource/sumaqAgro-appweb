@@ -1,3 +1,4 @@
+import { UpdateFarmerAccountCommand } from '../domain/model/commands/update-farmer-account.command';
 import { computed, inject, Service, signal } from '@angular/core';
 import { finalize, of, switchMap } from 'rxjs';
 import { UpdateFarmerContactCommand } from '../domain/model/commands/update-farmer-contact.command';
@@ -24,7 +25,8 @@ export class ProfilesStore {
   private readonly savingSignal = signal(false);
   private readonly errorSignal = signal<string | null>(null);
 
-  readonly contactSaved = signal(false);
+  private readonly contactSavedSignal = signal(false);
+  readonly contactSaved = this.contactSavedSignal.asReadonly();
   readonly profile = this.profileSignal.asReadonly();
   readonly cooperative = this.cooperativeSignal.asReadonly();
   readonly members = this.membersSignal.asReadonly();
@@ -37,9 +39,14 @@ export class ProfilesStore {
     () => this.members().filter((member) => member.active).length,
   );
 
+  clearContactFeedback(): void {
+    this.contactSavedSignal.set(false);
+    this.errorSignal.set(null);
+  }
+
   /** Loads the personal contact profile of the independent farmer. */
   loadFarmerProfile(userId: number): void {
-    this.contactSaved.set(false);
+    this.contactSavedSignal.set(false);
     this.profileSignal.set(null);
     this.loadingSignal.set(true);
     this.errorSignal.set(null);
@@ -54,18 +61,33 @@ export class ProfilesStore {
 
   /** Validates and persists the farmer's contact data. */
   saveContact(command: UpdateFarmerContactCommand): void {
-    this.contactSaved.set(false);
+    this.persistFarmerProfile(command);
+  }
+
+  saveAccount(command: UpdateFarmerAccountCommand): void {
+    this.persistFarmerProfile(command);
+  }
+
+  private persistFarmerProfile(
+    command: UpdateFarmerContactCommand | UpdateFarmerAccountCommand,
+  ): void {
+    this.contactSavedSignal.set(false);
     const current = this.profileSignal();
     if (!current || this.saving()) return;
     const profile = new FarmerProfile({
       id: current.id as number,
       userId: current.userId,
+      firstName: current.firstName,
+      lastName: current.lastName,
       phoneNumber: current.phoneNumber,
       email: current.email,
     });
 
     try {
       profile.updateContact(command.phoneNumber, command.email);
+      if (command instanceof UpdateFarmerAccountCommand) {
+        profile.updateName(command.firstName, command.lastName);
+      }
     } catch (error) {
       this.errorSignal.set(error instanceof Error ? error.message : 'Invalid contact data.');
       return;
@@ -79,7 +101,7 @@ export class ProfilesStore {
       .subscribe({
         next: (updatedProfile) => {
           this.profileSignal.set(updatedProfile);
-          this.contactSaved.set(true);
+          this.contactSavedSignal.set(true);
         },
         error: (error: Error) => this.errorSignal.set(error.message),
       });
