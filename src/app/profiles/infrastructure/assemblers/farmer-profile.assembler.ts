@@ -1,11 +1,16 @@
 import { BaseAssembler } from '../../../shared/infrastructure/base-assembler';
 import { FarmerProfile } from '../../domain/model/entities/farmer-profile.entity';
-import { FarmerProfileResource, FarmerProfilesResponse } from '../responses/farmer-profile.response';
+import {
+  FarmerProfileResource,
+  FarmerProfilesResponse,
+} from '../responses/farmer-profile.response';
 
 /** Maps the Profiles API contract to the farmer profile domain entity. */
-export class FarmerProfileAssembler
-  implements BaseAssembler<FarmerProfile, FarmerProfileResource, FarmerProfilesResponse>
-{
+export class FarmerProfileAssembler implements BaseAssembler<
+  FarmerProfile,
+  FarmerProfileResource,
+  FarmerProfilesResponse
+> {
   toEntityFromResource(resource: FarmerProfileResource): FarmerProfile {
     return new FarmerProfile(resource);
   }
@@ -14,6 +19,8 @@ export class FarmerProfileAssembler
     return {
       id: entity.id as number,
       userId: entity.userId,
+      firstName: entity.firstName,
+      lastName: entity.lastName,
       phoneNumber: entity.phoneNumber,
       email: entity.email,
     };
