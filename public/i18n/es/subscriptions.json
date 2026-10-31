@@ -1,5 +1,6 @@
 {
   "subscriptions": {
+    "nav-title": "Mi suscripción",
     "plan-code": {
       "SEED": "Semilla",
       "COOPERATIVE_PRO": "Cooperativa Pro",
@@ -46,6 +47,32 @@
       "billing-cycle": "Frecuencia de pago",
       "empty": "No hay planes disponibles en este momento."
     },
+    "billing": {
+      "title": "Suscripción y pagos",
+      "subtitle": "Consulta tu plan actual y el historial de pagos.",
+      "unknown-plan": "Plan no disponible",
+      "change-plan": "Cambiar de plan",
+      "cycle": "Frecuencia de pago",
+      "started": "Fecha de inicio",
+      "ends": "Fecha de fin",
+      "no-end-date": "Sin fecha de fin",
+      "plot-quota": "Cuota de parcelas",
+      "cancel": "Cancelar renovación",
+      "cancel-confirmation": "Al cancelar, conservarás el acceso hasta el final del período actual.",
+      "keep": "Mantener suscripción",
+      "confirm-cancel": "Confirmar cancelación",
+      "expired": "Tu suscripción venció. Elige un plan para recuperar el acceso.",
+      "cancelled-until": "La renovación está cancelada; conservarás el acceso hasta la fecha de fin.",
+      "no-subscription": "Todavía no tienes una suscripción.",
+      "browse-plans": "Explorar planes",
+      "payment-history": "Historial de pagos",
+      "amount": "Monto",
+      "date": "Fecha",
+      "status": "Estado",
+      "transaction": "Token de transacción",
+      "no-payments": "Aún no hay pagos registrados.",
+      "download-receipt": "Descargar comprobante"
+    },
     "checkout": {
       "title": "Confirmar plan",
       "subtitle": "Revisa el detalle antes de continuar.",
@@ -64,6 +91,7 @@
       "simulate-payment": "Simular pago aprobado",
       "payment-approved": "Pago de demostración aprobado. Tu plan se actualizó.",
       "payment-rejected": "El pago de demostración fue rechazado. Tu plan no cambió.",
+      "view-billing": "Ver suscripción y pagos",
       "simulate-rejection": "Simular pago rechazado",
       "no-plan": "Primero elige un plan para continuar.",
       "choose-plan": "Ver planes"
