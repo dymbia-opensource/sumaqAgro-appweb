@@ -1,3 +1,5 @@
+import { UpdateFarmerAccountCommand } from '../../domain/model/commands/update-farmer-account.command';
+import { FarmerProfileAssembler } from '../../infrastructure/assemblers/farmer-profile.assembler';
 import { TestBed } from '@angular/core/testing';
 import { of, Subject } from 'rxjs';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
@@ -72,5 +74,54 @@ describe('Farmer contact persistence', () => {
     expect(original.phoneNumber).toBe('912345678');
     expect(store.contactSaved()).toBe(false);
     expect(store.error()).toBeTruthy();
+  });
+
+  it('persists names and contact together and maps the names through the API contract', () => {
+    store.saveAccount(
+      new UpdateFarmerAccountCommand({
+        firstName: '  María José ',
+        lastName: ' Quispe Rojas ',
+        phoneNumber: '987654321',
+        email: 'new@example.com',
+      }),
+    );
+    const outgoing = api.updateFarmerProfile.mock.calls[0][0] as FarmerProfile;
+    const assembler = new FarmerProfileAssembler();
+    const resource = assembler.toResourceFromEntity(outgoing);
+    expect(resource.firstName).toBe('María José');
+    expect(resource.lastName).toBe('Quispe Rojas');
+    expect(store.profile()?.fullName).toBe('');
+    response.next(assembler.toEntityFromResource(resource));
+    response.complete();
+    expect(store.profile()?.fullName).toBe('María José Quispe Rojas');
+    expect(store.profile()?.email).toBe('new@example.com');
+    expect(store.contactSaved()).toBe(true);
+  });
+
+  it('does not persist whitespace-only names or change the existing profile', () => {
+    store.saveAccount(
+      new UpdateFarmerAccountCommand({
+        firstName: ' ',
+        lastName: 'Quispe',
+        phoneNumber: '987654321',
+        email: 'new@example.com',
+      }),
+    );
+    expect(api.updateFarmerProfile).not.toHaveBeenCalled();
+    expect(store.profile()).toBe(original);
+    expect(store.profile()?.email).toBe('old@example.com');
+    expect(store.contactSaved()).toBe(false);
+  });
+
+  it('loads old API profiles without name fields', () => {
+    const profile = new FarmerProfileAssembler().toEntityFromResource({
+      id: 1,
+      userId: 1,
+      phoneNumber: '912345678',
+      email: 'old@example.com',
+    });
+    expect(profile.firstName).toBe('');
+    expect(profile.lastName).toBe('');
+    expect(profile.fullName).toBe('');
   });
 });
