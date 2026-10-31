@@ -70,8 +70,8 @@ export class CheckoutView {
     );
   }
 
-  /** Submits the demo payment without collecting card details. */
-  onPay(): void {
+  /** Submits a demo payment without collecting card details. */
+  onPay(status: PaymentStatus.COMPLETED | PaymentStatus.REJECTED): void {
     const amount = this.amount();
     if (!amount || !this.selectedPlan() || this.processing()) return;
 
@@ -80,7 +80,7 @@ export class CheckoutView {
         subscriptionId: this.subscriptionId(),
         cardToken: 'demo-payment-token',
         amount,
-        simulatedStatus: this.paymentStatuses.COMPLETED,
+        simulatedStatus: status,
       }),
     );
   }

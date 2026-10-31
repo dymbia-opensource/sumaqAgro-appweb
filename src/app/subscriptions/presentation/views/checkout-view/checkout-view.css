@@ -81,12 +81,23 @@ dd {
   gap: 12px;
 }
 
+.demo-payment-actions {
+  display: flex;
+  justify-content: end;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
 @media (max-width: 760px) {
   .checkout-grid {
     grid-template-columns: 1fr;
   }
 
   .payment-actions {
+    flex-direction: column-reverse;
+  }
+
+  .demo-payment-actions {
     flex-direction: column-reverse;
   }
 }
