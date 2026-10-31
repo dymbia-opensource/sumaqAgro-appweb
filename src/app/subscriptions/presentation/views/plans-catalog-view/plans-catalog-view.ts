@@ -1,6 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { Router } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Breadcrumb, PageHeader } from '../../../../shared/presentation/components/page-header/page-header';
 import { MessageCard } from '../../../../shared/presentation/components/message-card/message-card';
@@ -25,6 +26,7 @@ import { PlanCard } from '../../components/plan-card/plan-card';
   styleUrl: './plans-catalog-view.css',
 })
 export class PlansCatalogView {
+  private readonly router = inject(Router);
   private readonly store = inject(SubscriptionsStore);
 
   readonly plans = this.store.plans;
@@ -64,5 +66,8 @@ export class PlansCatalogView {
         billingCycle: this.cycle(),
       }),
     );
+    if (this.store.selectedPlan()?.code === plan.code) {
+      void this.router.navigate(['/subscriptions/checkout']);
+    }
   }
 }

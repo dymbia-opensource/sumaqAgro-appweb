@@ -46,6 +46,28 @@
       "billing-cycle": "Billing cycle",
       "empty": "No plans are available right now."
     },
+    "checkout": {
+      "title": "Confirm your plan",
+      "subtitle": "Review the details before continuing.",
+      "summary": "Plan summary",
+      "plan": "Plan",
+      "billing-cycle": "Billing cycle",
+      "plot-quota": "Plot quota",
+      "coupon": "Coupon",
+      "coupon-label": "Promotional code",
+      "coupon-required": "Enter a promotional code.",
+      "apply-coupon": "Apply coupon",
+      "total": "Total due",
+      "payment-title": "Payment",
+      "demo-notice": "This is a demo: it is not connected to Niubiz yet, and you should not enter card details. The button simulates an approved payment.",
+      "back": "Back to plans",
+      "simulate-payment": "Simulate approved payment",
+      "payment-approved": "Demo payment approved. Your plan has been updated.",
+      "payment-rejected": "Demo payment rejected. Your plan was not changed.",
+      "view-billing": "View subscription and payments",
+      "no-plan": "Choose a plan before continuing.",
+      "choose-plan": "Browse plans"
+    },
     "errors": {
       "load-plans": "The plans could not be loaded.",
       "load-subscription": "Your subscription could not be loaded.",
